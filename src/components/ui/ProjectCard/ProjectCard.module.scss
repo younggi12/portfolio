@@ -1,0 +1,50 @@
+@use "@/styles/variables" as *;
+
+.card {
+  overflow: hidden;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+}
+
+.thumb {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-6;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.tag { color: $color-point; font-weight: $font-weight-bold; }
+
+.name {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+}
+
+.summary { color: $color-text-secondary; }
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+  margin-top: $space-2;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-point;
+
+  a:hover { text-decoration: underline; }
+}

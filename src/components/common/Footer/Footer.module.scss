@@ -1,0 +1,17 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.footer {
+  border-top: 1px solid rgba($color-border, 0.4);
+  padding-block: $space-8;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.inner {
+  @include container;
+  display: flex;
+  justify-content: space-between;
+
+  a:hover { color: $color-point; }
+}

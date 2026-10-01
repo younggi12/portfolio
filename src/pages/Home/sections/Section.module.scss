@@ -1,0 +1,28 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// Home 섹션 공통 틀 — 6번(Home) 작업에서 섹션별로 디자인 예정
+.section {
+  @include container;
+  padding-block: $space-20;
+
+  @include mobile { padding-block: $space-16; }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $gutter;
+
+  @include tablet { grid-template-columns: repeat(2, 1fr); }
+  @include mobile { grid-template-columns: 1fr; }
+}
+
+.muted { color: $color-text-secondary; }
+
+.more {
+  display: inline-block;
+  margin-top: $space-8;
+  font-weight: $font-weight-bold;
+  color: $color-point;
+}

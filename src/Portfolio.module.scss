@@ -1,0 +1,298 @@
+// Ink wash 팔레트 — 값만 바꾸면 전체 색이 바뀜
+$charcoal: #4A4A4A; // 숯검정 — 제목/본문
+$gray: #CBCBCB;     // 쿨그레이 — 테두리/옅은 요소
+$ivory: #FFFFFF;    // 배경 (누런기 완전히 없애려고 순백으로 변경 — 이름은 ivory로 남겨둠)
+$steel: #6D8196;    // 스틸블루 — 포인트(라벨/링크)
+$muted: #8c8c84;    // 본문보다 옅은 보조 텍스트(그레이보다 살짝 진하게, 배경 위에서도 읽히도록)
+
+:global(html), :global(body) {
+  margin: 0;
+}
+:global(body) {
+  display: block !important;
+}
+:global(#root) {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.root {
+  font-family: "Pretendard", "Malgun Gothic", system-ui, sans-serif;
+  color: $charcoal;
+}
+
+/* ── 로딩 인트로 (VS Code 타이핑 영상, 전체화면) ── */
+$editor: #111313; // 인트로 영상 속 VS Code 배경색 — 영상 로드 전/여백에도 같은 색
+
+.loading {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: $editor;
+  opacity: 1;
+  cursor: pointer;
+  transition: opacity 0.45s ease; // JSX의 LOADING_FADE(450ms)와 맞춤
+}
+
+.loadingLeave {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loadingVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; // 화면을 꽉 채움(비율 다르면 가장자리가 살짝 잘림)
+  display: block;
+}
+
+// 영상 진행률 바 — 화면 맨 위에 얇게
+.loadingBarTrack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+}
+
+.loadingBarFill {
+  height: 100%;
+  background: $steel;
+}
+
+.loadingSkip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 44px; // 영상 속 VS Code 상태바 위
+  margin: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+}
+
+// 세로 모바일: 잘리지 않게 영상 전체를 보여줌
+@media (max-width: 700px) and (orientation: portrait) {
+  .loadingVideo { object-fit: contain; }
+}
+
+/* ── 공통 페이지 ── */
+.page {
+  position: relative; // .hint 같은 absolute 요소의 기준점
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* ── 1페이지: 자기소개 ── */
+.pageWhite {
+  background: $ivory;
+  text-align: center;
+
+  .eyebrow { color: $gray; }
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  font-weight: 700;
+}
+
+.name {
+  margin: 0;
+  font-size: clamp(48px, 9vw, 96px);
+  font-weight: 900;
+  color: $charcoal;
+}
+
+.role {
+  margin: 8px 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: $steel;
+}
+
+.tagline {
+  margin: 0 0 8px;
+  color: $muted;
+  font-size: 15px;
+}
+
+.school {
+  margin: 0;
+  color: $gray;
+  font-size: 13px;
+}
+
+.hint {
+  position: absolute;
+  bottom: 40px;
+  margin: 0;
+  color: $gray;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  animation: blink 1.6s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+
+/* ── 2페이지: 콘텐츠 ── */
+.pageContent {
+  background: $ivory;
+  align-items: stretch;
+  padding: 80px 8vw;
+}
+
+.content {
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.section {
+  .label {
+    margin: 0 0 18px;
+    color: $steel;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    font-weight: 800;
+  }
+}
+
+.projectList {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.project {
+  padding: 24px 26px;
+  background: #fff;
+  border: 1px solid $gray;
+  border-radius: 12px;
+
+  h3 {
+    margin: 0 0 4px;
+    color: $charcoal;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0 0 12px;
+    color: $muted;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .projectRole {
+    margin: 0 0 12px;
+    color: $steel;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .projectPoints {
+    margin: 0 0 16px;
+    padding-left: 18px;
+    color: $charcoal;
+    font-size: 14px;
+    line-height: 1.7;
+
+    li + li { margin-top: 4px; }
+    li::marker { color: $gray; }
+  }
+
+  .projectStack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+
+    span {
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba($steel, 0.1);
+      color: $steel;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+
+  .projectLinks {
+    display: flex;
+    gap: 16px;
+  }
+
+  a {
+    color: $steel;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: 700;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.skillList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skillList span {
+  padding: 7px 16px;
+  border: 1px solid $gray;
+  border-radius: 999px;
+  background: #fff;
+  color: $charcoal;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.contactLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  a {
+    color: $steel;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+/* 키보드로 이동할 때 링크 위치가 보이도록 */
+a:focus-visible {
+  outline: 2px solid $steel;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (max-width: 700px) {
+  .pageContent { padding: 60px 6vw; }
+}
+
+/* "동작 줄이기" 설정한 사용자에겐 깜빡임 끔 */
+@media (prefers-reduced-motion: reduce) {
+  .hint {
+    animation: none;
+  }
+}

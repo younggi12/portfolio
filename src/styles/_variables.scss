@@ -1,0 +1,66 @@
+// =============================================================
+// 디자인 토큰 — 값은 여기서만 정의하고 컴포넌트는 변수만 쓴다 (AGENTS.md 4장)
+// =============================================================
+
+// ---- 4-1. 색상: "Stormy morning" (다크 테마) ----
+$color-bg: #384959;              // 전체 배경
+$color-surface: #384959;         // 카드 배경 (테두리로 구분)
+$color-text-primary: #ffffff;    // 제목·본문 (9.27:1)
+$color-text-secondary: #bdddfc;  // 보조 텍스트 (6.58:1)
+$color-point: #88bdf2;           // 링크·라벨·강조·포커스 (4.68:1) — 12px 미만 금지
+$color-border: #6a89a7;          // 테두리·구분선·장식 전용 (2.54:1) — 글자색 금지
+$color-intro-bg: #384959;        // 인트로 배경
+$color-intro-text: #ffffff;      // 인트로 위 텍스트
+
+// ---- 4-2. 타이포그래피 ----
+$font-family-base: "Pretendard", "Malgun Gothic", system-ui, sans-serif;
+
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+$font-size-2xl: 32px;
+$font-size-3xl: 48px;
+$font-size-4xl: 64px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+$font-weight-black: 800;
+
+$line-height-tight: 1.25;
+$line-height-base: 1.6;
+
+// ---- 4-3. 간격 (4px 단위) ----
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-16: 64px;
+$space-20: 80px;
+
+// ---- 4-4. 레이아웃 ----
+$content-max-width: 1280px;
+$side-padding-desktop: 80px;
+$side-padding-tablet: 40px;
+$side-padding-mobile: 20px;
+$gutter: 24px;
+$header-height: 72px;
+
+$breakpoint-mobile-max: 767px;
+$breakpoint-tablet-max: 1199px;
+
+// ---- 4-5. 모서리 · 모션 ----
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-pill: 999px;
+
+$duration-fast: 0.15s;
+$duration-base: 0.3s;
+$easing-base: ease;

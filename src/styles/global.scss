@@ -1,0 +1,38 @@
+// main.jsx에서 한 번만 import (AGENTS.md 9장)
+@use "variables" as *;
+@use "reset";
+
+html {
+  scroll-behavior: smooth;
+  // 고정 헤더에 섹션 제목이 가려지지 않게
+  scroll-padding-top: $header-height;
+}
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-md;
+  line-height: $line-height-base;
+  color: $color-text-primary;
+  background-color: $color-bg;
+  -webkit-font-smoothing: antialiased;
+}
+
+// 키보드 포커스는 항상 보이게 (AGENTS.md 9장)
+:focus-visible {
+  outline: 2px solid $color-point;
+  outline-offset: 3px;
+  border-radius: $radius-sm;
+}
+
+// "동작 줄이기" 사용자 대응
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

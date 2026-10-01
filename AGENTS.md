@@ -1,0 +1,280 @@
+# AGENTS.md — 이영기 포트폴리오
+
+> 2차 팀 프로젝트(JAJAK)의 AGENTS.md 방식을 개인 프로젝트에 맞게 옮긴 공식 규칙 문서입니다.
+> 사람이든 AI(Codex, Claude 등)든 코드 작업 전에 이 문서를 먼저 읽습니다.
+
+---
+
+## 0. 문서 운영 원칙
+- 이 문서가 이 프로젝트의 최종 기준입니다. 메모, 대화 기록보다 우선합니다.
+- 문서와 실제 코드가 다르면 **실제 코드 기준**으로 판단하고, 그 자리에서 문서를 갱신합니다.
+- 규칙을 바꿀 때는 코드만 바꾸지 않고 이 문서와 맨 아래 버전 히스토리를 함께 갱신합니다.
+- `[확정 필요]` 표시는 아직 정하지 않은 항목입니다. 정해지면 표시를 지우고 내용을 확정합니다.
+
+## 1. 프로젝트 개요
+- 목적: 취업용 개인 포트폴리오 웹사이트
+- 대상: 채용 담당자, 현직 개발자(코드와 GitHub까지 볼 수 있는 사람)
+- 핵심 메시지: "인터랙션으로 사용 경험을 만드는 프론트엔드 개발자"
+- 배포: Vercel (`main` 브랜치 push 시 자동 배포)
+
+## 2. 역할 (Ownership)
+개인 프로젝트이므로 **모든 영역의 담당자는 이영기**입니다.
+
+| 영역 | 담당 |
+| --- | --- |
+| 기획 / 콘텐츠(자기소개, 프로젝트 설명) | 이영기 |
+| 디자인(디자인 토큰, 화면 설계) | 이영기 |
+| 공통 구조(Layout, Header, Footer, Routing) | 이영기 |
+| 페이지 구현 | 이영기 |
+| 인트로 영상(새로 제작) / 이미지 자산 | 이영기 |
+| 배포 / 문서(README, AGENTS.md) | 이영기 |
+
+- 팀 프로젝트처럼 "남의 영역이라 못 고치는 파일"은 없습니다.
+- 대신 **공통 파일(6장)을 고칠 때는 영향 범위를 먼저 확인**합니다. 혼자라도 공통 파일 하나가 모든 페이지를 깨뜨릴 수 있기 때문입니다.
+
+## 3. 기술 스택
+- React 18, Vite 5, JavaScript + JSX
+- React Router 7 (`react-router-dom`)
+- 경로 별칭: `@` = `src` (`vite.config.js`). JS·SCSS 모두 `@/...`로 import
+- Sass / SCSS Modules (`*.module.scss`, `@use` 방식)
+- 패키지 매니저: npm 고정, `package-lock.json` 기준
+- 새 패키지는 **이 문서에 이유를 적은 뒤** 설치합니다(GSAP 등 애니메이션 라이브러리 포함).
+
+## 4. 디자인 토큰
+모든 값은 `src/styles/_variables.scss`에서만 정의하고, 컴포넌트에서는 변수만 씁니다. 색상·간격 하드코딩 금지.
+
+### 4-1. 색상 — "Stormy morning" 팔레트 (다크 테마)
+출처: Figma Resource Library "Color combinations" 조합 1. 사이트 전체를 어두운 배경 + 흰 글씨로 운영합니다.
+
+| 토큰 | 값 | 용도 | 배경 대비 |
+| --- | --- | --- | --- |
+| `$color-bg` | `#384959` | 전체 배경 (진한 슬레이트) | — |
+| `$color-surface` | `#384959` | 카드 배경 — 배경과 같은 색, 카드는 `$color-border` 테두리로 구분 | — |
+| `$color-text-primary` | `#FFFFFF` | 제목, 본문 | 9.27:1 |
+| `$color-text-secondary` | `#BDDDFC` | 보조 텍스트, 설명 | 6.58:1 |
+| `$color-point` | `#88BDF2` | 포인트: 링크, 라벨, 강조, 포커스 링 | 4.68:1 |
+| `$color-border` | `#6A89A7` | 테두리, 구분선, 장식 | 2.54:1 |
+| `$color-intro-bg` | `#384959` | 인트로 배경 — 사이트 배경과 같게 해서 전환이 끊기지 않게(영상 확정 후 조정 가능) | — |
+| `$color-intro-text` | `#FFFFFF` | 인트로 위 텍스트(건너뛰기 안내 등) | 9.27:1 |
+
+- **`$color-border`(`#6A89A7`)는 글자색으로 쓰지 않습니다.** 배경 대비 2.54:1로 읽기 어렵습니다(본문 기준 4.5:1 이상 필요).
+- `$color-point`는 4.5:1을 겨우 넘기므로 아주 작은 글씨(12px 미만)에는 쓰지 않습니다.
+- 새 색이 필요하면 위 4색(+흰색)의 투명도 변형(`rgba($color-point, 0.12)` 등)으로 먼저 해결하고, 그래도 안 되면 이 표에 추가한 뒤 사용합니다.
+
+### 4-2. 타이포그래피
+- 기본 폰트: Pretendard (`index.html`에서 CDN으로 로드), 대체 폰트 `"Malgun Gothic", system-ui, sans-serif`
+- 폰트 크기·굵기는 `_variables.scss`의 `$font-size-*`, `$font-weight-*` 토큰 사용
+
+### 4-3. 간격
+- 4px 단위 스케일: `$space-1`(4px) ~ `$space-10`(40px), `$space-16`(64px), `$space-20`(80px)
+
+### 4-4. 레이아웃 / 반응형
+- 헤더 높이 `$header-height`(72px), 섹션 이동 시 헤더에 가려지지 않게 `scroll-padding-top` 적용
+- Breakpoint: Mobile 0–767 / Tablet 768–1199 / Desktop 1200+
+- PC 1440 기준, content max-width 1280, 좌우 여백 80px(모바일 20px), gutter 24px
+- 미디어쿼리는 `_mixins.scss`의 `@include mobile`, `@include tablet`, `@include below-desktop` 믹스인으로만 작성
+- 가운데 정렬 콘텐츠 영역은 `@include container` 사용
+
+### 4-5. 모서리 · 모션
+- Radius: `$radius-sm`(4) / `$radius-md`(8) / `$radius-lg`(12) / `$radius-pill`
+- 전환 시간: `$duration-fast`(0.15s) / `$duration-base`(0.3s), `$easing-base`
+
+## 5. 페이지 / 라우트
+URL은 `src/routes/paths.js`에서만 정의합니다. 컴포넌트에서 `"/projects"`처럼 문자열 하드코딩 금지 → `PATHS.projects` 사용.
+
+| 페이지 | 경로 | 내용 |
+| --- | --- | --- |
+| Home | `/` | 인트로(첫 방문만) → Hero → About → 대표 프로젝트 3개 + 전체 보기 → Skills → Contact |
+| Projects | `/projects` | 프로젝트 6개 전체 — **팀 프로젝트 / 개인 프로젝트 두 섹션**, 카드마다 기술 태그 |
+| ProjectDetail | `/projects/:projectId` | 개요, 담당, 문제·해결, 스크린샷, 링크 — `hasDetail: true`인 프로젝트만 |
+| NotFound | `*` | 404 (없는 `projectId`, 상세 페이지 없는 `projectId`도 여기로) |
+
+- About / Skills / Contact는 별도 페이지가 아니라 Home 안의 섹션입니다.
+- Projects 페이지는 필터 없이 "팀 프로젝트" 섹션 → "개인 프로젝트" 섹션 순서로 나눠 보여줍니다. 구분은 `projects.js`의 `type`(`"team"` / `"solo"`) 값으로만 합니다.
+- 카드마다 기술 분류 태그(`category`: React / Canvas / Vanilla JS)를 붙입니다. 개인 섹션은 React → Canvas → Vanilla JS 순서로 배치합니다.
+- 카드 클릭 동작: `hasDetail: true`면 상세 페이지로, `false`면 상세 페이지 없이 카드의 배포/GitHub 버튼만 노출합니다.
+- 헤더 메뉴(About / Projects / Contact)는 Home의 각 섹션으로 스크롤 이동합니다. 다른 페이지에서 누르면 Home으로 이동한 뒤 해당 섹션으로 스크롤합니다.
+- 프로젝트가 늘어나도 페이지는 늘리지 않고 `projects.js`에 데이터만 추가합니다.
+- Vercel에서 새로고침 시 404가 나지 않도록 루트에 `vercel.json` rewrites 설정 필수.
+
+## 6. 폴더 구조
+```
+portfolio/
+├── docs/
+│   └── PROJECTS_CONTENT.md  # 프로젝트 카드·상세 페이지 콘텐츠 원본 (data/projects.js로 옮기기 전 정리본)
+├── AGENTS.md
+├── README.md
+├── index.html
+├── package.json / package-lock.json
+├── vite.config.js
+├── vercel.json
+├── public/
+│   ├── intro.mp4            # 인트로 영상(새로 제작 예정)
+│   └── intro-poster.jpg     # 인트로 첫 프레임(새로 제작 예정)
+└── src/
+    ├── main.jsx             # global.scss는 여기서 한 번만 import
+    ├── App.jsx              # Router 설정만
+    ├── assets/
+    │   └── images/projects/ # 프로젝트 스크린샷 (webp, 파일명 영문 소문자 + 하이픈)
+    ├── components/
+    │   ├── common/          # SiteLayout, Header, Footer, ScrollToTop (+ IntroVideo: 10번 작업)
+    │   └── ui/              # SectionTitle, ProjectCard (필요 시 Button, Tag 추가)
+    ├── data/
+    │   ├── profile.js       # 이름, 소개, 연락처
+    │   ├── projects.js      # 프로젝트 목록 + 상세 + 조회 헬퍼
+    │   ├── skills.js        # 스킬
+    │   └── site.js          # 메뉴, 섹션 제목, 버튼 문구 등 고정 문구
+    ├── pages/
+    │   ├── Home/
+    │   │   ├── Home.jsx
+    │   │   └── sections/    # Hero, About, FeaturedProjects, Skills, Contact
+    │   ├── Projects/
+    │   ├── ProjectDetail/
+    │   └── NotFound/
+    ├── routes/
+    │   └── paths.js         # PATHS, toProjectDetail(), SECTION_IDS
+    ├── utils/
+    │   └── getProjectImage.js  # 이미지 파일명 → 빌드 URL
+    └── styles/
+        ├── _variables.scss
+        ├── _mixins.scss
+        ├── _reset.scss
+        └── global.scss
+```
+- 폴더를 새로 만들 땐 먼저 이 트리에 추가합니다.
+- 컴포넌트는 폴더 단위: `ProjectCard/ProjectCard.jsx` + `ProjectCard.module.scss`
+
+**공통 파일**(수정 전 영향 범위 확인): `App.jsx`, `main.jsx`, `routes/*`, `styles/*`, `components/common/*`, `components/ui/*`, `data/*`, `index.html`, `vite.config.js`, `vercel.json`, `package.json`
+
+## 7. 데이터 계약
+화면에 보이는 텍스트 콘텐츠는 `src/data/*`에서만 관리합니다. JSX에 콘텐츠 하드코딩 금지.
+
+```js
+// src/data/projects.js
+{
+  projectId: "jajak",           // URL에 쓰이는 영문 소문자 id (고유)
+  name: "JAJAK — 전통주 AI 큐레이션 쇼핑몰",
+  type: "team",                 // "team" | "solo" → Projects 페이지 섹션 결정
+  category: "React",            // "React" | "Canvas" | "Vanilla JS" → 카드 태그
+  teamSize: 5,                  // solo면 1
+  period: "2026.08 ~ 2026.09",  // 이 프로젝트를 만든 기간(월 단위)
+  role: "로그인/회원가입/로그아웃, 공지사항·1:1 문의, 위시리스트",  // 팀: 내 담당 / 솔로: "기획·디자인·개발 전체"
+  summary: "한 줄 소개 — 무엇을 만든 프로젝트인지",
+  points: ["핵심 구현 2~3개 — 기술 이름이 아니라 무엇을 만들고 무엇을 해결했는지"],
+  stack: ["React", "Firebase Auth", "Firestore"],   // 사용 기술
+  thumbnail: "jajak-thumb.webp", // assets/images/projects/ 기준, 800×500
+  images: ["jajak-login.webp"],  // 상세·갤러리용 스크린샷 (1600px)
+  links: [                      // 버튼 순서대로, 없으면 빈 배열
+    { label: "사이트", href: "https://jajak-ten.vercel.app" },
+    { label: "GitHub", href: "https://github.com/jiwoo1012/TeamProject2" },
+  ],
+  featured: true,               // Home 대표 프로젝트(최대 3개)
+  hasDetail: true,              // 상세 페이지 유무
+}
+```
+- 필드를 추가·삭제할 때는 이 예시부터 고칩니다.
+- 이미지는 파일명만 적고, 화면에서는 `getProjectImage(파일명)`으로 URL을 얻습니다.
+- 상세 페이지 내용(`detail`)은 8번 작업 때 필드를 추가합니다.
+- `links`가 빈 배열이면 버튼 영역을 렌더링하지 않습니다.
+
+### 7-1. 프로젝트 목록 (6개)
+| projectId | 이름 | 구분 | 분류 | 대표 | 상세 | 링크 |
+| --- | --- | --- | --- | --- | --- | --- |
+| `jajak` | JAJAK — 전통주 AI 큐레이션 쇼핑몰 | 팀 | React | ★ | O | 사이트 jajak-ten.vercel.app / GitHub jiwoo1012/TeamProject2 |
+| `mungnyang-hub` | 멍냥허브 — 반려동물 용품 쇼핑몰 | 팀 | Vanilla JS | | X | 사이트 projectmangryung.github.io/teamproject/ / GitHub projectMangRyung/teamproject |
+| `f1-fansite` | F1 팬사이트 — 방명록 | 개인 | React | ★ | O | 방명록 guestbook01-phi.vercel.app (GitHub younggi12/guestbook01) / 게시글(학습 버전) re008-tzii.vercel.app (GitHub younggi12/re008) |
+| `canvas-breaker` | 캔버스 벽돌깨기 게임 | 개인 | Canvas | ★ | X | 사이트 younggi12.github.io/breaker/js061201.html / GitHub younggi12/breaker |
+| `canvas-draw` | 캔버스 드로잉 앱 | 개인 | Canvas | | X | 사이트 younggi12.github.io/draw-app/js060901.html / GitHub younggi12/draw-app |
+| `blueline` | BlueLine 야구용품 쇼핑몰 | 개인 | Vanilla JS | | X | 사이트 younggi12.github.io/-4/index.html / GitHub younggi12/-4 |
+
+- 대표(★) 3개는 `featured: true`, Home에 노출. 순서는 위 표 순서(팀 → 개인).
+- 대표 선정 기준: 팀 협업(JAJAK) / React + Firebase 개인 작업(F1 팬사이트) / Canvas 인터랙션(벽돌깨기) — 서로 다른 역량이 하나씩 보이도록.
+- `f1-fansite`: 학습하며 만든 게시글 등록(CRUD, 디자인 없음)을 기반으로 디자인과 기능을 확장해 방명록으로 완성. **"학습 버전 → 완성 버전" 성장 과정**을 상세 페이지의 중심 이야기로 사용. 저장소는 둘로 분리됨: 방명록 younggi12/guestbook01(Public), 게시글 younggi12/re008. 카드 버튼 순서: 방명록 → 방명록 GitHub → 게시글(학습 버전) → 게시글 GitHub.
+- guestbook01 저장소의 `.env`, `firebase.txt` 제거 완료(2026-10-01) — Vercel 환경변수(Production·Preview)로 이전, `.gitignore`에 추가.
+- `blueline`: 바닐라 JS로 직접 구현한 5페이지 쇼핑몰. Codex는 초기 일부만 활용 — 카드 담당 칸에 가볍게 언급(중심 이야기 아님).
+- JAJAK 저장소(jiwoo1012/TeamProject2) Public 확인 완료 — GitHub 링크 노출. 기여자 5명(팀 5인).
+
+#### 담당 / 핵심 내용 (정리된 것)
+- **JAJAK** (2026.08 ~ 2026.09, 5인 팀): 로그인/회원가입/로그아웃, 공지사항·1:1 문의, 위시리스트, 상품상세 협업 · React 19, Firebase Authentication, Firestore
+- **멍냥허브**: 옵션별 가격 계산, localStorage/sessionStorage 로그인 상태 유지, 모바일 네비게이션 버그 수정, 브랜드 페이지 제작 · HTML, CSS, JavaScript
+- **F1 팬사이트** (방명록 2026.07, 첫 배포 7/15): 기획·디자인·개발 전체, 방명록(드라이버 캐릭터 선택·팀 필터·페이지네이션), 게시글 등록, 스크롤 애니메이션 · React, Vite, Firebase, Zustand, SCSS
+- **벽돌깨기 / 드로잉 앱**: 기획·개발 전체 · HTML5 Canvas, JavaScript
+- **BlueLine**: Codex + README.md 활용 제작 · HTML, CSS, JavaScript
+- 각 프로젝트의 기간(`period`), 핵심 구현(`points`)은 추가 정리 필요 `[확정 필요]`
+
+## 8. 네이밍 컨벤션
+- 컴포넌트 PascalCase / 변수·함수·객체 필드 camelCase
+- 이벤트 핸들러 `handleXxx`, boolean `isXxx` / `hasXxx` / `canXxx`
+- 상수 UPPER_SNAKE_CASE (`PATHS`, `INTRO_MAX_MS`)
+- SCSS Modules 클래스명 camelCase (`styles.projectCard`)
+- 이미지 파일명 영문 소문자 + 하이픈, 형식은 webp (`jajak-thumb.webp`, `jajak-login.webp`)
+- 스크린샷 규칙: 브라우저 탭·주소창 제거, 가로 1600px, 개인정보(이메일 등)는 흐리게 처리. 썸네일은 800×500(16:10)
+
+## 9. 스타일링 규칙
+- `global.scss`는 `main.jsx`에서 한 번만 import
+- 각 `*.module.scss`는 `@use "@/styles/variables" as *;` 형태로 토큰을 불러옴
+- 색·간격·폰트 크기 하드코딩 금지(토큰 없으면 `_variables.scss`에 먼저 추가)
+- 모션은 한 곳에 집중: 인트로 영상 외 페이지 전체에 같은 등장 애니메이션 반복 금지
+- `prefers-reduced-motion: reduce` 사용자는 인트로 생략, 반복 애니메이션 끔
+- 키보드 포커스(`:focus-visible`)는 항상 보이게
+
+## 10. 상태관리 원칙
+- 상태는 가장 가까운 범위에: `useState` → props → Custom Hook 순
+- 전역 상태관리 라이브러리(Zustand, Redux 등)와 Context는 도입하지 않음 — 규모상 불필요
+- 브라우저 저장소는 방문자 편의 값에만 사용(`try/catch` 필수). 현재 사용 키: `introSeen`(11장)
+
+## 11. 인트로 영상 규칙
+- **방향: 어두운 배경 + 흰색 텍스트** (`$color-intro-bg`, `$color-intro-text`)
+- **영상 내용: 구상 중 `[확정 필요]`** — 이전 VS Code 타이핑 영상은 사용하지 않음. 제작 방식(직접 녹화 / AI 생성 / 코드 렌더링)도 내용과 함께 정함
+- `public/intro.mp4`를 Home 최초 진입 시 재생(전체화면 여부는 영상이 정해지면 확정)
+- 영상 진행률 = 상단 로딩바 진행률, 종료 후 페이드로 Home 노출
+- 클릭/아무 키로 건너뛰기, 로딩 중 `body` 스크롤 잠금
+- 로드 실패 시 즉시 건너뜀, 10초 초과 시 강제 종료
+- **첫 방문 때 1회만 재생, 재방문 시 재생하지 않음** — 다 보거나 건너뛰면 `localStorage`에 `introSeen: "true"` 저장(`try/catch` 필수, 저장 실패 시엔 매번 재생돼도 무방). 다른 브라우저·저장소 삭제 시에는 다시 재생됨
+- 영상 조건: 무음 H.264 MP4, 10초 이하, 2MB 이하
+
+## 12. Git 워크플로우 (개인용)
+- `main`: 배포 브랜치(Vercel 자동 배포) — 항상 빌드되는 상태 유지
+- `feature/작업명`: 기능 단위 작업 브랜치 (예: `feature/intro-video`, `feature/project-detail`)
+- 흐름: `git switch main` → `git pull` → `git switch -c feature/작업명` → 작업 → `npm run build` 확인 → `main`에 merge → push
+- 커밋 메시지: `feat:` / `fix:` / `style:` / `refactor:` / `docs:` / `chore:` + 한글 설명
+- `git push --force` 금지, `.env*` 파일 커밋 금지
+
+## 13. AI 작업 규칙 (Codex / Claude)
+작업 전
+1. 이 문서를 읽는다
+2. 요청 범위를 확인한다
+3. 기존 Component / Hook / data / 토큰을 먼저 검색해 재사용한다
+4. 실제 폴더 구조를 확인한다
+
+작업 중
+- 요청하지 않은 페이지·파일 동시 리팩터링 금지
+- 새 패키지 임의 설치 금지(3장 절차 따름)
+- 공통 UI 중복 생성 금지, Route 문자열 하드코딩 금지
+- 데이터 구조(7장) 임의 변경 금지
+
+작업 후
+- 수정한 파일 목록, 범위 이탈 여부, import 경로, `npm run build` 오류 여부를 보고
+
+## 14. Definition of Done
+- [ ] 요청 범위 안에서만 수정했다
+- [ ] 공통 UI·토큰을 재사용했다(하드코딩 없음)
+- [ ] 콘텐츠는 `src/data/*`에만 있다
+- [ ] Mobile / Tablet / Desktop 3단계에서 확인했다
+- [ ] 키보드로 이동 가능하고 포커스가 보인다
+- [ ] `npm run build` 오류 없음
+- [ ] 바뀐 규칙이 있으면 AGENTS.md를 갱신했다
+
+## 15. Change Management
+아래를 바꿀 때는 **이 문서를 먼저 고친 뒤** 코드를 바꿉니다.
+- 폴더 구조 / Routes / 데이터 계약(7장) / 디자인 토큰 / Dependency / Git 워크플로우 / 인트로 규칙
+
+## 16. 버전 히스토리
+- v1.6 (2026-10-01): 뼈대 세팅 완료 — React Router 7, `@` 경로 별칭, 디자인 토큰(4-5 모서리·모션 추가), 공통 레이아웃·페이지 뼈대, `data/site.js`·`utils/getProjectImage.js` 추가, 데이터 계약에 `images` 필드 추가, 프로젝트 6개 데이터 입력. 구 `Portfolio.jsx`·`Portfolio.module.scss`·`public/magnifier.png` 삭제.
+- v1.5 (2026-10-01): `docs/PROJECTS_CONTENT.md`(프로젝트 콘텐츠 정리본) 추가, 이미지 형식을 webp로 통일하고 스크린샷 규칙 추가. JAJAK·F1 콘텐츠 정리 완료.
+- v1.4 (2026-10-01): F1 방명록·게시글 등록을 "F1 팬사이트"(`f1-fansite`) 하나로 통합 → 총 6개. Projects는 팀/개인 섹션 + 기술 분류 태그(`category`). 상세 페이지는 JAJAK·F1 2개만(`hasDetail`). GitHub 링크, 프로젝트별 담당 내용 반영. 데이터 계약에 `category`, `hasDetail` 추가, `links`를 배열로 변경.
+- v1.3 (2026-10-01): Projects 페이지를 필터 대신 팀/개인 섹션 분리로 변경. 8번 프로젝트를 "BlueLine 야구용품 쇼핑몰"(`blueline`, Codex·README.md 활용 제작)로 정정.
+- v1.2 (2026-10-01): 페이지 구성 확정 — Home(About·Skills·Contact는 섹션) / Projects / ProjectDetail / NotFound. 프로젝트 7개 목록과 대표 3개(JAJAK, F1 방명록, 벽돌깨기) 확정.
+- v1.1 (2026-10-01): 색상 팔레트를 Ink wash(밝은 배경)에서 Stormy morning(다크 테마)으로 변경. 사이트 전체 어두운 배경 + 흰 글씨. 인트로 배경도 사이트 배경과 같은 `#384959`로 통일. `#6A89A7` 글자색 사용 금지 규칙 추가.
+- v1.0 (2026-10-01): 전면 재시작. JAJAK AGENTS.md 형식 도입, 역할 전부 이영기. 토큰명을 `$color-*` 체계로 정리. React Router 기반 다중 페이지 구조로 전환. 인트로 영상은 새로 제작하기로 함(이전 VS Code 타이핑 영상 폐기, 재생 규칙만 유지). 인트로 방향은 어두운 배경 + 흰색 텍스트, 첫 방문 때만 재생으로 확정.
+- 이전 버전 요약: VS Code 테마(폐기) → 흰 배경 2페이지 스크롤 구조 → 돋보기 효과(보류) → SCSS Modules + Ink wash → VS Code 타이핑 인트로 영상(폐기)

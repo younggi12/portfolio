@@ -1,0 +1,27 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.page {
+  @include container;
+  padding-block: $space-16;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: $space-8;
+  font-size: $font-size-sm;
+  color: $color-point;
+}
+
+.title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-black;
+  line-height: $line-height-tight;
+
+  @include mobile { font-size: $font-size-2xl; }
+}
+
+.summary {
+  margin-top: $space-4;
+  color: $color-text-secondary;
+}

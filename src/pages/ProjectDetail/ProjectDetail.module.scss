@@ -10,7 +10,7 @@
   display: inline-block;
   margin-bottom: $space-8;
   font-size: $font-size-sm;
-  color: $color-point;
+  @include hover-underline;
 }
 
 .title {
@@ -23,5 +23,4 @@
 
 .summary {
   margin-top: $space-4;
-  color: $color-text-secondary;
 }

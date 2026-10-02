@@ -12,14 +12,14 @@ body {
   font-family: $font-family-base;
   font-size: $font-size-md;
   line-height: $line-height-base;
-  color: $color-text-primary;
+  color: $color-text;
   background-color: $color-bg;
   -webkit-font-smoothing: antialiased;
 }
 
 // 키보드 포커스는 항상 보이게 (AGENTS.md 9장)
 :focus-visible {
-  outline: 2px solid $color-point;
+  outline: 2px solid $color-focus;
   outline-offset: 3px;
   border-radius: $radius-sm;
 }

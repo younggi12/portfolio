@@ -43,23 +43,39 @@
 ## 4. 디자인 토큰
 모든 값은 `src/styles/_variables.scss`에서만 정의하고, 컴포넌트에서는 변수만 씁니다. 색상·간격 하드코딩 금지.
 
-### 4-1. 색상 — "Stormy morning" 팔레트 (다크 테마)
-출처: Figma Resource Library "Color combinations" 조합 1. 사이트 전체를 어두운 배경 + 흰 글씨로 운영합니다.
+### 4-1. 색상 — "Stormy morning" × Apple 방식 (밝은 페이지 + 진한 카드)
+팔레트 4색(`#384959` `#6A89A7` `#88BDF2` `#BDDDFC`) + 흰색만 쓰고, 새 색은 이 색들의 **투명도 변형**으로만 만듭니다.
+apple.com의 색 구조(흰 배경 / 밝은 회색 띠 / 거의 검정 글자 / 검은 제품 카드)를 팔레트에 그대로 대응시켰습니다.
 
-| 토큰 | 값 | 용도 | 배경 대비 |
-| --- | --- | --- | --- |
-| `$color-bg` | `#384959` | 전체 배경 (진한 슬레이트) | — |
-| `$color-surface` | `#384959` | 카드 배경 — 배경과 같은 색, 카드는 `$color-border` 테두리로 구분 | — |
-| `$color-text-primary` | `#FFFFFF` | 제목, 본문 | 9.27:1 |
-| `$color-text-secondary` | `#BDDDFC` | 보조 텍스트, 설명 | 6.58:1 |
-| `$color-point` | `#88BDF2` | 포인트: 링크, 라벨, 강조, 포커스 링 | 4.68:1 |
-| `$color-border` | `#6A89A7` | 테두리, 구분선, 장식 | 2.54:1 |
-| `$color-intro-bg` | `#384959` | 인트로 배경 — 사이트 배경과 같게 해서 전환이 끊기지 않게(영상 확정 후 조정 가능) | — |
-| `$color-intro-text` | `#FFFFFF` | 인트로 위 텍스트(건너뛰기 안내 등) | 9.27:1 |
+| 토큰 | 값 | Apple 대응 | 용도 | 대비 |
+| --- | --- | --- | --- | --- |
+| `$color-bg` | `#FFFFFF` | `#FFFFFF` | 페이지 배경 | — |
+| `$color-band` | `#BDDDFC` 30% | `#F5F5F7` | 섹션 띠 배경 (흰 섹션과 번갈아) | 위 글자 8.4 |
+| `$color-text` | `#1D1D1F` | `#1D1D1F` | 밝은 배경 위 **모든 글자** (버튼 글자 포함) — **팔레트 예외** | 흰 16.8 / 연한 카드 11.95 |
+| `$color-text-soft` | `#6A89A7` | `#6E6E73` | 2톤 제목의 뒷부분 등 — **24px 이상 또는 18.66px 이상 굵은 글씨에만** | 3.65 |
+| `$color-border` | `#6A89A7` 30% | `#D2D2D7` | 테두리·구분선 | — |
+| `$color-panel` | `#384959` | `#1D1D1F` 패널 | 진한 카드, 주요 버튼 배경 | — |
+| `$color-on-panel` | `#FFFFFF` | `#F5F5F7` | 진한 배경(카드·버튼·헤더) 위 **모든 글자** | 9.27 |
+| `$color-panel-point` | `#88BDF2` | `#2997FF` | 진한 카드 위 포인트 (버튼 배경, 강조) | 4.68 |
+| `$color-panel-tag` | `#88BDF2` 20% | — | 진한 카드 위 태그 배경 | 위 흰 글자 6.52 |
+| `$color-panel-soft` | `#BDDDFC` | 하늘색 제품 카드 | 연한 카드 | 위 검정 글자 11.95 |
+| `$color-panel-soft-tag` | 흰색 60% | — | 연한 카드 위 태그 배경 | 위 글자 8.1 |
+| `$color-focus` | `#384959` | `#0071E3` | 포커스 링 | — |
+| `$color-intro-bg` / `$color-intro-text` | `#384959` / `#FFFFFF` | — | 인트로 (어둡게 시작해 밝은 페이지로 열림) | 9.27 |
 
-- **`$color-border`(`#6A89A7`)는 글자색으로 쓰지 않습니다.** 배경 대비 2.54:1로 읽기 어렵습니다(본문 기준 4.5:1 이상 필요).
-- `$color-point`는 4.5:1을 겨우 넘기므로 아주 작은 글씨(12px 미만)에는 쓰지 않습니다.
-- 새 색이 필요하면 위 4색(+흰색)의 투명도 변형(`rgba($color-point, 0.12)` 등)으로 먼저 해결하고, 그래도 안 되면 이 표에 추가한 뒤 사용합니다.
+**규칙**
+- **글자색은 검정(`#1D1D1F`)과 흰색 두 가지만** 씁니다 (Apple 방식). 밝은 배경 위 → 검정, 진한 배경 위 → 흰색. 버튼 글자도 동일.
+- 팔레트 색은 배경·카드·버튼·테두리에만 쓰고 글자에는 쓰지 않습니다. 예외: 큰 제목 2톤 처리의 `$color-text-soft`.
+- 위계는 크기·굵기로 구분합니다.
+- `#88BDF2`는 **진한 카드(`$color-panel`) 위에서만** 씁니다. 흰 배경 위에서는 글자·버튼에 쓰지 않습니다(1.98:1).
+- 섹션은 흰색 ↔ `$color-band`를 번갈아 배치합니다 (`@include band`).
+- **헤더는 Apple 방식**: 항상 화면 위에 고정되어 따라오고, 배경색은 헤더 바로 아래 섹션에 맞춰 바뀝니다.
+  - 모든 섹션·페이지 최상위 요소에 `data-header-theme="light" | "band" | "dark"`를 반드시 붙입니다 (흰 배경 / 띠 배경 / 진한 배경).
+  - 새 섹션을 만들 때 이 속성을 빠뜨리면 헤더 색이 맞지 않습니다.
+- 프로젝트 카드는 진한 카드(`tone="dark"`)와 연한 카드(`tone="light"`)를 번갈아 배치합니다.
+- 버튼: 흰 배경 위 `@include button-primary`(진한 배경 + 흰 글자), 진한 카드 위 `@include button-on-panel`(하늘색 배경 + 진한 글자). 호버는 투명도 85%.
+- 링크 호버는 색 변화 대신 밑줄 `@include hover-underline`.
+- 긴 본문은 `$text-max-width`(680px)를 넘지 않게 합니다.
 
 ### 4-2. 타이포그래피
 - 기본 폰트: Pretendard (`index.html`에서 CDN으로 로드), 대체 폰트 `"Malgun Gothic", system-ui, sans-serif`
@@ -84,7 +100,7 @@ URL은 `src/routes/paths.js`에서만 정의합니다. 컴포넌트에서 `"/pro
 
 | 페이지 | 경로 | 내용 |
 | --- | --- | --- |
-| Home | `/` | 인트로(첫 방문만) → Hero → About → 대표 프로젝트 3개 + 전체 보기 → Skills → Contact |
+| Home | `/` | 인트로(첫 방문만) → Hero → About → **대표 프로젝트 책 넘기기** → Skills → Contact |
 | Projects | `/projects` | 프로젝트 6개 전체 — **팀 프로젝트 / 개인 프로젝트 두 섹션**, 카드마다 기술 태그 |
 | ProjectDetail | `/projects/:projectId` | 개요, 담당, 문제·해결, 스크린샷, 링크 — `hasDetail: true`인 프로젝트만 |
 | NotFound | `*` | 404 (없는 `projectId`, 상세 페이지 없는 `projectId`도 여기로) |
@@ -131,6 +147,9 @@ portfolio/
     │   ├── Projects/
     │   ├── ProjectDetail/
     │   └── NotFound/
+    ├── hooks/
+    │   ├── useHeaderTheme.js   # 헤더 아래 섹션의 테마(light/band/dark) 감지
+    │   └── useMediaQuery.js    # 화면 크기·동작 줄이기 설정 확인
     ├── routes/
     │   └── paths.js         # PATHS, toProjectDetail(), SECTION_IDS
     ├── utils/
@@ -214,7 +233,12 @@ portfolio/
 - `global.scss`는 `main.jsx`에서 한 번만 import
 - 각 `*.module.scss`는 `@use "@/styles/variables" as *;` 형태로 토큰을 불러옴
 - 색·간격·폰트 크기 하드코딩 금지(토큰 없으면 `_variables.scss`에 먼저 추가)
-- 모션은 한 곳에 집중: 인트로 영상 외 페이지 전체에 같은 등장 애니메이션 반복 금지
+- 대표 모션은 두 곳뿐: ① 인트로 영상 ② Home 대표 프로젝트 **책 넘기기**. 그 외 페이지 전체에 같은 등장 애니메이션 반복 금지
+- **책 넘기기 규칙** (`pages/Home/sections/FeaturedBook.jsx`)
+  - 한 페이지 = 작품 하나. 순서: [표지, 대표 작품(featured)…, 전체 보기 페이지]. 대표 작품이 바뀌면 자동 반영
+  - 섹션에 닿으면 책이 헤더 아래 고정(sticky), 스크롤 진행률 → 장(leaf)의 `rotateY` 각도로 변환 (라이브러리 없이 CSS 3D + `requestAnimationFrame`)
+  - 넘김 1장당 스크롤 90vh, 처음·끝에 멈춤 구간(`HOLD`)
+  - 모바일(767px 이하)·"동작 줄이기" 사용자는 일반 카드 목록(`FeaturedProjects`)으로 대체
 - `prefers-reduced-motion: reduce` 사용자는 인트로 생략, 반복 애니메이션 끔
 - 키보드 포커스(`:focus-visible`)는 항상 보이게
 
@@ -224,7 +248,7 @@ portfolio/
 - 브라우저 저장소는 방문자 편의 값에만 사용(`try/catch` 필수). 현재 사용 키: `introSeen`(11장)
 
 ## 11. 인트로 영상 규칙
-- **방향: 어두운 배경 + 흰색 텍스트** (`$color-intro-bg`, `$color-intro-text`)
+- **방향: 어두운 배경 + 흰색 텍스트** (`$color-intro-bg`, `$color-intro-text`) — 인트로가 끝나면 밝은 페이지가 열리는 대비 연출
 - **영상 내용: 구상 중 `[확정 필요]`** — 이전 VS Code 타이핑 영상은 사용하지 않음. 제작 방식(직접 녹화 / AI 생성 / 코드 렌더링)도 내용과 함께 정함
 - `public/intro.mp4`를 Home 최초 진입 시 재생(전체화면 여부는 영상이 정해지면 확정)
 - 영상 진행률 = 상단 로딩바 진행률, 종료 후 페이드로 Home 노출
@@ -270,6 +294,13 @@ portfolio/
 - 폴더 구조 / Routes / 데이터 계약(7장) / 디자인 토큰 / Dependency / Git 워크플로우 / 인트로 규칙
 
 ## 16. 버전 히스토리
+- v2.3 (2026-10-02): Home 대표 프로젝트를 **책 넘기기 연출**로 변경 — 스크롤에 맞춰 3D로 페이지가 넘어감(한 페이지 = 작품 하나). 모바일·동작 줄이기는 카드 목록 대체. `useMediaQuery` 훅, `BOOK_TEXT` 문구 추가. 대표 모션 규칙을 인트로 + 책 두 곳으로 수정.
+- v2.2 (2026-10-02): 글자색을 Apple처럼 검정(`#1D1D1F`, 팔레트 예외)·흰색 두 가지로 통일. 하늘색 버튼 글자도 검정. 팔레트 색은 배경·카드·버튼·테두리 전용.
+- v2.1 (2026-10-02): 헤더를 Apple 방식으로 — 항상 고정, 아래 섹션 배경(light/band/dark)에 맞춰 헤더 색이 바뀜. `useHeaderTheme` 훅, `data-header-theme` 속성 규칙, `$color-band-solid` 토큰 추가.
+- v2.0 (2026-10-02): ~~프레임 레이아웃 추가 — 바깥 연분홍 액자(`$color-frame` #F0E3FD, 팔레트 예외) + 둥근 흰 판. 헤더를 fixed → 흰 판 안 sticky로 변경, 액자 틈을 덮는 고정 띠 추가. `frame-gap` 믹스인 추가.~~ → **시도 후 되돌림.** 액자 없이 흰 페이지가 화면 끝까지 차는 방식(Apple 실제 사이트와 동일) 유지.
+- v1.9 (2026-10-02): **밝은 테마로 전환 (Apple 방식)** — 흰 페이지 + `#BDDDFC` 띠 + `#384959` 글자, 프로젝트 카드는 진한/연한 톤 번갈아. 흰 글자는 진한 카드·버튼 안에서만. 토큰 전면 교체(`$color-band`, `$color-panel*`, `$color-text-soft`, `$color-focus`), 믹스인 `button-primary`·`button-on-panel`·`band` 추가, `button-outline` 삭제. Home 섹션을 전체 너비 + `.inner` 구조로 변경.
+- v1.8 (2026-10-02): 모든 글자색을 흰색으로 통일(`$color-text`), 호버는 포인트색 밑줄, 주요 버튼은 흰 글자 + 포인트색 테두리로 변경. `hover-underline`·`button-outline` 믹스인 추가. `$color-text-secondary`·`$color-on-point` 삭제.
+- v1.7 (2026-10-01): 색 역할 재배치 — 글자는 흰색 유지, 포인트색은 채운 버튼·라벨·메뉴 표시 중심으로, 카드 배경에 `#6A89A7` 12%, 태그 배경 토큰 추가, 카드 위 포인트 글자 금지 규칙 추가. 본문 줄간격 1.7, `$text-max-width` 추가.
 - v1.6 (2026-10-01): 뼈대 세팅 완료 — React Router 7, `@` 경로 별칭, 디자인 토큰(4-5 모서리·모션 추가), 공통 레이아웃·페이지 뼈대, `data/site.js`·`utils/getProjectImage.js` 추가, 데이터 계약에 `images` 필드 추가, 프로젝트 6개 데이터 입력. 구 `Portfolio.jsx`·`Portfolio.module.scss`·`public/magnifier.png` 삭제.
 - v1.5 (2026-10-01): `docs/PROJECTS_CONTENT.md`(프로젝트 콘텐츠 정리본) 추가, 이미지 형식을 webp로 통일하고 스크린샷 규칙 추가. JAJAK·F1 콘텐츠 정리 완료.
 - v1.4 (2026-10-01): F1 방명록·게시글 등록을 "F1 팬사이트"(`f1-fansite`) 하나로 통합 → 총 6개. Projects는 팀/개인 섹션 + 기술 분류 태그(`category`). 상세 페이지는 JAJAK·F1 2개만(`hasDetail`). GitHub 링크, 프로젝트별 담당 내용 반영. 데이터 계약에 `category`, `hasDetail` 추가, `links`를 배열로 변경.

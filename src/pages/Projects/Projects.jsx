@@ -11,14 +11,14 @@ const GROUPS = [
 ];
 
 const Projects = () => (
-  <div className={styles.page}>
+  <div className={styles.page} data-header-theme="light">
     <SectionTitle as="h1">{SECTION_TITLES.allProjects}</SectionTitle>
     {GROUPS.map((group) => (
       <section key={group.type} className={styles.group} aria-label={group.title}>
         <h2 className={styles.groupTitle}>{group.title}</h2>
         <div className={styles.grid}>
-          {getProjectsByType(group.type).map((project) => (
-            <ProjectCard key={project.projectId} project={project} />
+          {getProjectsByType(group.type).map((project, index) => (
+            <ProjectCard key={project.projectId} project={project} tone={index % 2 ? "light" : "dark"} />
           ))}
         </div>
       </section>

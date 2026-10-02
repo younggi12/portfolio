@@ -7,14 +7,16 @@ import ProjectCard from "@/components/ui/ProjectCard/ProjectCard";
 import styles from "./Section.module.scss";
 
 const FeaturedProjects = () => (
-  <section id={SECTION_IDS.projects} className={styles.section}>
-    <SectionTitle>{SECTION_TITLES.featured}</SectionTitle>
-    <div className={styles.grid}>
-      {getFeaturedProjects().map((project) => (
-        <ProjectCard key={project.projectId} project={project} />
-      ))}
+  <section data-header-theme="light" id={SECTION_IDS.projects} className={styles.section}>
+    <div className={styles.inner}>
+      <SectionTitle>{SECTION_TITLES.featured}</SectionTitle>
+      <div className={styles.grid}>
+        {getFeaturedProjects().map((project, index) => (
+          <ProjectCard key={project.projectId} project={project} tone={index % 2 ? "light" : "dark"} />
+        ))}
+      </div>
+      <Link to={PATHS.projects} className={styles.more}>{UI_TEXT.viewAllProjects}</Link>
     </div>
-    <Link to={PATHS.projects} className={styles.more}>{UI_TEXT.viewAllProjects}</Link>
   </section>
 );
 

@@ -10,9 +10,9 @@
 
 .groupTitle {
   margin-bottom: $space-6;
-  font-size: $font-size-xl;
+  font-size: $font-size-xl;  // 24px 굵게 → 흐린 색(text-soft) 사용 가능
   font-weight: $font-weight-bold;
-  color: $color-text-secondary;
+  color: $color-text-soft;
 }
 
 .grid {

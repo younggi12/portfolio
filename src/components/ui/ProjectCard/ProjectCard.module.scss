@@ -1,10 +1,27 @@
 @use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 .card {
   overflow: hidden;
-  background-color: $color-surface;
-  border: 1px solid $color-border;
   border-radius: $radius-lg;
+}
+
+// 진한 카드: #384959 + 흰 글자 (Apple의 검은 제품 카드 역할)
+.dark {
+  background-color: $color-panel;
+  color: $color-on-panel;
+
+  .tag { background-color: $color-panel-tag; }
+  .primary { @include button-on-panel; }
+}
+
+// 연한 카드: #BDDDFC + 진한 글자
+.light {
+  background-color: $color-panel-soft;
+  color: $color-text;
+
+  .tag { background-color: $color-panel-soft-tag; }
+  .primary { @include button-primary; }
 }
 
 .thumb {
@@ -23,28 +40,37 @@
 .meta {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: $space-3;
   font-size: $font-size-sm;
-  color: $color-text-secondary;
 }
 
-.tag { color: $color-point; font-weight: $font-weight-bold; }
+.tag {
+  padding: 2px $space-2;
+  border-radius: $radius-pill;
+  font-weight: $font-weight-bold;
+}
 
 .name {
   font-size: $font-size-lg;
   font-weight: $font-weight-bold;
 }
 
-.summary { color: $color-text-secondary; }
-
 .links {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: $space-4;
-  margin-top: $space-2;
+  margin-top: $space-3;
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
-  color: $color-point;
+}
 
-  a:hover { text-decoration: underline; }
+// 보조 링크: 얇은 밑줄 → 호버 시 굵게
+.secondary {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+
+  &:hover { text-decoration-thickness: 2px; }
 }

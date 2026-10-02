@@ -14,7 +14,7 @@ const ProjectDetail = () => {
   if (!project || !project.hasDetail) return <NotFound />;
 
   return (
-    <article className={styles.page}>
+    <article className={styles.page} data-header-theme="light">
       <Link to={PATHS.projects} className={styles.back}>← {UI_TEXT.backToProjects}</Link>
       <h1 className={styles.title}>{project.name}</h1>
       <p className={styles.summary}>{project.summary}</p>

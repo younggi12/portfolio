@@ -2,10 +2,10 @@
 @use "@/styles/mixins" as *;
 
 .footer {
-  border-top: 1px solid rgba($color-border, 0.4);
+  @include band;
+  border-top: 1px solid $color-border;
   padding-block: $space-8;
   font-size: $font-size-sm;
-  color: $color-text-secondary;
 }
 
 .inner {
@@ -13,5 +13,5 @@
   display: flex;
   justify-content: space-between;
 
-  a:hover { color: $color-point; }
+  a { @include hover-underline; }
 }

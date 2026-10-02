@@ -2,12 +2,17 @@
 @use "@/styles/mixins" as *;
 
 // Home 섹션 공통 틀 — 6번(Home) 작업에서 섹션별로 디자인 예정
+// 섹션은 화면 전체 너비, 안쪽 .inner가 콘텐츠 폭을 잡는다 (띠 배경을 화면 끝까지 칠하기 위해)
 .section {
-  @include container;
   padding-block: $space-20;
 
   @include mobile { padding-block: $space-16; }
 }
+
+// 흰 섹션과 번갈아 쓰는 연한 띠 (Apple #F5F5F7 역할)
+.band { @include band; }
+
+.inner { @include container; }
 
 .grid {
   display: grid;
@@ -18,11 +23,20 @@
   @include mobile { grid-template-columns: 1fr; }
 }
 
-.muted { color: $color-text-secondary; }
+.muted { font-size: $font-size-sm; }
+
+// Apple식 2톤 제목의 뒷부분 (24px 이상 큰 글씨에만)
+.soft { color: $color-text-soft; }
+
+.headline {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-black;
+  line-height: $line-height-tight;
+
+  @include mobile { font-size: $font-size-2xl; }
+}
 
 .more {
-  display: inline-block;
   margin-top: $space-8;
-  font-weight: $font-weight-bold;
-  color: $color-point;
+  @include button-primary;
 }

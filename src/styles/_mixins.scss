@@ -24,3 +24,47 @@
   @include tablet { padding-inline: $side-padding-tablet; }
   @include mobile { padding-inline: $side-padding-mobile; }
 }
+
+// 호버는 색 변화 대신 현재 글자색 밑줄로 표시
+@mixin hover-underline {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color $duration-fast $easing-base;
+
+  &:hover { text-decoration-color: currentColor; }
+}
+
+// 버튼 공통 모양 (Apple 알약형)
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-2 $space-5;
+  border-radius: $radius-pill;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  transition: opacity $duration-fast $easing-base;
+
+  &:hover { opacity: 0.85; } // 흰 배경 위 #384959 85% → 흰 글자 6.07:1
+}
+
+// 주요 버튼 — 밝은 배경 위: 진한 배경 + 흰 글자
+@mixin button-primary {
+  @include button-base;
+  background-color: $color-panel;
+  color: $color-on-panel;
+}
+
+// 진한 카드 위 버튼: 포인트색 배경 + 검정 글자 (8.5:1)
+@mixin button-on-panel {
+  @include button-base;
+  background-color: $color-panel-point;
+  color: $color-text;
+}
+
+// 전체 너비 섹션 띠 배경
+@mixin band {
+  background-color: $color-band;
+}
+

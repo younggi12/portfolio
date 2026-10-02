@@ -1,0 +1,246 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// ---- 스크롤 구간 ----
+// 넘김 1장마다 화면 높이 90%만큼 스크롤 + 처음·끝 멈춤 구간
+.scroller {
+  position: relative;
+  height: calc((var(--flips) + 1) * 90vh + 100vh - #{$header-height});
+}
+
+// 섹션에 닿으면 헤더 바로 아래에 고정
+.stage {
+  position: sticky;
+  top: $header-height;
+  height: calc(100vh - #{$header-height});
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-5;
+}
+
+// ---- 책 ----
+.book {
+  position: relative;
+  // 가로 1040px, 화면 너비 88%, 화면 높이에 맞는 크기 중 가장 작은 값
+  width: min(1040px, 88vw, calc((100vh - #{$header-height} - 140px) * 1.5));
+  aspect-ratio: 3 / 2;
+  perspective: 2400px;
+}
+
+// 책 표지(뒤 판) — 페이지 바깥으로 살짝 보이는 진한 테두리
+.boards {
+  position: absolute;
+  inset: -12px;
+  border-radius: $radius-lg;
+  background-color: $color-panel;
+  box-shadow: 0 30px 60px rgba($color-text, 0.18);
+}
+
+// 바닥에 깔린 왼쪽·오른쪽 페이지
+.base {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  overflow: hidden;
+  background-color: $color-bg;
+}
+
+.left {
+  left: 0;
+  border-radius: $radius-md 0 0 $radius-md;
+
+  // 가운데 접힌 부분 그림자
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 40px;
+    background: linear-gradient(to left, rgba($color-text, 0.12), transparent);
+    pointer-events: none;
+  }
+}
+
+.right {
+  right: 0;
+  border-radius: 0 $radius-md $radius-md 0;
+}
+
+// 넘어가는 장 (앞면 + 뒷면), 책등(왼쪽 끝)을 축으로 회전
+.leaf {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: $color-bg;
+  backface-visibility: hidden;
+
+  // 넘어가는 동안 종이에 드리우는 그림자 (--shade: JS가 0~0.22로 조절)
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background-color: $color-text;
+    opacity: var(--shade, 0);
+    pointer-events: none;
+  }
+}
+
+.front {
+  border-radius: 0 $radius-md $radius-md 0;
+
+  // 가운데 접힌 부분 그림자
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40px;
+    background: linear-gradient(to right, rgba($color-text, 0.12), transparent);
+    pointer-events: none;
+  }
+}
+
+.back {
+  transform: rotateY(180deg);
+  border-radius: $radius-md 0 0 $radius-md;
+}
+
+.progress {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.1em;
+}
+
+// ---- 페이지 내용 ----
+.cover,
+.project,
+.end {
+  position: relative;
+  height: 100%;
+  padding: clamp(20px, 3.2vw, 44px);
+}
+
+.cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: $space-4;
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.coverTitle {
+  font-size: clamp(28px, 3.4vw, $font-size-3xl);
+  font-weight: $font-weight-black;
+  line-height: $line-height-tight;
+}
+
+.count { color: $color-text-soft; }
+
+.coverDesc { max-width: 28ch; }
+
+.hint {
+  margin-top: $space-6;
+  font-size: $font-size-sm;
+  animation: hint 1.6s $easing-base infinite;
+}
+
+@keyframes hint {
+  50% { transform: translateY(4px); opacity: 0.5; }
+}
+
+.project {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: $radius-md;
+  margin-bottom: $space-2;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+  font-size: $font-size-xs;
+}
+
+.tag {
+  padding: 2px $space-2;
+  border-radius: $radius-pill;
+  background-color: $color-panel-soft;
+  font-weight: $font-weight-bold;
+}
+
+.name {
+  font-size: clamp(16px, 1.6vw, $font-size-lg);
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+}
+
+.summary {
+  font-size: $font-size-sm;
+  line-height: $line-height-base;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-4;
+  margin-top: auto;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.primary { @include button-primary; }
+
+.secondary {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+
+  &:hover { text-decoration-thickness: 2px; }
+}
+
+.pageNo {
+  position: absolute;
+  right: clamp(20px, 3.2vw, 44px);
+  bottom: clamp(16px, 2vw, 24px);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+}
+
+.end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-band-solid;
+  font-size: $font-size-sm;
+  font-style: italic;
+}

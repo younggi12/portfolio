@@ -26,3 +26,14 @@ export const UI_TEXT = {
   teamSize: (n) => `${n}인 팀`,
   solo: "개인",
 };
+
+// 대표 프로젝트 책 연출 (Home Featured 섹션)
+export const BOOK_TEXT = {
+  coverLabel: "Featured Projects",
+  coverTitle: "대표 작품",
+  coverDesc: "직접 만들고 고민한 작품들을 한 장씩 넘겨보세요.",
+  scrollHint: "스크롤해서 넘기기",
+  outroTitle: "더 많은 작품이 있어요",
+  outroDesc: "팀 프로젝트와 개인 프로젝트를 모두 볼 수 있어요.",
+  endMark: "Thank you for reading",
+};

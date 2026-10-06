@@ -1,0 +1,57 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 10;
+  height: $header-height;
+  backdrop-filter: saturate(180%) blur(12px);
+  transition:
+    background-color $duration-base $easing-base,
+    color $duration-base $easing-base,
+    border-color $duration-base $easing-base;
+}
+
+// ---- 아래 섹션에 맞춘 3가지 테마 ----
+.light {
+  background-color: rgba($color-bg, 0.8);
+  border-bottom: 1px solid $color-border;
+  color: $color-text;
+}
+
+.band {
+  background-color: rgba($color-band-solid, 0.85);
+  border-bottom: 1px solid $color-border;
+  color: $color-text;
+}
+
+.dark {
+  background-color: rgba($color-panel, 0.85);
+  border-bottom: 1px solid rgba($color-on-panel, 0.15);
+  color: $color-on-panel;
+}
+
+.inner {
+  @include container;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.logo {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-black;
+}
+
+.nav {
+  display: flex;
+  gap: $space-8;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+
+  a { @include hover-underline; }
+
+  @include mobile { gap: $space-4; }
+}

@@ -1,14 +1,20 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
 
-// ---- 스크롤 구간 ----
-// 넘김 1장마다 화면 높이 90%만큼 스크롤 + 처음·끝 멈춤 구간
-.scroller {
-  position: relative;
-  height: calc((var(--flips) + 1) * 90vh + 100vh - #{$header-height});
+// =============================================================
+// 검정 섹션 (Apple 제품 섹션 방식) — 글자는 흰색, 책 페이지 안은 검정 글자
+// =============================================================
+.section {
+  background-color: $color-black;
+  color: $color-on-panel;
 }
 
-// 섹션에 닿으면 헤더 바로 아래에 고정
+// 스크롤 구간: (오프닝 + 등장 + 넘김 + 끝) × 화면 높이 + 고정 화면 1개
+.scroller {
+  position: relative;
+  height: calc(var(--total) * 100vh + 100vh - #{$header-height});
+}
+
 .stage {
   position: sticky;
   top: $header-height;
@@ -17,194 +23,157 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: $space-5;
-}
-
-// ---- 책 ----
-.book {
-  position: relative;
-  // 가로 1040px, 화면 너비 88%, 화면 높이에 맞는 크기 중 가장 작은 값
-  width: min(1040px, 88vw, calc((100vh - #{$header-height} - 140px) * 1.5));
-  aspect-ratio: 3 / 2;
-  perspective: 2400px;
-}
-
-// 책 표지(뒤 판) — 페이지 바깥으로 살짝 보이는 진한 테두리
-.boards {
-  position: absolute;
-  inset: -12px;
-  border-radius: $radius-lg;
-  background-color: $color-panel;
-  box-shadow: 0 30px 60px rgba($color-text, 0.18);
-}
-
-// 바닥에 깔린 왼쪽·오른쪽 페이지
-.base {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
   overflow: hidden;
-  background-color: $color-bg;
 }
 
-.left {
-  left: 0;
-  border-radius: $radius-md 0 0 $radius-md;
+// 큰 흰 제목 — 오프닝이 시작되면 서서히 사라짐 (--heading: JS가 1→0)
+.heading {
+  position: absolute;
+  top: 6%;
+  z-index: 2;
+  font-size: clamp(32px, 4vw, $font-size-4xl);
+  font-weight: $font-weight-black;
+  letter-spacing: -0.02em;
+  opacity: var(--heading, 1);
+  transform: translateY(calc((1 - var(--heading, 1)) * -16px));
+  pointer-events: none;
+}
 
-  // 가운데 접힌 부분 그림자
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: 40px;
-    background: linear-gradient(to left, rgba($color-text, 0.12), transparent);
-    pointer-events: none;
-  }
+// 영상 프레임과 같은 16:9 상자 (화면 안에 꽉 차게, 넘치지 않게)
+.frame {
+  position: relative;
+  width: min(100vw, calc((100vh - #{$header-height}) * 16 / 9));
+  aspect-ratio: 16 / 9;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// 펼친 페이지 위에 정확히 겹치는 영역 (위치는 JSX의 PAGE_RECT)
+// 등장 전에는 숨겨 두고, --reveal(0→1)에 맞춰 종이가 먼저 나타남
+.pages {
+  position: absolute;
+  opacity: clamp(0, calc(var(--reveal, 0) * 4), 1);
+  pointer-events: none;
+}
+
+// 등장이 끝나야 버튼·링크를 누를 수 있음
+.pagesReady { pointer-events: auto; }
+
+.flipbook {
+  width: 100%;
+  height: 100%;
+}
+
+// ---- 종이 ----
+.page {
+  background-color: $color-book-paper;
+  color: $color-text;
+  overflow: hidden;
+  container-type: inline-size; // 글자 크기를 페이지 너비에 비례 (cqw)
+  word-break: keep-all;         // 한국어를 단어 단위로 줄바꿈
+}
+
+// 책등 쪽으로 휘어 들어가는 그림자
+.left {
+  background-image: linear-gradient(to left, rgba($color-black, 0.1), rgba($color-black, 0.02) 10%, transparent 22%);
 }
 
 .right {
-  right: 0;
-  border-radius: 0 $radius-md $radius-md 0;
+  background-image: linear-gradient(to right, rgba($color-black, 0.1), rgba($color-black, 0.02) 10%, transparent 22%);
 }
 
-// 넘어가는 장 (앞면 + 뒷면), 책등(왼쪽 끝)을 축으로 회전
-.leaf {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 50%;
-  height: 100%;
-  transform-origin: left center;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-.face {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background-color: $color-bg;
-  backface-visibility: hidden;
-
-  // 넘어가는 동안 종이에 드리우는 그림자 (--shade: JS가 0~0.22로 조절)
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background-color: $color-text;
-    opacity: var(--shade, 0);
-    pointer-events: none;
-  }
-}
-
-.front {
-  border-radius: 0 $radius-md $radius-md 0;
-
-  // 가운데 접힌 부분 그림자
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 40px;
-    background: linear-gradient(to right, rgba($color-text, 0.12), transparent);
-    pointer-events: none;
-  }
-}
-
-.back {
-  transform: rotateY(180deg);
-  border-radius: $radius-md 0 0 $radius-md;
-}
-
-.progress {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  letter-spacing: 0.1em;
-}
-
-// ---- 페이지 내용 ----
-.cover,
-.project,
-.end {
+.pageInner {
   position: relative;
   height: 100%;
-  padding: clamp(20px, 3.2vw, 44px);
+  padding: 9cqw 9cqw 8cqw;
 }
 
-.cover {
+// 하나씩 서서히 나타나기 — 순서(--i)마다 조금씩 늦게
+.reveal {
+  // 마지막 요소(i=7)도 --reveal 0.9 안에 다 나타나도록: 0.15 + 7×0.07 + 0.25 = 0.89
+  --t: clamp(0, calc((var(--reveal, 0) - 0.15 - var(--i) * 0.07) / 0.25), 1);
+  opacity: var(--t);
+  transform: translateY(calc((1 - var(--t)) * 10px));
+}
+
+.intro {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: $space-4;
+  gap: 4cqw;
+  height: 100%;
 }
 
 .label {
-  font-size: $font-size-sm;
+  font-size: 2.8cqw;
   font-weight: $font-weight-bold;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.coverTitle {
-  font-size: clamp(28px, 3.4vw, $font-size-3xl);
+.introTitle {
+  font-size: 9cqw;
   font-weight: $font-weight-black;
   line-height: $line-height-tight;
 }
 
-.count { color: $color-text-soft; }
+.soft { color: $color-text-soft; }
 
-.coverDesc { max-width: 28ch; }
-
-.hint {
-  margin-top: $space-6;
-  font-size: $font-size-sm;
-  animation: hint 1.6s $easing-base infinite;
-}
-
-@keyframes hint {
-  50% { transform: translateY(4px); opacity: 0.5; }
+.introDesc {
+  font-size: 3.6cqw;
+  line-height: $line-height-base;
+  max-width: 26ch;
 }
 
 .project {
   display: flex;
   flex-direction: column;
-  gap: $space-2;
+  gap: 2.4cqw;
+  height: 100%;
 }
 
-.image {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  border-radius: $radius-md;
-  margin-bottom: $space-2;
+// 종이에 인쇄해 붙인 사진
+.photo {
+  padding: 1.6cqw;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba($color-black, 0.18);
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
 }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: $space-3;
-  font-size: $font-size-xs;
+  gap: 2.4cqw;
+  font-size: 2.8cqw;
 }
 
 .tag {
-  padding: 2px $space-2;
+  padding: 0.4cqw 2cqw;
   border-radius: $radius-pill;
   background-color: $color-panel-soft;
   font-weight: $font-weight-bold;
 }
 
 .name {
-  font-size: clamp(16px, 1.6vw, $font-size-lg);
+  font-size: 4.4cqw;
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
 }
 
 .summary {
-  font-size: $font-size-sm;
+  font-size: 3.2cqw;
   line-height: $line-height-base;
 }
 
@@ -212,13 +181,17 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: $space-4;
+  gap: 3.2cqw;
   margin-top: auto;
-  font-size: $font-size-sm;
+  font-size: 3cqw;
   font-weight: $font-weight-bold;
 }
 
-.primary { @include button-primary; }
+.primary {
+  @include button-primary;
+  padding: 1.6cqw 4cqw;
+  font-size: 3cqw;
+}
 
 .secondary {
   text-decoration: underline;
@@ -230,17 +203,84 @@
 
 .pageNo {
   position: absolute;
-  right: clamp(20px, 3.2vw, 44px);
-  bottom: clamp(16px, 2vw, 24px);
-  font-size: $font-size-xs;
+  right: 9cqw;
+  bottom: 4cqw;
+  font-size: 2.6cqw;
   font-weight: $font-weight-bold;
 }
 
 .end {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: 3cqw;
+  font-style: italic;
+}
+
+// ---- 이전 / 다음 버튼 (흰 글자 + 테두리, Apple 검정 섹션 버튼처럼) ----
+.controls {
+  position: absolute;
+  bottom: 4%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: $color-band-solid;
+  gap: $space-5;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity $duration-base $easing-base, transform $duration-base $easing-base;
+  pointer-events: none;
+}
+
+.controlsVisible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.navButton {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba($color-on-panel, 0.5);
+  border-radius: 50%;
+  color: $color-on-panel;
+  font-size: $font-size-xl;
+  line-height: 1;
+  transition: background-color $duration-fast $easing-base;
+
+  &:hover:not(:disabled) { background-color: rgba($color-on-panel, 0.12); }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+}
+
+.progress {
+  min-width: 64px;
+  text-align: center;
   font-size: $font-size-sm;
-  font-style: italic;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.1em;
+}
+
+// ---- 모바일 · 동작 줄이기 ----
+.simple {
+  padding-block: $space-16 $space-10;
+  background-color: $color-black;
+  color: $color-on-panel;
+  text-align: center;
+}
+
+.simpleHeading {
+  margin-bottom: $space-6;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-black;
+}
+
+.simpleMedia {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }

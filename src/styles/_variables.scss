@@ -25,6 +25,10 @@ $color-panel-tag: rgba(#88bdf2, 0.2);        // 진한 카드 위 태그 배경 
 $color-panel-soft: #bdddfc;                  // 연한 카드 배경 (위 검정 글자 11.95:1)
 $color-panel-soft-tag: rgba(#ffffff, 0.6);   // 연한 카드 위 태그 배경
 
+// 검정 섹션 (Apple 제품 섹션 방식 — 대표 프로젝트 책)
+$color-black: #000000;                       // 섹션 배경 (위 흰 글자 21:1)
+$color-book-paper: #e9ecfd;                  // 책 영상 속 종이 색 — 페이지가 영상 위에 이음매 없이 겹치도록
+
 // 상호작용
 $color-focus: #384959;                       // 포커스 링
 

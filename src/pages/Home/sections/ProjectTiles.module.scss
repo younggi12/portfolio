@@ -1,7 +1,7 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
 
-// 같은 크기 카드 4열 (태블릿 2열, 모바일 1열), 카드 사이 여유 있게
+// 같은 크기 카드 2열 (모바일 1열), 카드 사이 여유 있게
 .section {
   @include container;
   padding-block: $space-20;
@@ -17,8 +17,8 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $space-6;
+  grid-template-columns: repeat(2, 1fr);   // 2열 — 카드가 커서 세로도 높아짐
+  gap: $space-10 $space-8;
 
   @include tablet { grid-template-columns: repeat(2, 1fr); }
   @include mobile { grid-template-columns: 1fr; }
@@ -31,22 +31,28 @@
 }
 
 // 카드 = 작품 사진만
+// 카드: 썸네일과 같은 2:1 → 꽉 차고 잘리는 곳 없음
 .media {
+  position: relative;
+  aspect-ratio: 2 / 1;
   overflow: hidden;
   border-radius: $radius-lg;
   background-color: $color-band-solid;
   box-shadow: 0 4px 20px rgba($color-black, 0.08);
+  transition: transform $duration-base $easing-base, box-shadow $duration-base $easing-base;
+
+  // 마우스를 올리면 카드째 살짝 떠오름 (사진은 확대하지 않아 잘리지 않음)
+  .tile:hover & {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba($color-black, 0.14);
+  }
 }
 
 .image {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  object-position: top;
-  transition: transform $duration-base $easing-base;
-
-  .tile:hover & { transform: scale(1.04); }
+  height: 100%;
+  object-fit: cover;          // 카드와 사진 비율이 같아 꽉 차고 잘리지 않음
 }
 
 // 카드 아래 글
@@ -63,30 +69,31 @@
 }
 
 .title {
-  font-size: $font-size-lg;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
 }
 
 .subtitle {
-  font-size: $font-size-sm;
+  font-size: $font-size-md;
   word-break: keep-all;
 }
 
+// Apple 방식: 파란 버튼 + 파란 글자 링크
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-2;
-  margin-top: $space-3;
+  align-items: center;
+  gap: $space-2 $space-6;
+  margin-top: $space-4;
 }
 
-.primary {
-  @include button-primary;
-  padding: $space-1 $space-4;
-  font-size: $font-size-xs;
-}
+.primary { @include button-primary; }
 
-.secondary {
-  @include button-outline;
-  padding: $space-1 $space-4;
-  font-size: $font-size-xs;
+.secondary { @include button-link; }
+
+// 더보기 / 접기
+.more {
+  display: block;
+  margin: $space-10 auto 0;
+  @include button-link;
 }

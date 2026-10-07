@@ -20,8 +20,7 @@ npm run dev
 | 바꾸고 싶은 것 | 파일 |
 | --- | --- |
 | 이름, 소개, About(사진·교육 과정·배운 것), 연락처 | `src/data/profile.js` |
-| 프로젝트 | `src/data/projects.js` (+ 이미지는 `src/assets/images/projects/`) |
-| 스킬 | `src/data/skills.js` |
+| 프로젝트 (목록 · 상세 페이지) | `src/data/projects.js` (+ 이미지는 `src/assets/images/projects/`) |
 | 메뉴, 섹션 제목, 버튼 문구 | `src/data/site.js` |
 | 색상, 글자 크기, 간격 | `src/styles/_variables.scss` |
 

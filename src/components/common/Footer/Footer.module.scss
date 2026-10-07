@@ -1,60 +1,133 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
 
+// Apple 푸터처럼 작은 글자 + 얇은 구분선
 .footer {
   @include band;
   border-top: 1px solid $color-border;
-  padding-block: $space-20 $space-10;
+  padding-block: $space-16 $space-8;
 
-  @include mobile { padding-block: $space-16 $space-8; }
+  @include mobile { padding-block: $space-12 $space-6; }
 }
 
-.inner {
-  @include container;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: $space-4;
+.inner { @include container; }
+
+// ---- 위: 인사말 | 연락처 ----
+.top {
+  display: grid;
+  grid-template-columns: 1fr minmax(280px, 400px);
+  gap: $space-10;
+  align-items: start;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: $space-8;
+  }
 }
 
 .title {
-  font-size: $font-size-sm;
+  margin-bottom: $space-3;
+  font-size: $font-size-xs;
   font-weight: $font-weight-bold;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .message {
-  max-width: $text-max-width;
-  font-size: $font-size-lg;
-}
-
-// 가장 크게 보여줄 것: 이메일
-.email {
-  font-size: clamp(28px, 4.4vw, $font-size-3xl);
-  font-weight: $font-weight-black;
-  line-height: $line-height-tight;
-  word-break: break-all;
-  @include hover-underline;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: $space-5;
-  margin-top: $space-2;
-}
-
-.primary { @include button-primary; }
-
-.link {
-  font-size: $font-size-sm;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
+  letter-spacing: $letter-spacing-heading;
+  line-height: $line-height-tight;
+
+  @include mobile { font-size: $font-size-lg; }
+}
+
+.subMessage {
+  margin-top: $space-2;
+  font-size: $font-size-sm;
+  word-break: keep-all;
+}
+
+// 연락처 목록
+.contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-5;
+}
+
+.list {
+  width: 100%;
+  border-top: 1px solid $color-border;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  gap: $space-3;
+  padding-block: $space-3;
+  border-bottom: 1px solid $color-border;
+  font-size: $font-size-sm;
+
+  dt { font-weight: $font-weight-bold; }
+
+  dd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    margin: 0;
+    min-width: 0;
+  }
+}
+
+.value {
+  overflow-wrap: anywhere;
   @include hover-underline;
 }
 
 .copy {
-  margin-top: $space-10;
+  flex-shrink: 0;
+  padding: 2px $space-3;
+  border: 1px solid $color-border;
+  border-radius: $radius-pill;
   font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  transition: border-color $duration-fast $easing-base;
+
+  &:hover { border-color: currentColor; }
+}
+
+.primary { @include button-primary; }
+
+// ---- 아래: 저작권 | 맨 위로 ----
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-top: $space-12;
+  padding-top: $space-5;
+  border-top: 1px solid $color-border;
+  font-size: $font-size-xs;
+
+  @include mobile { margin-top: $space-10; }
+}
+
+.toTop {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  @include hover-underline;
+}
+
+// 화면엔 안 보이고 화면 읽기 프로그램만 읽음 ("복사됨" 알림)
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

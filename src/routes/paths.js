@@ -1,7 +1,6 @@
 // URL은 여기서만 정의 — 컴포넌트에서 문자열 하드코딩 금지 (AGENTS.md 5장)
 export const PATHS = {
   home: "/",
-  projects: "/projects",
   projectDetail: "/projects/:projectId",
   notFound: "*",
 };
@@ -12,6 +11,5 @@ export const toProjectDetail = (projectId) => `/projects/${projectId}`;
 export const SECTION_IDS = {
   about: "about",
   projects: "projects",
-  skills: "skills",
   contact: "contact",
 };

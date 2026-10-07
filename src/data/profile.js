@@ -17,13 +17,53 @@ export const PROFILE = {
   education: {
     name: "이젠컴퓨터아카데미 안산 · 웹/프론트엔드 개발자 과정",
     period: "2026.04.16 ~ 2026.10.26",
+    months: 6,          // About 숫자 칸에 표시
   },
   // 과정에서 배운 것 (실제로 프로젝트에 써 본 것 위주)
+  // icon: utils/skillIcons.js의 키
   learned: [
-    { title: "화면 구현", items: ["HTML5 · CSS3 · SCSS", "반응형 레이아웃", "JavaScript (ES6+)", "jQuery", "Canvas API"] },
-    { title: "React", items: ["컴포넌트 설계", "React Router", "커스텀 훅", "Zustand"] },
-    { title: "데이터 · 서버", items: ["Firebase Auth", "Cloud Firestore · 보안 규칙", "REST API 연동", "Node.js · Express · MySQL 기초"] },
-    { title: "협업 · 도구", items: ["Git / GitHub", "Vite", "Vercel 배포", "Figma", "AI 협업 규칙 문서"] },
+    {
+      title: "화면 구현",
+      items: [
+        { label: "HTML5", icon: "html5" },
+        { label: "CSS3", icon: "css" },
+        { label: "SCSS", icon: "sass" },
+        { label: "JavaScript (ES6+)", icon: "javascript" },
+        { label: "jQuery", icon: "jquery" },
+        { label: "Canvas API", icon: "canvas" },
+        { label: "반응형 레이아웃", icon: "responsive" },
+      ],
+    },
+    {
+      title: "React",
+      items: [
+        { label: "React", icon: "react" },
+        { label: "React Router", icon: "reactRouter" },
+        { label: "컴포넌트 설계", icon: "component" },
+        { label: "커스텀 훅", icon: "hook" },
+        { label: "Zustand", icon: "store" },
+      ],
+    },
+    {
+      title: "데이터 · 서버",
+      items: [
+        { label: "Firebase Auth", icon: "firebase" },
+        { label: "Firestore · 보안 규칙", icon: "database" },
+        { label: "REST API 연동", icon: "api" },
+        { label: "Node.js · Express · MySQL 기초", icon: "node" },
+      ],
+    },
+    {
+      title: "협업 · 도구",
+      items: [
+        { label: "Git", icon: "git" },
+        { label: "GitHub", icon: "github" },
+        { label: "Vite", icon: "vite" },
+        { label: "Vercel", icon: "vercel" },
+        { label: "Figma", icon: "figma" },
+        { label: "AI 협업 규칙 문서", icon: "document" },
+      ],
+    },
   ],
   email: "oosc76@naver.com",
   github: "https://github.com/younggi12",

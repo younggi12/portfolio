@@ -8,12 +8,14 @@
   @include mobile { padding-block: $space-16; }
 }
 
-.inner {
-  @include container;
+.inner { @include container; }
+
+// ---- 위: 사진 + 소개 ----
+.top {
   display: grid;
   grid-template-columns: minmax(240px, 360px) 1fr;
   gap: $space-16;
-  align-items: start;
+  align-items: center;
 
   @include tablet { gap: $space-10; }
   @include mobile {
@@ -22,12 +24,12 @@
   }
 }
 
-// 사진 (세로 4:5) — 사진이 없으면 같은 크기의 빈 자리
+// 사진 (세로 4:5) — 사진이 없으면 진한 칸에 이니셜
 .photo {
   aspect-ratio: 4 / 5;
   border-radius: $radius-lg;
   overflow: hidden;
-  background-color: $color-panel-soft;
+  background-color: $color-panel;
 
   img {
     width: 100%;
@@ -42,9 +44,10 @@
   display: grid;
   place-items: center;
   height: 100%;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  letter-spacing: 0.2em;
+  color: $color-on-panel;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-black;
+  letter-spacing: -0.04em;
 }
 
 .content {
@@ -54,12 +57,19 @@
   max-width: $text-max-width;
 }
 
-.title {
-  margin-bottom: $space-2;
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-black;
+.role {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
 
-  @include mobile { font-size: $font-size-2xl; }
+.name {
+  margin-top: -$space-3;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-black;
+  letter-spacing: $letter-spacing-title;
+  line-height: $line-height-tight;
+
+  @include mobile { font-size: $font-size-3xl; }
 }
 
 .intro {
@@ -67,42 +77,109 @@
   word-break: keep-all;
 }
 
+// 숫자 칸 4개
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-4;
+  margin-top: $space-4;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  strong {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-black;
+    letter-spacing: $letter-spacing-title;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  small {
+    margin-left: 2px;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+  }
+
+  span { font-size: $font-size-sm; }
+
+  @include mobile {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: $space-6;
+  }
+}
+
 .education {
   display: flex;
   flex-wrap: wrap;
   gap: $space-1 $space-4;
-  margin-top: $space-4;
-  padding-block: $space-4;
-  border-block: 1px solid $color-border;
+  margin-top: $space-2;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
 
   dt { font-weight: $font-weight-bold; }
-  dd { font-variant-numeric: tabular-nums; }
+  dd { margin: 0; font-variant-numeric: tabular-nums; }
+}
+
+// ---- 아래: 배운 것 카드 4개 ----
+.learnedTitle {
+  margin-top: $space-20;
+  margin-bottom: $space-6;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-black;
+  letter-spacing: $letter-spacing-heading;
+
+  @include mobile { margin-top: $space-16; }
 }
 
 .learned {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $space-6;
-  margin-top: $space-2;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-4;
 
+  @include below-desktop { grid-template-columns: repeat(2, 1fr); }
   @include mobile { grid-template-columns: 1fr; }
 }
 
-.groupTitle {
-  margin-bottom: $space-2;
-  font-size: $font-size-sm;
+.card {
+  padding: $space-6;
+  border-radius: $radius-lg;
+  background-color: $color-bg;
+}
+
+.cardTitle {
+  margin-bottom: $space-4;
+  font-size: $font-size-lg;
   font-weight: $font-weight-bold;
 }
 
 .items {
   display: flex;
-  flex-wrap: wrap;
-  gap: $space-2;
+  flex-direction: column;
+  gap: $space-3;
 
   li {
-    padding: 4px $space-3;
-    border-radius: $radius-pill;
-    background-color: $color-bg;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
     font-size: $font-size-sm;
   }
+}
+
+// 브랜드 아이콘 (채운 모양)
+.icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+// 개념 아이콘 (선 모양, lucide)
+.iconLine {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
 }

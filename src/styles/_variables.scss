@@ -31,11 +31,17 @@ $color-black: #000000;                       // 섹션 배경 (위 흰 글자 21
 // 상호작용
 $color-focus: #384959;                       // 포커스 링
 
+// 버튼 · 링크 (Apple 방식 파란색 — 팔레트 예외)
+$color-action: #0071e3;                      // 주요 버튼 배경 (위 흰 글자 4.70:1)
+$color-action-hover: #0077ed;                // 주요 버튼 호버 (Apple처럼 살짝 밝게, 흰 글자 4.32:1)
+$color-link: #0066cc;                        // 보조 링크 버튼 글자 (흰 5.57 / 띠 5.04)
+
 // 인트로 (어두운 화면으로 시작해 밝은 페이지로 열리는 연출)
-$color-intro-bg: #384959;
+$color-intro-bg: #000000;   // 인트로 배경 (검정)
 $color-intro-text: #ffffff;
 
 // ---- 4-2. 타이포그래피 ----
+$font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "D2Coding", monospace;
 $font-family-base: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
 
 $font-size-xs: 12px;
@@ -69,6 +75,7 @@ $space-5: 20px;
 $space-6: 24px;
 $space-8: 32px;
 $space-10: 40px;
+$space-12: 48px;
 $space-16: 64px;
 $space-20: 80px;
 
@@ -92,4 +99,7 @@ $radius-pill: 999px;
 
 $duration-fast: 0.15s;
 $duration-base: 0.3s;
+$duration-reveal: 0.9s;                     // 스크롤 등장
+$duration-page: 1.2s;                       // 상세 페이지 들어올 때 페이드 인
+$easing-reveal: cubic-bezier(0.2, 0.7, 0.2, 1);
 $easing-base: ease;

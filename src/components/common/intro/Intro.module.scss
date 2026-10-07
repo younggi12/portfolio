@@ -1,0 +1,69 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100; // 헤더(10)보다 위
+  display: grid;
+  place-items: center;
+  padding: $side-padding-mobile;
+  background-color: $color-intro-bg;
+  color: $color-intro-text;
+  cursor: pointer;
+  transition: opacity var(--exit) $easing-base;
+}
+
+.leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+  font-size: clamp(20px, 2.6vw, 34px);
+  font-weight: $font-weight-black;
+  letter-spacing: $letter-spacing-title;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.line { display: block; }
+
+// 한 글자씩: 투명 + 살짝 아래 + 흐림 → 선명하게
+.char {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(0.25em);
+  animation: reveal var(--char-fade) $easing-base forwards;
+  animation-delay: calc(var(--i) * var(--char-delay));
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+.skip {
+  position: absolute;
+  right: $space-8;
+  bottom: $space-8;
+  font-size: $font-size-sm;
+  color: $color-intro-text;
+  opacity: 0.7;
+  @include hover-underline;
+
+  &:hover { opacity: 1; }
+
+  @include mobile {
+    right: $space-5;
+    bottom: $space-5;
+  }
+}

@@ -1,6 +1,8 @@
 // 작품 소개 — Apple 홈페이지 제품 타일 방식
-// 팀 / 개인 따로, 같은 크기 카드 4열.
+// 팀 / 개인 따로, 같은 크기 카드 3열.
+// isMore: true인 작품은 처음엔 숨기고 "더보기"로 펼침 (대표 작품이 먼저 보이게 앞으로 정렬)
 // 카드에는 작품 사진만, 글(분류·이름·부제·버튼)은 카드 아래로 — 사진 카드 → 분류 → 이름 → 부제 → 버튼 2개
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { SECTION_IDS, toProjectDetail } from "@/routes/paths";
 import { getProjectsByType } from "@/data/projects";
@@ -29,7 +31,7 @@ const Tile = ({ project }) => {
   const secondary = hasDetail ? first : second;
 
   return (
-    <article className={styles.tile}>
+    <article className={styles.tile} data-reveal>
       <div className={styles.media}>
         <img src={getProjectImage(thumbnail)} alt={`${title} 화면`} className={styles.image} loading="lazy" />
       </div>
@@ -49,18 +51,31 @@ const Tile = ({ project }) => {
   );
 };
 
-const ProjectTiles = () => (
-  <section id={SECTION_IDS.projects} data-header-theme="light" className={styles.section} aria-label={SECTION_TITLES.allProjects}>
-    {GROUPS.map((group) => (
-      <div key={group.type} className={styles.group}>
-        <h2 className={styles.groupTitle}>{group.title}</h2>
-        <div className={styles.grid}>
-          {getProjectsByType(group.type).map((project) => (
-            <Tile key={project.projectId} project={project} />
-          ))}
-        </div>
+const ProjectGroup = ({ type, title }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const projects = getProjectsByType(type);
+  const main = projects.filter((p) => !p.isMore);
+  const more = projects.filter((p) => p.isMore);
+  const visible = isOpen ? [...main, ...more] : main;
+
+  return (
+    <div className={styles.group}>
+      <h2 className={styles.groupTitle} data-reveal>{title}</h2>
+      <div className={styles.grid}>
+        {visible.map((project) => <Tile key={project.projectId} project={project} />)}
       </div>
-    ))}
+      {more.length > 0 && (
+        <button type="button" className={styles.more} onClick={() => setIsOpen((v) => !v)} aria-expanded={isOpen}>
+          {isOpen ? UI_TEXT.showLess : `${UI_TEXT.showMore} (${more.length})`}
+        </button>
+      )}
+    </div>
+  );
+};
+
+const ProjectTiles = () => (
+  <section id={SECTION_IDS.projects} data-header-theme="light" className={styles.section} aria-label={SECTION_TITLES.projects}>
+    {GROUPS.map((group) => <ProjectGroup key={group.type} type={group.type} title={group.title} />)}
   </section>
 );
 

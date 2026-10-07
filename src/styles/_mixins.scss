@@ -40,20 +40,20 @@
 @mixin button-base {
   display: inline-flex;
   align-items: center;
-  padding: $space-2 $space-5;
+  padding: 10px $space-5;
   border-radius: $radius-pill;
   font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  transition: opacity $duration-fast $easing-base;
-
-  &:hover { opacity: 0.85; } // 흰 배경 위 #384959 85% → 흰 글자 6.07:1
+  font-weight: $font-weight-semibold;
+  transition: background-color $duration-fast $easing-base, opacity $duration-fast $easing-base;
 }
 
-// 주요 버튼 — 밝은 배경 위: 진한 배경 + 흰 글자
+// 주요 버튼 — Apple "더 알아보기": 파란 배경 + 흰 글자, 호버 시 살짝 밝게
 @mixin button-primary {
   @include button-base;
-  background-color: $color-panel;
+  background-color: $color-action;
   color: $color-on-panel;
+
+  &:hover { background-color: $color-action-hover; }
 }
 
 // 진한 카드 위 버튼: 포인트색 배경 + 검정 글자 (8.5:1)
@@ -61,6 +61,8 @@
   @include button-base;
   background-color: $color-panel-point;
   color: $color-text;
+
+  &:hover { opacity: 0.85; }
 }
 
 // 전체 너비 섹션 띠 배경
@@ -69,9 +71,22 @@
 }
 
 
-// 보조 버튼 — 테두리만 (Apple "구입하기" 버튼처럼)
-@mixin button-outline {
-  @include button-base;
-  border: 1px solid currentColor;
-  color: $color-text;
+// 보조 버튼 — Apple "구입하기 >": 테두리 없는 파란 글자 + 꺾쇠, 호버 시 밑줄
+@mixin button-link {
+  display: inline-block; // flex면 꺾쇠까지 밑줄이 번짐 → inline-block + 꺾쇠 inline-block
+  padding-block: 10px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  color: $color-link;
+  @include hover-underline;
+
+  // 꺾쇠는 inline-block → 밑줄이 글자에만 생기고 꺾쇠 아래엔 안 생김
+  &::after {
+    content: "›";
+    display: inline-block;
+    margin-left: 3px;
+    font-size: 1.2em;
+    line-height: 1;
+    text-decoration: none;
+  }
 }

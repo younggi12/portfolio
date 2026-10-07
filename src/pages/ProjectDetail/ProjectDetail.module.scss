@@ -3,24 +3,322 @@
 
 .page {
   @include container;
-  padding-block: $space-16;
+
+  dd { margin: 0; }
+
+  padding-block: $space-16 $space-20;
+}
+
+// ---- 상단 ----
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+  text-align: center;
+}
+
+// 들어올 때 글자(위에서부터 한 줄씩) → 이미지 → 개요 순서로 천천히 나타남 (투명 → 선명, 움직임 없음, 헤더 제외)
+.hero > *,
+.meta {
+  animation: pageFadeIn $duration-page ease-out both;
+}
+
+// 글자는 위에서부터 0.15초 간격으로 한 줄씩, 그다음 이미지 → 개요
+.hero > .eyebrow { animation-delay: 150ms; }
+.hero > .title { animation-delay: 300ms; }
+.hero > .subtitle { animation-delay: 450ms; }
+.hero > .summary { animation-delay: 600ms; }
+.hero > .links { animation-delay: 750ms; }
+.hero > .heroImage { animation-delay: 1000ms; }
+.meta { animation-delay: 1300ms; }
+
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .back {
-  display: inline-block;
+  align-self: flex-start;
   margin-bottom: $space-8;
   font-size: $font-size-sm;
   @include hover-underline;
 }
 
-.title {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-black;
-  line-height: $line-height-tight;
+.eyebrow {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
 
-  @include mobile { font-size: $font-size-2xl; }
+.title {
+  font-size: clamp(40px, 6vw, $font-size-4xl);
+  font-weight: $font-weight-black;
+  line-height: 1.05;
+}
+
+.subtitle {
+  font-size: clamp(18px, 2vw, $font-size-xl);
+  font-weight: $font-weight-semibold;
 }
 
 .summary {
+  max-width: 40ch;
+  margin-top: $space-2;
+  line-height: $line-height-base;
+  word-break: keep-all;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: $space-2 $space-6;
   margin-top: $space-4;
+}
+
+.primary { @include button-primary; }
+.secondary { @include button-link; }
+
+.heroImage {
+  width: 100%;
+  margin-top: $space-10;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  border-radius: $radius-lg;
+  box-shadow: 0 10px 40px rgba($color-black, 0.1);
+}
+
+// ---- 개요 표 ----
+.meta {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1.5fr;
+  gap: $space-6;
+  margin-top: $space-10;
+  padding-block: $space-6;
+  border-block: 1px solid $color-border;
+
+  dt {
+    margin-bottom: $space-1;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+  }
+
+  dd {
+    line-height: $line-height-base;
+    word-break: keep-all;
+  }
+
+  @include mobile { grid-template-columns: 1fr; }
+}
+
+// ---- 섹션 공통 ----
+.section {
+  margin-top: $space-10;
+
+  @include mobile { margin-top: $space-10; }
+}
+
+.sectionTitle {
+  margin-bottom: $space-6;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-black;
+}
+
+.text {
+  max-width: $text-max-width;
+  line-height: $line-height-base;
+  word-break: keep-all;
+}
+
+// ---- 내가 만든 기능: 3열 (사진 + 제목 + 한 줄) ----
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-6;
+
+  @include mobile { grid-template-columns: 1fr; }
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+
+  h3 {
+    margin-top: $space-4;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+  }
+
+  p {
+    margin-top: $space-1;
+    font-size: $font-size-sm;
+    line-height: $line-height-base;
+    word-break: keep-all;
+  }
+}
+
+.featureMain {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+}
+
+// 작은 사진 줄 — 누르면 위 큰 사진이 바뀜
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: $space-2;
+  margin-top: $space-2;
+}
+
+.thumb {
+  overflow: hidden;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  opacity: 0.55;
+  transition: opacity $duration-fast $easing-base;
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  &:hover { opacity: 0.85; }
+}
+
+.thumbActive {
+  opacity: 1;
+  border-color: $color-panel;
+}
+
+// 코드 카드 — 사진 대신 실제 코드 일부 (큰 사진과 같은 16:10 크기)
+.code {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: $radius-md;
+  background-color: $color-panel;
+  color: $color-on-panel;
+
+  pre {
+    flex: 1;
+    margin: 0;
+    padding: $space-3 $space-4;
+    overflow: auto;
+    font-family: $font-family-mono;
+    font-size: $font-size-xs;
+    line-height: 1.6;
+    white-space: pre;
+
+    code { padding: 0; border-radius: 0; background: none; color: inherit; font-size: inherit; }
+  }
+}
+
+.codeFile {
+  padding: $space-2 $space-4;
+  border-bottom: 1px solid rgba($color-on-panel, 0.15);
+  font-family: $font-family-mono;
+  font-size: $font-size-xs;
+  color: $color-panel-point;
+}
+
+// 코드 칸 — 작은 사진과 같은 크기의 남색 칸
+.thumbCode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 10;
+  background-color: $color-panel;
+  color: $color-on-panel;
+  font-family: $font-family-mono;
+  font-size: $font-size-xs;
+}
+
+// ---- 문제 해결 ----
+.problem {
+  padding: $space-8;
+  border-radius: $radius-lg;
+  background-color: $color-band-solid;
+
+  @include mobile { padding: $space-5; }
+}
+
+.problemTitle {
+  margin-bottom: $space-5;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  word-break: keep-all;
+}
+
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: $space-4;
+
+  dt {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    padding-top: 2px;
+  }
+
+  dd {
+    line-height: $line-height-base;
+    word-break: keep-all;
+  }
+
+  li + li { margin-top: $space-1; }
+
+  @include mobile { grid-template-columns: 1fr; gap: $space-1; }
+}
+
+.lesson {
+  margin-top: $space-5;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
+  font-weight: $font-weight-bold;
+}
+
+// ---- 목록 (협업, 개선할 점) ----
+.list {
+  max-width: $text-max-width;
+
+  li {
+    position: relative;
+    padding-left: $space-5;
+    line-height: $line-height-base;
+    word-break: keep-all;
+
+    &::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+    }
+  }
+
+  li + li { margin-top: $space-3; }
+}
+
+// 문장 속 코드
+.page code {
+  padding: 1px 6px;
+  border-radius: $radius-sm;
+  background-color: rgba($color-panel, 0.08);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.9em;
 }

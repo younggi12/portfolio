@@ -37,6 +37,22 @@ body {
   }
 }
 
+// 스크롤 등장 (hooks/useScrollReveal.js) — 흐림 없이 투명 → 선명 + 아래에서 위로 (Apple 방식)
+// html.reveal-on은 JS가 동작할 때만 붙음 → JS 실패 시에도 내용은 보임
+.reveal-on [data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity $duration-reveal $easing-reveal,
+    transform $duration-reveal $easing-reveal;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal-on [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
 // 제목 자간 — 큰 글씨는 좁게 해야 단정해 보임
 h1, h2 { letter-spacing: $letter-spacing-title; }
 h3, h4 { letter-spacing: $letter-spacing-heading; }

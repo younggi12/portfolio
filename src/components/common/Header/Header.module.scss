@@ -37,10 +37,28 @@
   height: 100%;
 }
 
+// 로고: YG + 깜빡이는 커서 (탭 아이콘은 public/favicon.svg)
 .logo {
+  display: inline-flex;
+  align-items: center;
   font-size: 22px;
   font-weight: $font-weight-black;
   letter-spacing: -0.04em;
+}
+
+.cursor {
+  width: 3px;
+  height: 0.9em;
+  margin-left: 3px;
+  border-radius: 1px;
+  background-color: currentColor; // 로고 글자색과 같음 (밝은 배경 검정 / 어두운 배경 흰색)
+  animation: blink 1.1s steps(1, end) infinite;
+
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
 }
 
 .nav {

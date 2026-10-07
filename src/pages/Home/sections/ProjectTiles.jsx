@@ -1,15 +1,18 @@
 // 작품 소개 — Apple 홈페이지 제품 타일 방식
-// 2열 타일, 타일마다: 분류 → 큰 이름 → 한 줄 소개 → 버튼 2개 → 아래 큰 스크린샷
-// 배경은 연한 하늘색 / 검정을 체크무늬로 번갈아 (모바일은 1열)
+// 팀 / 개인 따로, 같은 크기 카드 4열.
+// 카드에는 작품 사진만, 글(분류·이름·부제·버튼)은 카드 아래로 — 사진 카드 → 분류 → 이름 → 부제 → 버튼 2개
 import { Link } from "react-router-dom";
 import { SECTION_IDS, toProjectDetail } from "@/routes/paths";
-import { PROJECTS } from "@/data/projects";
+import { getProjectsByType } from "@/data/projects";
 import { SECTION_TITLES, UI_TEXT } from "@/data/site";
 import { getProjectImage } from "@/utils/getProjectImage";
 import styles from "./ProjectTiles.module.scss";
 
-// 2열 체크무늬: 0행 [밝음, 검정] / 1행 [검정, 밝음] ...
-const toneOf = (index) => ((Math.floor(index / 2) + index) % 2 ? "dark" : "light");
+// 팀 프로젝트 → 개인 프로젝트 순서 (카드 크기는 모두 같음)
+const GROUPS = [
+  { type: "team", title: SECTION_TITLES.team },
+  { type: "solo", title: SECTION_TITLES.solo },
+];
 
 // "JAJAK — 전통주 AI 큐레이션 쇼핑몰" → 제목 / 부제
 const splitName = (name) => {
@@ -17,17 +20,19 @@ const splitName = (name) => {
   return { title, subtitle };
 };
 
-const Tile = ({ project, index }) => {
+const Tile = ({ project }) => {
   const { projectId, name, type, category, teamSize, thumbnail, links, hasDetail } = project;
   const { title, subtitle } = splitName(name);
-  const tone = toneOf(index);
   // 버튼 2개: 상세 페이지가 있으면 [자세히 보기, 첫 링크], 없으면 [첫 링크, 둘째 링크]
   const [first, second] = links;
   const primary = hasDetail ? { label: UI_TEXT.viewDetail, to: toProjectDetail(projectId) } : first;
   const secondary = hasDetail ? first : second;
 
   return (
-    <article className={`${styles.tile} ${styles[tone]}`} data-header-theme={tone === "dark" ? "dark" : "band"}>
+    <article className={styles.tile}>
+      <div className={styles.media}>
+        <img src={getProjectImage(thumbnail)} alt={`${title} 화면`} className={styles.image} loading="lazy" />
+      </div>
       <div className={styles.text}>
         <p className={styles.eyebrow}>
           {category} · {type === "team" ? UI_TEXT.teamSize(teamSize) : UI_TEXT.solo}
@@ -40,16 +45,22 @@ const Tile = ({ project, index }) => {
           {secondary && <a href={secondary.href} target="_blank" rel="noreferrer" className={styles.secondary}>{secondary.label}</a>}
         </div>
       </div>
-      <img src={getProjectImage(thumbnail)} alt={`${title} 화면`} className={styles.image} loading="lazy" />
     </article>
   );
 };
 
 const ProjectTiles = () => (
   <section id={SECTION_IDS.projects} data-header-theme="light" className={styles.section} aria-label={SECTION_TITLES.allProjects}>
-    <div className={styles.grid}>
-      {PROJECTS.map((project, index) => <Tile key={project.projectId} project={project} index={index} />)}
-    </div>
+    {GROUPS.map((group) => (
+      <div key={group.type} className={styles.group}>
+        <h2 className={styles.groupTitle}>{group.title}</h2>
+        <div className={styles.grid}>
+          {getProjectsByType(group.type).map((project) => (
+            <Tile key={project.projectId} project={project} />
+          ))}
+        </div>
+      </div>
+    ))}
   </section>
 );
 

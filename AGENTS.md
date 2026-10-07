@@ -49,7 +49,6 @@
 - Sass / SCSS Modules (`*.module.scss`, `@use` 방식)
 - 패키지 매니저: npm 고정, `package-lock.json` 기준
 - 새 패키지는 **이 문서에 이유를 적은 뒤** 설치합니다(GSAP 등 애니메이션 라이브러리 포함).
-- `react-pageflip` (MIT, 내부적으로 `page-flip`): 대표 프로젝트 책에서 **종이가 휘며 넘어가는** 효과. CSS 3D 회전만으로는 종이 휨·말림 그림자를 표현할 수 없어 도입. 마우스 끌기는 끄고(`useMouseEvents={false}`) 스크롤·버튼으로만 넘김
 
 ## 4. 디자인 토큰
 모든 값은 `src/styles/_variables.scss`에서만 정의하고, 컴포넌트에서는 변수만 씁니다. 색상·간격 하드코딩 금지.
@@ -72,8 +71,7 @@ apple.com의 색 구조(흰 배경 / 밝은 회색 띠 / 거의 검정 글자 / 
 | `$color-panel-soft` | `#BDDDFC` | 하늘색 제품 카드 | 연한 카드 | 위 검정 글자 11.95 |
 | `$color-panel-soft-tag` | 흰색 60% | — | 연한 카드 위 태그 배경 | 위 글자 8.1 |
 | `$color-focus` | `#384959` | `#0071E3` | 포커스 링 | — |
-| `$color-black` | `#000000` | 검정 제품 섹션 | 대표 프로젝트 책 섹션 배경 (위 흰 글자 21:1) | — |
-| `$color-book-paper` | `#E9ECFD` | — | 책 영상 속 종이 색 — 페이지가 영상 위에 이음매 없이 겹치도록 측정한 값 | 위 검정 글자 15.8 |
+| `$color-black` | `#000000` | 검정 | 헤더 진한 테마, 그림자 | — |
 | `$color-intro-bg` / `$color-intro-text` | `#384959` / `#FFFFFF` | — | 인트로 (어둡게 시작해 밝은 페이지로 열림) | 9.27 |
 
 **규칙**
@@ -134,6 +132,7 @@ URL은 `src/routes/paths.js`에서만 정의합니다. 컴포넌트에서 `"/pro
 ```
 portfolio/
 ├── docs/
+│   ├── design/book/         # 책 연출 원본(사진·영상) 보관 — 사이트에선 안 씀
 │   └── PROJECTS_CONTENT.md  # 프로젝트 카드·상세 페이지 콘텐츠 원본 (data/projects.js로 옮기기 전 정리본)
 ├── AGENTS.md
 ├── README.md
@@ -143,10 +142,6 @@ portfolio/
 ├── vercel.json
 ├── public/
 │   ├── images/              # About 사진 (profile.webp, 세로 4:5)
-│   ├── book/                # 대표 프로젝트 책 오프닝 (원본은 docs/design/book/)
-│   │   ├── frames/f001~084.webp  # 스크롤 재생용 프레임 (영상에서 12fps 추출, 약 750KB)
-│   │   ├── book-open.mp4 / .webm # 모바일 자동 재생용 영상 (7초, 400KB / 190KB)
-│   │   └── last.webp             # 영상 마지막 장면 (동작 줄이기용 정지 이미지)
 │   ├── intro.mp4            # 인트로 영상(새로 제작 예정)
 │   └── intro-poster.jpg     # 인트로 첫 프레임(새로 제작 예정)
 └── src/
@@ -160,18 +155,17 @@ portfolio/
     ├── data/
     │   ├── profile.js       # 이름, 로고, 소개, 사진, 교육 과정, 배운 것, 연락처
     │   ├── projects.js      # 프로젝트 목록 + 상세 + 조회 헬퍼
-    │   ├── skills.js        # 스킬
+    │   ├── skills.js        # 스킬 (Skills 섹션 보류 — 데이터만 유지)
     │   └── site.js          # 메뉴, 섹션 제목, 버튼 문구 등 고정 문구
     ├── pages/
     │   ├── Home/
     │   │   ├── Home.jsx
-    │   │   └── sections/    # Hero, About, FeaturedBook(+모바일용 FeaturedProjects), Skills(보류)
+    │   │   └── sections/    # Hero, About, ProjectTiles (각각 .jsx + .module.scss)
     │   ├── Projects/
     │   ├── ProjectDetail/
     │   └── NotFound/
     ├── hooks/
-    │   ├── useHeaderTheme.js   # 헤더 아래 섹션의 테마(light/band/dark) 감지
-    │   └── useMediaQuery.js    # 화면 크기·동작 줄이기 설정 확인
+    │   └── useHeaderTheme.js   # 헤더 아래 섹션의 테마(light/band/dark) 감지
     ├── routes/
     │   └── paths.js         # PATHS, toProjectDetail(), SECTION_IDS
     ├── utils/
@@ -255,20 +249,14 @@ portfolio/
 - `global.scss`는 `main.jsx`에서 한 번만 import
 - 각 `*.module.scss`는 `@use "@/styles/variables" as *;` 형태로 토큰을 불러옴
 - 색·간격·폰트 크기 하드코딩 금지(토큰 없으면 `_variables.scss`에 먼저 추가)
-- 대표 모션은 두 곳뿐: ① 인트로 영상 ② Home 대표 프로젝트 **책 넘기기**. 그 외 페이지 전체에 같은 등장 애니메이션 반복 금지
-- **대표 프로젝트 책 규칙** (`pages/Home/sections/FeaturedBook.jsx`) — Apple 제품 섹션 방식의 **검정 섹션**(`data-header-theme="dark"`)
-  - 책 이미지·영상: Adobe Firefly로 생성(펼친 책·닫힌 책 사진 → 첫/마지막 장면 지정 영상). 원본은 `docs/design/book/`
-  - **PC — 스크롤 타임라인 하나로 진행** (구간 길이 `SEG`, 화면 높이 단위)
-    1. 오프닝(1.6): 닫힌 책이 펼쳐지는 영상을 스크롤에 맞춰 재생 — 프레임 이미지를 canvas에 그림. 큰 흰 제목은 서서히 사라짐
-    2. 등장(0.7): 펼친 페이지 위에 내용이 하나씩 서서히 나타남 (`--reveal` 0→1, 요소마다 순서 `--i`)
-    3. 넘김(장당 0.9): `react-pageflip`으로 종이가 휘며 넘어감. 구간의 절반을 지나면 다음 펼침
-  - **스크롤을 멈추면 오프닝·등장을 끝까지 자동 재생**(실제로는 자동 스크롤 = 스크롤 위치가 유일한 기준). 휠·터치·키·클릭이 들어오면 즉시 중단, 위로 올릴 땐 자동 재생 안 함
-  - 이전/다음 버튼·←/→ 키: 해당 펼침의 스크롤 위치로 이동 (등장이 끝난 뒤 표시)
-  - 작품 페이지 영역은 영상 마지막 장면에서 측정한 `PAGE_RECT`(16:9 프레임 기준 %)에 겹침 — **영상을 바꾸면 반드시 다시 측정**
-  - 페이지 수는 짝수(펼침 단위): [소개, 대표 작품…, 전체 보기, (끝)]. 대표 작품이 바뀌면 자동 반영
-  - 페이지 안 글자 크기는 페이지 너비 비례(`cqw`), 한국어는 단어 단위 줄바꿈(`word-break: keep-all`)
-  - **모바일(767px 이하)**: 섹션에 닿으면 영상 1회 자동 재생 + 아래 일반 카드 목록 (`FeaturedProjects`)
-  - **동작 줄이기**: 영상 대신 마지막 장면 정지 이미지 + 카드 목록
+- 대표 모션은 인트로 영상(보류) 한 곳. 그 외 페이지 전체에 같은 등장 애니메이션 반복 금지
+- **작품 소개 규칙** (`pages/Home/sections/ProjectTiles.jsx`)
+  - 팀 프로젝트 → 개인 프로젝트 순서로 나눠 보여줌 (`type` 기준)
+  - 카드 크기는 모두 같게: 4열(태블릿 2열, 모바일 1열), 간격 `$space-6`
+  - **카드 = 작품 사진만**(16:10, 둥근 모서리), 분류·이름·부제·버튼은 카드 **아래**
+  - 이름은 `name`의 " — " 앞, 부제는 뒤
+  - 버튼 2개: 상세 페이지 있으면 [자세히 보기, 첫 링크], 없으면 [첫 링크, 둘째 링크]
+  - 썸네일은 **사이트 메인 화면** 캡처(내 담당 화면 X), 1200×750 webp
 
 ## 10. 상태관리 원칙
 - 상태는 가장 가까운 범위에: `useState` → props → Custom Hook 순
@@ -322,6 +310,7 @@ portfolio/
 - 폴더 구조 / Routes / 데이터 계약(7장) / 디자인 토큰 / Dependency / Git 워크플로우 / 인트로 규칙
 
 ## 16. 버전 히스토리
+- v3.0 (2026-10-07): 작품 소개를 팀/개인 분리 + 같은 크기 사진 카드(글은 카드 아래)로 정리. JAJAK·멍냥허브 썸네일을 사이트 메인 화면으로 교체. **책 연출 코드 정리** — `FeaturedBook`·`FeaturedProjects`·`Skills`·`Section.module.scss`·`useMediaQuery`·`public/book/`·`react-pageflip`·`BOOK_TEXT`·`HERO_TEXT`·`$color-book-paper` 삭제 (원본은 `docs/design/book/`에 보관).
 - v2.9 (2026-10-07): Home 작품 소개를 책 연출 대신 **Apple 홈페이지 제품 타일 방식**으로 교체 (`ProjectTiles`) — 2열, 연한 하늘색/검정 체크무늬, 분류 → 큰 이름 → 부제 → 버튼 2개 → 스크린샷. 전체 6개 노출. 책 파일(`FeaturedBook`, `public/book/`)은 확정 전까지 보관.
 - v2.8 (2026-10-07): 첫 화면 버튼 제거, 문구를 "디자인을 코드로, 화면을 경험으로."로 확정(기술 이름 빼고 짧게). 헤더 로고 `YG`, 헤더 구분선 제거(검정 섹션에선 헤더도 검정). About 개편 — 사진 자리(4:5) + 소개 + 교육 과정(2026.04.16 ~ 2026.10.26) + 과정에서 배운 것 4묶음(`profile.learned`). index.html 글씨체 중복 로드 제거.
 - v2.7 (2026-10-07): 글씨체 확정 — Pretendard Variable 웹폰트를 index.html에서 실제로 불러옴(이전엔 이름만 지정돼 설치 안 된 PC에선 맑은 고딕으로 보임). 본문 17px, 큰 제목 굵기 800→700, 제목 자간 토큰 추가. 첫 화면 Apple 제품 섹션 방식(가운데 정렬).

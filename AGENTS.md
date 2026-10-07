@@ -24,7 +24,7 @@
 ## 1. 프로젝트 개요
 - 목적: 취업용 개인 포트폴리오 웹사이트
 - 대상: 채용 담당자, 현직 개발자(코드와 GitHub까지 볼 수 있는 사람)
-- 핵심 메시지: "인터랙션으로 사용 경험을 만드는 프론트엔드 개발자"
+- 핵심 메시지: "디자인을 코드로, 화면을 경험으로." (첫 화면 한 줄 소개)
 - 배포: Vercel (`main` 브랜치 push 시 자동 배포)
 
 ## 2. 역할 (Ownership)
@@ -91,7 +91,9 @@ apple.com의 색 구조(흰 배경 / 밝은 회색 띠 / 거의 검정 글자 / 
 - 긴 본문은 `$text-max-width`(680px)를 넘지 않게 합니다.
 
 ### 4-2. 타이포그래피
-- 기본 폰트: Pretendard (`index.html`에서 CDN으로 로드), 대체 폰트 `"Malgun Gothic", system-ui, sans-serif`
+- 기본 폰트: **Pretendard Variable** — `index.html`에서 dynamic subset CSS **한 줄만** 로드 (static 전체 파일 중복 로드 금지)
+- 대체 폰트: `-apple-system, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif`
+- 본문 17px, 큰 제목 굵기 700, 제목 자간 `$letter-spacing-title`(-0.025em) / `$letter-spacing-heading`(-0.015em)
 - 폰트 크기·굵기는 `_variables.scss`의 `$font-size-*`, `$font-weight-*` 토큰 사용
 
 ### 4-3. 간격
@@ -113,11 +115,13 @@ URL은 `src/routes/paths.js`에서만 정의합니다. 컴포넌트에서 `"/pro
 
 | 페이지 | 경로 | 내용 |
 | --- | --- | --- |
-| Home | `/` | **인트로(첫 화면: 이름·한 줄 소개) → About → 작품 소개(검정 책) → 푸터(연락처)** |
+| Home | `/` | **첫 화면(라벨·이름·한 줄 소개·보조 설명, 버튼 없음) → About(사진·소개·교육 과정·배운 것) → 작품 소개(Apple 타일 6개) → 푸터(연락처)** |
 | Projects | `/projects` | 프로젝트 6개 전체 — **팀 프로젝트 / 개인 프로젝트 두 섹션**, 카드마다 기술 태그 |
 | ProjectDetail | `/projects/:projectId` | 개요, 담당, 문제·해결, 스크린샷, 링크 — `hasDetail: true`인 프로젝트만 |
 | NotFound | `*` | 404 (없는 `projectId`, 상세 페이지 없는 `projectId`도 여기로) |
 
+- 헤더 로고는 이니셜 `YG`(`profile.logo`), 누르면 홈. 헤더 아래 구분선 없음(배경색이 아래 섹션과 같아 자연스럽게 이어짐)
+- About 사진: `public/images/`에 넣고 `profile.photo`에 파일명만 적음(세로 4:5). 비어 있으면 같은 크기의 빈 자리 표시
 - About은 Home 안의 섹션, **Contact는 푸터**입니다 (헤더 Contact 메뉴 → 푸터로 스크롤). Skills는 "나중에 추가" 목록.
 - Projects 페이지는 필터 없이 "팀 프로젝트" 섹션 → "개인 프로젝트" 섹션 순서로 나눠 보여줍니다. 구분은 `projects.js`의 `type`(`"team"` / `"solo"`) 값으로만 합니다.
 - 카드마다 기술 분류 태그(`category`: React / Canvas / Vanilla JS)를 붙입니다. 개인 섹션은 React → Canvas → Vanilla JS 순서로 배치합니다.
@@ -138,6 +142,7 @@ portfolio/
 ├── vite.config.js
 ├── vercel.json
 ├── public/
+│   ├── images/              # About 사진 (profile.webp, 세로 4:5)
 │   ├── book/                # 대표 프로젝트 책 오프닝 (원본은 docs/design/book/)
 │   │   ├── frames/f001~084.webp  # 스크롤 재생용 프레임 (영상에서 12fps 추출, 약 750KB)
 │   │   ├── book-open.mp4 / .webm # 모바일 자동 재생용 영상 (7초, 400KB / 190KB)
@@ -153,14 +158,14 @@ portfolio/
     │   ├── common/          # SiteLayout, Header, Footer, ScrollToTop (+ IntroVideo: 10번 작업)
     │   └── ui/              # SectionTitle, ProjectCard (필요 시 Button, Tag 추가)
     ├── data/
-    │   ├── profile.js       # 이름, 소개, 연락처
+    │   ├── profile.js       # 이름, 로고, 소개, 사진, 교육 과정, 배운 것, 연락처
     │   ├── projects.js      # 프로젝트 목록 + 상세 + 조회 헬퍼
     │   ├── skills.js        # 스킬
     │   └── site.js          # 메뉴, 섹션 제목, 버튼 문구 등 고정 문구
     ├── pages/
     │   ├── Home/
     │   │   ├── Home.jsx
-    │   │   └── sections/    # Hero, About, FeaturedProjects, Skills, Contact
+    │   │   └── sections/    # Hero, About, FeaturedBook(+모바일용 FeaturedProjects), Skills(보류)
     │   ├── Projects/
     │   ├── ProjectDetail/
     │   └── NotFound/
@@ -317,6 +322,9 @@ portfolio/
 - 폴더 구조 / Routes / 데이터 계약(7장) / 디자인 토큰 / Dependency / Git 워크플로우 / 인트로 규칙
 
 ## 16. 버전 히스토리
+- v2.9 (2026-10-07): Home 작품 소개를 책 연출 대신 **Apple 홈페이지 제품 타일 방식**으로 교체 (`ProjectTiles`) — 2열, 연한 하늘색/검정 체크무늬, 분류 → 큰 이름 → 부제 → 버튼 2개 → 스크린샷. 전체 6개 노출. 책 파일(`FeaturedBook`, `public/book/`)은 확정 전까지 보관.
+- v2.8 (2026-10-07): 첫 화면 버튼 제거, 문구를 "디자인을 코드로, 화면을 경험으로."로 확정(기술 이름 빼고 짧게). 헤더 로고 `YG`, 헤더 구분선 제거(검정 섹션에선 헤더도 검정). About 개편 — 사진 자리(4:5) + 소개 + 교육 과정(2026.04.16 ~ 2026.10.26) + 과정에서 배운 것 4묶음(`profile.learned`). index.html 글씨체 중복 로드 제거.
+- v2.7 (2026-10-07): 글씨체 확정 — Pretendard Variable 웹폰트를 index.html에서 실제로 불러옴(이전엔 이름만 지정돼 설치 안 된 PC에선 맑은 고딕으로 보임). 본문 17px, 큰 제목 굵기 800→700, 제목 자간 토큰 추가. 첫 화면 Apple 제품 섹션 방식(가운데 정렬).
 - v2.6 (2026-10-06): **방향 확정 + 디자인 동결.** Home 흐름을 인트로(첫 화면) → About → 작품 소개(검정 책) → 푸터(연락처)로 단순화. Skills·Contact 섹션 제거, 연락처는 푸터로 합침(이메일 크게 + 메일 보내기·GitHub). 인트로 영상·Skills·Vite 업그레이드는 "나중에 추가" 목록으로.
 - v2.5 (2026-10-06): 대표 프로젝트 책을 **검정 섹션 + Firefly 실사 책 영상**으로 교체 — 스크롤 재생 오프닝(자동 이어 재생 포함) → 내용 순차 등장 → `react-pageflip` 종이 휨 넘김. 모바일은 영상 자동 재생 + 카드 목록. `$color-black`·`$color-book-paper` 토큰, `public/book/` 자산 추가.
 - v2.4 (2026-10-02): 책 넘기기에 이전/다음 버튼·키보드(←/→) 추가, 실제 책 질감(하드커버·종이 결·책등 그림자·페이지 두께)을 CSS로 적용.

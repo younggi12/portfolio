@@ -37,11 +37,11 @@ $color-intro-bg: #384959;
 $color-intro-text: #ffffff;
 
 // ---- 4-2. 타이포그래피 ----
-$font-family-base: "Pretendard", "Malgun Gothic", system-ui, sans-serif;
+$font-family-base: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
 
 $font-size-xs: 12px;
 $font-size-sm: 14px;
-$font-size-md: 16px;
+$font-size-md: 17px;   // Apple 본문 크기
 $font-size-lg: 18px;
 $font-size-xl: 24px;
 $font-size-2xl: 32px;
@@ -50,8 +50,13 @@ $font-size-4xl: 64px;
 
 $font-weight-regular: 400;
 $font-weight-medium: 500;
+$font-weight-semibold: 600;
 $font-weight-bold: 700;
-$font-weight-black: 800;
+$font-weight-black: 700;  // 큰 제목 — 800은 무거워 보여 700으로 (깔끔한 인상)
+
+// 자간: 큰 글씨일수록 좁게 (Apple 방식)
+$letter-spacing-title: -0.025em;
+$letter-spacing-heading: -0.015em;
 
 $line-height-tight: 1.25;
 $line-height-base: 1.7;   // 흰 본문이 길어도 읽기 편하게 넉넉히

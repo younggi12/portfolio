@@ -1,0 +1,42 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  min-height: calc(100vh - #{$header-height});
+  padding: $space-20 $side-padding-mobile;
+  text-align: center;
+}
+
+.role {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-text-soft;
+}
+
+.name {
+  font-size: clamp(56px, 9vw, 112px);
+  font-weight: $font-weight-black;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.tagline {
+  max-width: 32ch;
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  word-break: keep-all;
+}
+
+.description {
+  max-width: 46ch;
+  font-size: $font-size-md;
+  line-height: $line-height-base;
+  color: $color-text-soft;
+  word-break: keep-all;
+}

@@ -1,0 +1,102 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// Apple 타일 사이 간격처럼 흰 틈 12px
+.section {
+  padding: $space-3;
+  background-color: $color-bg;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-3;
+
+  @include mobile { grid-template-columns: 1fr; }
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  min-height: 580px;
+  padding-top: $space-16;
+  text-align: center;
+
+  @include mobile {
+    min-height: 480px;
+    padding-top: $space-10;
+  }
+}
+
+// 밝은 타일: 연한 하늘색 + 검정 글자
+.light {
+  background-color: $color-band-solid;
+  color: $color-text;
+
+  .primary { @include button-primary; }
+  .secondary { @include button-outline; }
+}
+
+// 검정 타일: 검정 + 흰 글자
+.dark {
+  background-color: $color-black;
+  color: $color-on-panel;
+
+  .primary { @include button-on-panel; }
+  .secondary {
+    @include button-base;
+    border: 1px solid currentColor;
+    color: $color-on-panel;
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+  padding-inline: $space-6;
+}
+
+.eyebrow {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.title {
+  font-size: clamp(32px, 3.4vw, $font-size-3xl);
+  font-weight: $font-weight-black;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: clamp(17px, 1.6vw, 22px);
+  word-break: keep-all;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-3;
+  margin-top: $space-4;
+}
+
+// 스크린샷: 타일 아래쪽에 크게, 아래 끝은 타일 밖으로 살짝 잘림 (Apple 제품 이미지처럼)
+.image {
+  width: 82%;
+  margin-top: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+  border-radius: $radius-lg $radius-lg 0 0;
+  box-shadow: 0 -8px 40px rgba($color-black, 0.18);
+  transform: translateY(12%);
+  transition: transform $duration-base $easing-base;
+
+  .tile:hover & { transform: translateY(8%); }
+}
+
+.text { margin-bottom: $space-10; }

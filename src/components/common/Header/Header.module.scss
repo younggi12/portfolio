@@ -9,26 +9,23 @@
   backdrop-filter: saturate(180%) blur(12px);
   transition:
     background-color $duration-base $easing-base,
-    color $duration-base $easing-base,
-    border-color $duration-base $easing-base;
+    color $duration-base $easing-base;
 }
 
 // ---- 아래 섹션에 맞춘 3가지 테마 ----
+// 구분선 없음: 배경색이 아래 섹션과 같아서 헤더가 페이지와 이어져 보인다 (Apple 방식)
 .light {
   background-color: rgba($color-bg, 0.8);
-  border-bottom: 1px solid $color-border;
   color: $color-text;
 }
 
 .band {
   background-color: rgba($color-band-solid, 0.85);
-  border-bottom: 1px solid $color-border;
   color: $color-text;
 }
 
 .dark {
-  background-color: rgba($color-panel, 0.85);
-  border-bottom: 1px solid rgba($color-on-panel, 0.15);
+  background-color: rgba($color-black, 0.8); // 검정 책 섹션과 같은 색
   color: $color-on-panel;
 }
 
@@ -41,8 +38,9 @@
 }
 
 .logo {
-  font-size: $font-size-lg;
+  font-size: 22px;
   font-weight: $font-weight-black;
+  letter-spacing: -0.04em;
 }
 
 .nav {

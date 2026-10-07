@@ -1,15 +1,13 @@
+// 첫 화면 — Apple 제품 소개 섹션 방식 (가운데 정렬: 라벨 → 큰 이름 → 한 줄 소개 → 보조 설명)
 import { PROFILE } from "@/data/profile";
-import styles from "./Section.module.scss";
+import styles from "./Hero.module.scss";
 
-// Apple식 2톤 제목: "이영기." 진하게 + 소개 문장은 흐리게
 const Hero = () => (
-  <section data-header-theme="light" className={styles.section} aria-label="소개">
-    <div className={styles.inner}>
-      <p className={styles.muted}>{PROFILE.role}</p>
-      <h1 className={styles.headline}>
-        {PROFILE.name}. <span className={styles.soft}>{PROFILE.tagline}</span>
-      </h1>
-    </div>
+  <section data-header-theme="light" className={styles.hero} aria-label="소개">
+    <p className={styles.role}>{PROFILE.role}</p>
+    <h1 className={styles.name}>{PROFILE.name}</h1>
+    <p className={styles.tagline}>{PROFILE.tagline}</p>
+    <p className={styles.description}>{PROFILE.description}</p>
   </section>
 );
 

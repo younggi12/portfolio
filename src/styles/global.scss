@@ -36,3 +36,7 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+// 제목 자간 — 큰 글씨는 좁게 해야 단정해 보임
+h1, h2 { letter-spacing: $letter-spacing-title; }
+h3, h4 { letter-spacing: $letter-spacing-heading; }

@@ -47,3 +47,9 @@ export const FOOTER_TEXT = {
   emailLabel: "이메일 보내기",
   githubLabel: "GitHub",
 };
+
+// 첫 화면 (Apple 제품 소개 섹션 방식: 큰 제목 → 한 줄 소개 → 버튼 2개)
+export const HERO_TEXT = {
+  primary: "작품 보기",
+  secondary: "연락하기",
+};

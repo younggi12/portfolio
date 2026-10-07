@@ -14,7 +14,7 @@ const Header = () => {
   return (
     <header className={`${styles.header} ${styles[theme]}`}>
       <div className={styles.inner}>
-        <Link to={PATHS.home} className={styles.logo}>{PROFILE.name}</Link>
+        <Link to={PATHS.home} className={styles.logo} aria-label={`${PROFILE.name} 홈으로`}>{PROFILE.logo}</Link>
         <nav aria-label="주요 메뉴">
           <ul className={styles.nav}>
             {NAV_ITEMS.map((item) => (

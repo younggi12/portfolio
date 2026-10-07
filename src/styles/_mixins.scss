@@ -68,3 +68,10 @@
   background-color: $color-band;
 }
 
+
+// 보조 버튼 — 테두리만 (Apple "구입하기" 버튼처럼)
+@mixin button-outline {
+  @include button-base;
+  border: 1px solid currentColor;
+  color: $color-text;
+}

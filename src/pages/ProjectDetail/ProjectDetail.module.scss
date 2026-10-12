@@ -134,15 +134,17 @@
 // ---- 내가 만든 기능: 3열 (사진 + 제목 + 한 줄) ----
 .features {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr)); // minmax(0) — 긴 코드 줄이 칸을 넓히지 않게
   gap: $space-6;
 
+  @include tablet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   @include mobile { grid-template-columns: 1fr; }
 }
 
 .feature {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 
   h3 {
     margin-top: $space-4;

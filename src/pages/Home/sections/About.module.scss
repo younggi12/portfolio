@@ -91,6 +91,7 @@
   }
 
   strong {
+    white-space: nowrap;
     font-size: $font-size-3xl;
     font-weight: $font-weight-black;
     letter-spacing: $letter-spacing-title;
@@ -104,9 +105,13 @@
     font-weight: $font-weight-bold;
   }
 
-  span { font-size: $font-size-sm; }
+  span {
+    font-size: $font-size-sm;
+    white-space: nowrap;
+  }
 
-  @include mobile {
+  // 태블릿 · 모바일은 2칸씩 (4칸이면 "6개월"·"팀 프로젝트"가 줄바꿈됨)
+  @include below-desktop {
     grid-template-columns: repeat(2, 1fr);
     row-gap: $space-6;
   }
@@ -120,7 +125,10 @@
   padding-top: $space-4;
   border-top: 1px solid $color-border;
 
-  dt { font-weight: $font-weight-bold; }
+  dt {
+    font-weight: $font-weight-bold;
+    word-break: keep-all;
+  }
   dd { margin: 0; font-variant-numeric: tabular-nums; }
 }
 

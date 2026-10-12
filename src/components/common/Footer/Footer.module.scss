@@ -38,6 +38,7 @@
   font-weight: $font-weight-bold;
   letter-spacing: $letter-spacing-heading;
   line-height: $line-height-tight;
+  word-break: keep-all;
 
   @include mobile { font-size: $font-size-lg; }
 }

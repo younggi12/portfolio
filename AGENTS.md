@@ -102,7 +102,7 @@ apple.com의 색 구조(흰 배경 / 밝은 회색 띠 / 거의 검정 글자 / 
 ### 4-4. 레이아웃 / 반응형
 - 헤더 높이 `$header-height`(72px), 섹션 이동 시 헤더에 가려지지 않게 `scroll-padding-top` 적용
 - Breakpoint: Mobile 0–767 / Tablet 768–1199 / Desktop 1200+
-- PC 1440 기준, content max-width 1280, 좌우 여백 80px(모바일 20px), gutter 24px
+- PC 1440 기준, content max-width 1280(작품 소개만 넓게 1600 — `$content-wide-max-width`), 좌우 여백 80px(모바일 20px), gutter 24px
 - 미디어쿼리는 `_mixins.scss`의 `@include mobile`, `@include tablet`, `@include below-desktop` 믹스인으로만 작성
 - 가운데 정렬 콘텐츠 영역은 `@include container` 사용
 
@@ -123,7 +123,7 @@ URL은 `src/routes/paths.js`에서만 정의합니다. 컴포넌트에서 문자
 - 헤더 로고: 이니셜 `YG`(`profile.logo`) + 깜빡이는 커서(글자와 같은 색, 동작 줄이기 설정이면 멈춤), 누르면 홈. 헤더 아래 구분선 없음
 - 탭 아이콘: `public/favicon.svg` — 검정 둥근 사각형 + 흰 YG(글자를 도형으로 변환해 폰트와 무관)
 - 링크 미리보기: `public/og-image.png`(1200×630, 검정 배경 + 흰 문구 "디자인을 코드로 / 화면을 경험으로" + YG| · 이름 — 인트로와 같은 느낌) + `index.html`의 `og:*` 태그. **배포 후 `og:image`를 `https://배포주소/og-image.png` 전체 주소로 바꾸고 `og:url` 추가** `[확정 필요]`
-- About 구성: 사진 | 역할 · 이름(큰 글자) · 소개 · 숫자 칸 3개(위 라벨 → 아래 숫자, 단위도 같은 크기 / 작품 · 팀 프로젝트 수는 `projects.js`에서 계산, 교육 개월 수는 `profile.education.months`) · 교육 과정 → 아래 "과정에서 배운 것" 흰 카드 4개(모든 항목에 아이콘 — 기술은 브랜드 아이콘, 개념은 선 아이콘)
+- About 구성: 사진 | 역할 · 이름(큰 글자) · 소개 · 숫자 칸 3개(위 라벨 → 아래 숫자, 단위도 같은 크기 / 작품 · 팀 프로젝트 수는 `projects.js`에서 계산, 교육 개월 수는 `profile.education.months`) → 아래 "이젠컴퓨터아카데미에서 배운 것"(제목 = 배운 곳, 아래 작은 줄 = 과정 · 기간 — `profile.education`) 흰 카드 5개(화면 구현 · JavaScript · React · 데이터 · 서버 · 협업 · 도구, 항목 5~6개씩, PC 5열 · 태블릿 3열 · 모바일 1열, 모든 항목에 아이콘 — 기술은 브랜드 아이콘, 개념은 선 아이콘)
 - About 사진: `public/images/`에 넣고 `profile.photo`에 파일명만 적음(세로 4:5). 비어 있으면 진한 칸에 이니셜 `YG` 표시
 - About은 Home 안의 섹션, **Contact는 푸터**입니다 (헤더 Contact 메뉴 → 푸터로 스크롤). Skills는 "나중에 추가" 목록.
 - 푸터(Apple 푸터처럼 작은 글자 + 얇은 구분선): 왼쪽 CONTACT · 인사말(24px) · 한 줄 설명 / 오른쪽 연락처 목록(이메일 글자 + 복사 버튼, GitHub ↗) — mailto 링크 · "이메일 보내기" 버튼 없음(메일 앱 없는 PC에서 동작 안 함) / 맨 아래 © · 만든 도구 | 맨 위로. 문구는 `FOOTER_TEXT`
@@ -154,7 +154,7 @@ portfolio/
     ├── assets/
     │   └── images/projects/ # 프로젝트 스크린샷 (webp, 파일명 영문 소문자 + 하이픈)
     ├── components/
-    │   └── common/          # SiteLayout, Header, Footer, ScrollToTop, Intro, Lightbox
+    │   └── common/          # SiteLayout, Header, Footer, ScrollToTop, Intro, Lightbox, SkillIcon
     ├── data/
     │   ├── profile.js       # 이름, 로고, 소개, 사진, 교육 과정, 배운 것, 연락처
     │   ├── projects.js      # 프로젝트 목록 + 상세(detail) + 조회 헬퍼
@@ -173,7 +173,7 @@ portfolio/
     │   └── paths.js         # PATHS, toProjectDetail(), SECTION_IDS
     ├── utils/
     │   ├── getProjectImage.js  # 이미지 파일명 → 빌드 URL
-    │   └── skillIcons.js       # 기술 아이콘 키 → simple-icons / lucide-react
+    │   └── skillIcons.js       # 기술 아이콘 키 → simple-icons / lucide-react, getStackIcon(기술 이름)
     └── styles/
         ├── _variables.scss
         ├── _mixins.scss
@@ -198,10 +198,15 @@ portfolio/
   category: "React",            // "React" | "Canvas" | "Vanilla JS"
   teamSize: 5,                  // solo면 1
   period: "2026.08 ~ 2026.09",
-  role: "회원 인증, 고객센터, 위시리스트",  // 팀: 내 담당 / 솔로: "기획·디자인·개발 전체"
+  role: "회원 인증, 고객센터, 위시리스트",  // 팀: 내 담당 / 솔로: "기획·디자인·개발 전체" (상세 페이지)
+  roleShort: "회원 인증 · 고객센터 · 위시리스트", // 팀만 — 작품 카드의 "담당" 한 줄 (짧게)
   summary: "한 줄 소개",
   stack: ["React 19", "Firebase Auth"],
   thumbnail: "jajak-thumb.webp", // 카드 + 상세 상단 대표 화면 (1200×600, 2:1)
+  headerText: "#2c231b",        // 그 작품 사이트 헤더 글자색 → 패널 글자 · 아이콘 색 (원본 CSS 값)
+  headerGlow: "cyan",           // 선택 — 원본 글자에 text-shadow 빛이 있을 때 (벽돌깨기 제목)
+  // 값마다 출처를 주석으로: 원본 CSS 값 / 배포 화면 캡처 측정 / 이미지 평균(단색 없음)
+  headerColor: "#f2ebe2", headerTone: "light", // 그 작품 사이트 헤더 색(원본 CSS 값, 단색 또는 그라데이션) → 카드 기술 패널 배경 ("dark"면 흰 글자) — 팔레트 예외(작품 고유 색)
   links: [{ label: "사이트", href: "..." }, { label: "GitHub", href: "..." }],
   hasDetail: true,              // 상세 페이지 유무
   isMore: false,                // true면 처음엔 숨기고 "더보기"로 표시 (생략 = false)
@@ -228,9 +233,9 @@ portfolio/
 | --- | --- | --- | --- | --- | --- |
 | `jajak` | JAJAK — 전통주 AI 큐레이션 쇼핑몰 | 팀 | React | O | 사이트 jajak-ten.vercel.app / GitHub jiwoo1012/TeamProject2 |
 | `mungnyang-hub` | 멍냥허브 — 반려동물 용품 쇼핑몰 | 팀 | Vanilla JS | O | 사이트 projectmangryung.github.io/teamproject/ / GitHub projectMangRyung/teamproject |
-| `f1-fansite` | F1 팬사이트 — 방명록 | 개인 | React | O | 방명록 guestbook01-phi.vercel.app (GitHub younggi12/guestbook01) / 게시글(학습 버전) re008-tzii.vercel.app (GitHub younggi12/re008) |
-| `canvas-breaker` | 캔버스 벽돌깨기 게임 | 개인 | Canvas | O | 사이트 younggi12.github.io/breaker/js061201.html / GitHub younggi12/breaker |
-| `canvas-draw` | 캔버스 드로잉 앱 | 개인 | Canvas | O | 사이트 younggi12.github.io/draw-app/js060901.html / GitHub younggi12/draw-app |
+| `f1-fansite` | F1 팬사이트 — 응원 메시지를 남기는 방명록 | 개인 | React | O | 방명록 guestbook01-phi.vercel.app (GitHub younggi12/guestbook01) / 게시글(학습 버전) re008-tzii.vercel.app (GitHub younggi12/re008) |
+| `canvas-breaker` | SPACE BREAKER — 우주 테마 벽돌깨기 게임 | 개인 | Canvas | O | 사이트 younggi12.github.io/breaker/js061201.html / GitHub younggi12/breaker |
+| `canvas-draw` | 캔버스 드로잉 앱 — 그리고 저장하는 그림판 | 개인 | Canvas | O | 사이트 younggi12.github.io/draw-app/js060901.html / GitHub younggi12/draw-app |
 | `blueline` | BlueLine 야구용품 쇼핑몰 | 개인 | Vanilla JS | O | 사이트 younggi12.github.io/-4/index.html / GitHub younggi12/-4 |
 
 - 화면 순서: 팀(JAJAK → 멍냥허브) → 개인(BlueLine → F1 → 벽돌깨기 → 드로잉 앱). 6개 모두 상세 페이지 있음.
@@ -259,6 +264,7 @@ portfolio/
 - `global.scss`는 `main.jsx`에서 한 번만 import
 - 각 `*.module.scss`는 `@use "@/styles/variables" as *;` 형태로 토큰을 불러옴
 - 색·간격·폰트 크기 하드코딩 금지(토큰 없으면 `_variables.scss`에 먼저 추가)
+- 작품 카드 사진: 스크롤하면 서서히 등장(사이트 공통 `data-reveal`), 마우스를 올리면 아래에서 기술 태그 패널(`stack` + 아이콘)이 올라옴(터치 기기는 숨김), 사진을 누르면 상세 페이지
 - 모션은 다섯 가지만: 인트로(한 글자씩 등장) · **스크롤 등장** · 상세 페이지 첫 화면 페이드 인(`pageFadeIn`) · 헤더 로고 커서 깜빡임 · 크게 보기 열릴 때 페이드. 새 애니메이션 추가 금지
 - **스크롤 등장**(`hooks/useScrollReveal.js`, SiteLayout에서 1회 실행): 요소에 `data-reveal`만 붙이면 화면에 들어올 때 흐림 없이 투명 → 선명 + 32px 아래에서 위로(0.9s, Apple 방식). 같이 들어온 요소는 90ms씩 순서대로(최대 6칸). 인트로 중엔 기다렸다가 끝나면 시작(`html[data-intro="playing"]` + `introdone` 이벤트). 새 섹션을 만들면 제목 · 카드 단위로 `data-reveal`을 붙임 (푸터, 페이지 첫 화면(상세 상단 · 개요)에는 붙이지 않음 — 들어가자마자 움직이면 어색함) (글자 하나하나, 버튼 하나하나에는 붙이지 않음)
 - **작품 소개 규칙** (`pages/Home/sections/ProjectTiles.jsx`)
@@ -321,6 +327,31 @@ portfolio/
 - 폴더 구조 / Routes / 데이터 계약(7장) / 디자인 토큰 / Dependency / Git 워크플로우 / 인트로 규칙
 
 ## 16. 버전 히스토리
+- v3.43 (2026-10-12): 작품 소개를 무신사 기업 사이트 방식으로 — 그룹(팀 / 개인)마다 화면 멈춤(sticky stage), 흰 배경이 꽉 찬 뒤 스크롤하면 제목이 가운데에 서서히 등장 후 위로 지나감(고정 안 함), 작품(썸네일 + 사진 반대쪽 설명, 좌우 번갈아)이 아래에서 서서히 나타나 화면 위로 빠져나감(사라짐 효과 없음, 스크롤과 같은 속도). 휴대폰 · 동작 줄이기는 보통 목록. `PROJECT_GROUP_TEXT` 추가, 썸네일 흰 카드 · 하늘색 바탕 제거, 썸네일 테두리 18%. 헤더: 작품 소개가 화면을 덮을 때만 아래로 스크롤하면 숨김(`useHideOnScroll`). 사이트 전체 휠 스크롤을 75% 속도로 부드럽게(`useSmoothScroll`). 새로고침하면 맨 위(인트로 → About)에서 시작(`main.jsx`, scrollRestoration manual). ※ 9장 "작품 소개 규칙" · "모션은 다섯 가지만" 문구는 마지막 정리 때 갱신.
+- v3.42 (2026-10-12): 작품 카드 사진 등장을 마스크 리빌(왼쪽 → 오른쪽 걷힘)에서 사이트 공통 서서히 등장으로 변경, `data-reveal="wipe"` 스타일 삭제.
+- v3.41 (2026-10-12): 교육 과정 줄을 소개 아래에서 빼고 "배운 것" 제목으로 합침 — "이젠컴퓨터아카데미에서 배운 것" + "웹/프론트엔드 개발자 과정 · 2026.04.16 - 2026.10.26". `profile.education`을 school · course · period로, `ABOUT_TEXT.learned`를 함수로.
+- v3.40 (2026-10-12): "배운 것"을 카드 5개로 다시 묶음 — JavaScript 카드 신설(ES6+ · Canvas API · IntersectionObserver · Pointer Events · fetch · JSON), 카드마다 5~6개로 균형. PC 5열 · 태블릿 3열.
+- v3.39 (2026-10-12): "배운 것" 항목을 모두 한 줄로 — IntersectionObserver(괄호 설명 삭제), localStorage / sessionStorage 나눔, Node.js · Express 기초 / MySQL 기초 나눔(MySQL 아이콘 추가). 항목은 카드 한 줄에 들어가는 길이로 씀.
+- v3.38 (2026-10-12): About "배운 것"에 작품에서 쓴 기술 추가 — 화면 구현: IntersectionObserver(스크롤 연출) · Pointer Events / 데이터 · 서버: "fetch · JSON 데이터"를 fetch · JSON으로 나누고 localStorage · sessionStorage 추가. 아이콘은 상세 페이지와 같은 것.
+- v3.37 (2026-10-12): 기술 패널 — 한 줄에 다 들어가면 기술을 전부 보여주고, 넘칠 때만 들어가는 만큼 + "+N"(`StackLine`, 너비를 재서 계산 · 카드 크기 바뀌면 다시 계산). `PANEL_MAX` 삭제.
+- v3.36 (2026-10-12): 작품 소개 영역을 넓게(최대 1600px, `$content-wide-max-width`) — 큰 화면에서 카드 · 기술 패널이 약 1.25배. 2열 · 태블릿 · 모바일은 그대로.
+- v3.35 (2026-10-12): 상세 페이지 소개 문장을 부제와 겹치지 않게 "어떻게 만들었는지"로 다시 씀, 소개 칸을 넓힘. F1 개선할 점을 실제 코드 기준(전체 실시간 구독 → 페이지 단위 불러오기)으로 교체, BlueLine "저장소 이름 정리" 삭제. 사이트 전체 읽기 좋은 줄바꿈 규칙(global.scss).
+- v3.35 (2026-10-12): 상세 페이지 소개 문장(`summary`)을 부제와 겹치지 않게 "어떻게 만들었는지"로 교체(JAJAK 제외), 칸을 `$text-max-width`로 넓히고 `text-wrap: balance`, 끊기면 안 되는 말은 `\u00a0`(예: "한 상"). 개선할 점 정리 — F1은 실제 개선점(페이지 단위 불러오기)으로, BlueLine 저장소 이름 항목 삭제.
+- v3.34 (2026-10-12): 작품 카드 사진에 연한 1px 테두리(`::after`, 흰 썸네일도 카드 모양). 개인 작품 부제를 "무엇을 하는 작품인지"로 통일 — F1 "응원 메시지를 남기는 방명록", SPACE BREAKER "우주 테마 벽돌깨기 게임", 드로잉 "그리고 저장하는 그림판".
+- v3.33 (2026-10-12): 패널 색 출처 정리 — 멍냥허브 배경을 실제 보이는 색 #587866(헤더 rgba 80%가 화면에 겹친 색, 배포 사이트 캡처 측정)으로, 벽돌깨기는 헤더가 없어 제목(#gameTitle: white + cyan 빛)을 따름(`headerGlow`). 각 값 옆에 출처 주석.
+- v3.33 (2026-10-12): 멍냥허브 패널 배경을 실제 보이는 색 #547866으로(헤더 rgba(46, 90, 68, 0.8)을 body #EEEEEE 위에 겹친 값) — 썸네일 속 헤더와 같게.
+- v3.32 (2026-10-12): 모든 작품 패널 글자색을 각 사이트 헤더 글자색(원본 CSS)으로 — JAJAK #2C231B, 멍냥허브 · BlueLine · 벽돌깨기 · 드로잉 #FFFFFF, F1 #FF0000. `headerText` 필수로.
+- v3.31 (2026-10-12): F1 카드 패널 글자를 F1 사이트 헤더 메뉴처럼 빨강(#FF0000)으로 — 데이터 계약에 선택 필드 `headerText` 추가, 색 글자일 땐 칩 배경을 더 어둡게(대비 4.6:1).
+- v3.30 (2026-10-12): 작품 카드 기술 패널 속도 0.45s → 0.7s(더 부드럽게), `$duration-panel` 토큰 추가.
+- v3.29 (2026-10-12): 작품 카드 사진 링크를 키보드 Tab · 화면 읽기에서 제외(`tabIndex=-1` + `aria-hidden`) — "자세히 보기"와 같은 링크를 두 번 거치지 않게. 마우스 클릭은 그대로.
+- v3.28 (2026-10-12): 패널 색을 각 작품 저장소의 실제 헤더 CSS 값으로(멍냥허브 #2E5A44, BlueLine `.top-bar` 그라데이션 #1D3A66 → #2F6FED, F1 black, 드로잉 darkblue; 헤더가 이미지인 JAJAK · 벽돌깨기는 이미지 평균 색). 패널은 불투명 단색 · 한 줄(최대 4개 + "+N", `PANEL_MAX`).
+- v3.27 (2026-10-12): 작품 카드 기술 패널 — 배경을 헤더와 같은 반투명 흰 유리로(`@mixin frosted-light`를 헤더 · 패널이 같이 사용), 패널이 올라올 때 아래 둥근 모서리에 검게 비치던 부분 제거(카드에 `mask-image`로 사진 + 패널을 한 번에 둥글게 자름, 패널 1px 크게).
+- v3.26 (2026-10-12): 작품 카드 연출 — 사진 마스크 리빌(`data-reveal="wipe"`, global.scss) + 호버 시 기술 태그 패널. 사진 클릭 시 상세 페이지 이동. 카드 떠오르기 효과 제거(패널과 겹침). 휴대폰 · 태블릿(390 · 320 · 810px) 확인.
+- v3.25 (2026-10-12): 팀 프로젝트 카드에 "담당 …" 한 줄(데이터 계약에 `roleShort` 추가, `UI_TEXT.myRole`). 드로잉 앱 이름을 "캔버스 드로잉 앱 — 그림판"으로(부제가 없어 카드 버튼 높이가 어긋나던 문제).
+- v3.24 (2026-10-12): About 소개 첫 문장을 한 줄 소개(`.lead`, 24px 세미볼드, 두 줄로 나눔)로 키워 이름 → 한 줄 소개 → 본문 위계를 만듦.
+- v3.23 (2026-10-12): `profile.js`에서 안 쓰는 `tagline` · `description` 삭제, 주석 정리. About 소개를 작품 언급 없이 프론트엔드 개발자 소개 3문장으로(정체성 → 중요하게 생각하는 것 → 일하는 방식), 문장 속 `\n`에서 줄바꿈(`white-space: pre-line`). 배운 것: "REST API 연동" → "fetch · JSON 데이터", "Figma" → "Figma 기초"(실제 사용 수준에 맞춤).
+- v3.22 (2026-10-12): 상세 페이지 "기술" 칸을 아이콘 + 이름 목록으로(`getStackIcon` — `stack` 글자 → 아이콘 키, 새 기술은 `STACK_ICON_KEYS`에 추가). 아이콘 컴포넌트를 `components/common/SkillIcon`으로 분리해 About과 함께 사용.
+- v3.21 (2026-10-12): About 숫자 칸 위 구분선도 스크롤 등장(목록 `ul`에 `data-reveal`) · 상세 페이지 이전 / 다음 작품 영역도 등장 — 구분선만 먼저 보이던 문제.
 - v3.20 (2026-10-12): About 숫자 칸을 3개(작품 · 팀 프로젝트 · 교육 과정)로 줄이고 Apple 사양표 방식(라벨 위, 숫자 · 단위 같은 크기 32px)으로. 개인 프로젝트 칸 · `ABOUT_TEXT.stats.solo` 삭제.
 - v3.19 (2026-10-12): 푸터 "이메일 보내기" 버튼 · 이메일 mailto 링크 제거(주소 글자 + 복사 버튼만). `FOOTER_TEXT.sendMail` 삭제.
 - v3.18 (2026-10-12): 상세 페이지 사진 크게 보기(`Lightbox`), 이전 / 다음 작품 카드(`getAdjacentProjects`, `article key`로 넘어갈 때 새로 그림), 헤더 메뉴 현재 위치 표시(`useActiveSection`). JAJAK 썸네일을 팝업 없는 메인 화면으로 교체. 문구 `DETAIL_TEXT.prev/next`, `LIGHTBOX_TEXT` 추가.

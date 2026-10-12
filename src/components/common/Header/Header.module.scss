@@ -9,8 +9,12 @@
   backdrop-filter: saturate(180%) blur(12px); // 밝은 테마 값은 @mixin frosted-light와 같음
   transition:
     background-color $duration-base $easing-base,
-    color $duration-base $easing-base;
+    color $duration-base $easing-base,
+    transform $duration-base $easing-base;
 }
+
+// 작품 소개에서 아래로 스크롤할 때 위로 숨김 (Tab으로 헤더에 들어오면 다시 보임)
+.hidden:not(:focus-within) { transform: translateY(-100%); }
 
 // ---- 아래 섹션에 맞춘 3가지 테마 ----
 // 구분선 없음: 배경색이 아래 섹션과 같아서 헤더가 페이지와 이어져 보인다 (Apple 방식)

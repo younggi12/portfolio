@@ -15,6 +15,12 @@ export const SECTION_TITLES = {
   solo: "개인 프로젝트",
 };
 
+// 작품 소개 그룹 — 상단에 고정되는 제목 아래 한 줄
+export const PROJECT_GROUP_TEXT = {
+  team: "여럿이 함께 만들고, 맡은 기능은 끝까지",
+  solo: "기획부터 디자인 · 개발 · 배포까지 혼자서",
+};
+
 export const UI_TEXT = {
   viewDetail: "자세히 보기",
   notFoundTitle: "페이지를 찾을 수 없어요",

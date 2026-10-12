@@ -49,6 +49,7 @@
 - 패키지 매니저: npm 고정, `package-lock.json` 기준
 - 새 패키지는 **이 문서에 이유를 적은 뒤** 설치합니다(GSAP 등 애니메이션 라이브러리 포함).
 - `simple-icons`: About "배운 것" 카드의 기술 아이콘(단색 SVG 경로). `utils/skillIcons.js`에서 쓰는 것만 import → 빌드에 필요한 아이콘만 포함
+- `lucide-react`: 브랜드가 없는 개념 항목(Canvas, 반응형, 컴포넌트, 훅 등)의 선 아이콘. 마찬가지로 `utils/skillIcons.js`에서 쓰는 것만 import
 
 ## 4. 디자인 토큰
 모든 값은 `src/styles/_variables.scss`에서만 정의하고, 컴포넌트에서는 변수만 씁니다. 색상·간격 하드코딩 금지.
@@ -71,11 +72,13 @@ apple.com의 색 구조(흰 배경 / 밝은 회색 띠 / 거의 검정 글자 / 
 | `$color-panel-soft` | `#BDDDFC` | 하늘색 제품 카드 | 연한 카드 | 위 검정 글자 11.95 |
 | `$color-panel-soft-tag` | 흰색 60% | — | 연한 카드 위 태그 배경 | 위 글자 8.1 |
 | `$color-focus` | `#384959` | `#0071E3` | 포커스 링 | — |
+| `$color-action` / `-hover` | `#0071E3` / `#0077ED` | `#0071E3` / `#0077ED` | 주요 버튼 배경 — **팔레트 예외(Apple 파랑)** | 위 흰 글자 4.70 / 호버 4.32 |
+| `$color-link` | `#0066CC` | `#0066CC` | 보조 링크 버튼 글자 — **팔레트 예외** | 흰 5.57 / 띠 5.04 |
 | `$color-black` | `#000000` | 검정 | 헤더 진한 테마, 그림자 | — |
 | `$color-intro-bg` / `$color-intro-text` | `#000000` / `#FFFFFF` | — | 인트로 (검정 배경에 흰 글자, 끝나면 밝은 페이지가 열림) | 21 |
 
 **규칙**
-- **글자색은 검정(`#1D1D1F`)과 흰색 두 가지만** 씁니다 (Apple 방식). 밝은 배경 위 → 검정, 진한 배경 위 → 흰색. 버튼 글자도 동일.
+- **글자색은 검정(`#1D1D1F`)과 흰색 두 가지만** 씁니다 (Apple 방식). 밝은 배경 위 → 검정, 진한 배경 위 → 흰색. 예외: 보조 링크 버튼 글자 `$color-link`(파랑).
 - 팔레트 색은 배경·카드·버튼·테두리에만 쓰고 글자에는 쓰지 않습니다. 예외: 큰 제목 2톤 처리의 `$color-text-soft`.
 - 위계는 크기·굵기로 구분합니다.
 - `#88BDF2`는 **진한 카드(`$color-panel`) 위에서만** 씁니다. 흰 배경 위에서는 글자·버튼에 쓰지 않습니다(1.98:1).
@@ -83,7 +86,7 @@ apple.com의 색 구조(흰 배경 / 밝은 회색 띠 / 거의 검정 글자 / 
 - **헤더는 Apple 방식**: 항상 화면 위에 고정되어 따라오고, 배경색은 헤더 바로 아래 섹션에 맞춰 바뀝니다.
   - 모든 섹션·페이지 최상위 요소에 `data-header-theme="light" | "band" | "dark"`를 반드시 붙입니다 (흰 배경 / 띠 배경 / 진한 배경).
   - 새 섹션을 만들 때 이 속성을 빠뜨리면 헤더 색이 맞지 않습니다.
-- 버튼: 흰 배경 위 `@include button-primary`(진한 배경 + 흰 글자), 진한 카드 위 `@include button-on-panel`(하늘색 배경 + 진한 글자). 호버는 투명도 85%.
+- **버튼은 Apple 방식**: 주요 = `@include button-primary`(파란 알약 `$color-action` + 흰 글자, 호버 시 살짝 밝은 파랑) / 보조 = `@include button-link`(테두리 없는 파란 글자 + `›`, 호버 시 글자에만 밑줄 — 꺾쇠 제외). 진한 카드 위는 `button-on-panel`. 테두리만 있는 버튼(`button-outline`)은 쓰지 않음(삭제)
 - 링크 호버는 색 변화 대신 밑줄 `@include hover-underline`.
 - 긴 본문은 `$text-max-width`(680px)를 넘지 않게 합니다.
 
@@ -94,7 +97,7 @@ apple.com의 색 구조(흰 배경 / 밝은 회색 띠 / 거의 검정 글자 / 
 - 폰트 크기·굵기는 `_variables.scss`의 `$font-size-*`, `$font-weight-*` 토큰 사용
 
 ### 4-3. 간격
-- 4px 단위 스케일: `$space-1`(4px) ~ `$space-10`(40px), `$space-16`(64px), `$space-20`(80px)
+- 4px 단위 스케일: `$space-1`(4px) ~ `$space-10`(40px), `$space-12`(48px), `$space-16`(64px), `$space-20`(80px)
 
 ### 4-4. 레이아웃 / 반응형
 - 헤더 높이 `$header-height`(72px), 섹션 이동 시 헤더에 가려지지 않게 `scroll-padding-top` 적용
@@ -119,9 +122,10 @@ URL은 `src/routes/paths.js`에서만 정의합니다. 컴포넌트에서 문자
 - 전체 목록 페이지(`/projects`)는 없습니다 — 작품 목록은 Home의 작품 소개 섹션이 전부입니다. 상세의 "작품 목록으로"는 `/#projects`로 돌아감
 - 헤더 로고: 이니셜 `YG`(`profile.logo`) + 깜빡이는 커서(글자와 같은 색, 동작 줄이기 설정이면 멈춤), 누르면 홈. 헤더 아래 구분선 없음
 - 탭 아이콘: `public/favicon.svg` — 검정 둥근 사각형 + 흰 YG(글자를 도형으로 변환해 폰트와 무관)
-- About 구성: 사진 | 역할 · 이름(큰 글자) · 소개 · 숫자 칸 4개(작품 · 팀 · 개인 수는 `projects.js`에서 계산, 교육 개월 수는 `profile.education.months`) · 교육 과정 → 아래 "과정에서 배운 것" 흰 카드 4개(아이콘 + 항목, 아이콘 없는 항목은 작은 점)
+- About 구성: 사진 | 역할 · 이름(큰 글자) · 소개 · 숫자 칸 4개(작품 · 팀 · 개인 수는 `projects.js`에서 계산, 교육 개월 수는 `profile.education.months`) · 교육 과정 → 아래 "과정에서 배운 것" 흰 카드 4개(모든 항목에 아이콘 — 기술은 브랜드 아이콘, 개념은 선 아이콘)
 - About 사진: `public/images/`에 넣고 `profile.photo`에 파일명만 적음(세로 4:5). 비어 있으면 진한 칸에 이니셜 `YG` 표시
 - About은 Home 안의 섹션, **Contact는 푸터**입니다 (헤더 Contact 메뉴 → 푸터로 스크롤). Skills는 "나중에 추가" 목록.
+- 푸터(Apple 푸터처럼 작은 글자 + 얇은 구분선): 왼쪽 CONTACT · 인사말(24px) · 한 줄 설명 / 오른쪽 연락처 목록(이메일 + 복사 버튼, GitHub ↗) + "이메일 보내기" 버튼 / 맨 아래 © · 만든 도구 | 맨 위로. 문구는 `FOOTER_TEXT`
 - 헤더 메뉴(About / Projects / Contact)는 Home의 각 섹션으로 스크롤 이동합니다. 다른 페이지에서 누르면 Home으로 이동한 뒤 해당 섹션으로 스크롤합니다.
 - 프로젝트가 늘어나도 페이지는 늘리지 않고 `projects.js`에 데이터만 추가합니다.
 - Vercel에서 새로고침 시 404가 나지 않도록 루트에 `vercel.json` rewrites 설정 필수.
@@ -164,7 +168,7 @@ portfolio/
     │   └── paths.js         # PATHS, toProjectDetail(), SECTION_IDS
     ├── utils/
     │   ├── getProjectImage.js  # 이미지 파일명 → 빌드 URL
-    │   └── skillIcons.js       # 기술 아이콘 키 → simple-icons
+    │   └── skillIcons.js       # 기술 아이콘 키 → simple-icons / lucide-react
     └── styles/
         ├── _variables.scss
         ├── _mixins.scss
@@ -197,7 +201,7 @@ portfolio/
   hasDetail: true,              // 상세 페이지 유무
   isMore: false,                // true면 처음엔 숨기고 "더보기"로 표시 (생략 = false)
   detail: {
-    features: [                 // 내가 만든 기능 3개 (3열)
+    features: [                 // 내가 만든 기능 3개 (PC 3열 · 태블릿 2열 · 모바일 1열)
       { title: "회원 인증", text: "한 줄 설명",
         images: ["jajak-signup.webp", "jajak-login.webp"],   // 사용 흐름 순서 (1600×800)
         code: { file: "파일명", snippet: "실제 코드 일부" } }, // 선택 — 화면으로 안 보이는 기능
@@ -250,8 +254,8 @@ portfolio/
 - `global.scss`는 `main.jsx`에서 한 번만 import
 - 각 `*.module.scss`는 `@use "@/styles/variables" as *;` 형태로 토큰을 불러옴
 - 색·간격·폰트 크기 하드코딩 금지(토큰 없으면 `_variables.scss`에 먼저 추가)
-- 모션은 세 가지만: 인트로(한 글자씩 등장) · **스크롤 등장** · 헤더 로고 커서 깜빡임. 새 애니메이션 추가 금지
-- **스크롤 등장**(`hooks/useScrollReveal.js`, SiteLayout에서 1회 실행): 요소에 `data-reveal`만 붙이면 화면에 들어올 때 인트로처럼 흐림 → 선명 + 24px 위로(0.9s). 같이 들어온 요소는 90ms씩 순서대로(최대 6칸). 인트로 중엔 기다렸다가 끝나면 시작(`html[data-intro="playing"]` + `introdone` 이벤트). 새 섹션을 만들면 제목 · 카드 단위로 `data-reveal`을 붙임 (푸터는 붙이지 않음) (푸터는 붙이지 않음) (글자 하나하나, 버튼 하나하나에는 붙이지 않음)
+- 모션은 네 가지만: 인트로(한 글자씩 등장) · **스크롤 등장** · 상세 페이지 첫 화면 페이드 인(`pageFadeIn`) · 헤더 로고 커서 깜빡임. 새 애니메이션 추가 금지
+- **스크롤 등장**(`hooks/useScrollReveal.js`, SiteLayout에서 1회 실행): 요소에 `data-reveal`만 붙이면 화면에 들어올 때 흐림 없이 투명 → 선명 + 32px 아래에서 위로(0.9s, Apple 방식). 같이 들어온 요소는 90ms씩 순서대로(최대 6칸). 인트로 중엔 기다렸다가 끝나면 시작(`html[data-intro="playing"]` + `introdone` 이벤트). 새 섹션을 만들면 제목 · 카드 단위로 `data-reveal`을 붙임 (푸터, 페이지 첫 화면(상세 상단 · 개요)에는 붙이지 않음 — 들어가자마자 움직이면 어색함) (글자 하나하나, 버튼 하나하나에는 붙이지 않음)
 - **작품 소개 규칙** (`pages/Home/sections/ProjectTiles.jsx`)
   - 팀 프로젝트 → 개인 프로젝트 순서로 나눠 보여줌 (`type` 기준)
   - 카드 크기는 모두 같게: 2열(모바일 1열), 간격 세로 `$space-10` · 가로 `$space-8`
@@ -312,7 +316,14 @@ portfolio/
 - 폴더 구조 / Routes / 데이터 계약(7장) / 디자인 토큰 / Dependency / Git 워크플로우 / 인트로 규칙
 
 ## 16. 버전 히스토리
-- v3.9 (2026-10-07): 사이트 전체 스크롤 등장 연출 — `useScrollReveal` + `data-reveal` (About · 작품 소개 · 상세 페이지, 푸터는 제외). 인트로와 같은 흐림 → 선명. `$duration-reveal` · `$easing-reveal` 토큰 추가.
+- v3.16 (2026-10-12): 모바일 · 태블릿 점검 — About 숫자 칸 태블릿에서도 2칸(줄바꿈 방지), 교육 과정 이름 · 푸터 인사말 단어 단위 줄바꿈(`keep-all`). 가로 넘침 없음 확인(390 · 768px). 상세 기능 카드: 코드 카드가 칸을 넓히던 문제 수정(`minmax(0, 1fr)`), 태블릿 2열.
+- v3.15 (2026-10-07): 주요 버튼 호버를 밝은 파랑(#0077ED)으로, 보조 링크 호버 밑줄이 `›` 아래엔 안 생기게.
+- v3.14 (2026-10-07): 버튼을 Apple 방식으로 — 주요 버튼 파란 알약(`$color-action`), 보조는 파란 글자 링크 + `›`(`button-link`, `$color-link`). `button-outline` 삭제. 작품 카드 버튼 크기 키움.
+- v3.13 (2026-10-07): 푸터 개편 — 글자 크기 축소(큰 이메일 제거), 인사말 | 연락처 목록 2열, 이메일 복사 버튼("복사됨" 2초 · 화면 읽기 알림), 맨 위로 버튼, 저작권 줄. `$space-12` 토큰 추가.
+- v3.12 (2026-10-07): 상세 페이지 들어올 때 글자가 위에서부터 0.15초 간격으로 한 줄씩(작품 목록으로 → 분류 → 제목 → 부제 → 소개 → 링크) → 대표 이미지(1.0s) → 개요(1.3s) 순서로 1.2초 페이드 인(움직임 없음, 헤더 제외 — `pageFadeIn`, `$duration-page`).
+- v3.11 (2026-10-07): 페이지 이동 시 스크롤을 즉시 맨 위로(부드러운 스크롤로 화면이 올라가며 보이던 문제), 같은 페이지 메뉴 이동만 부드럽게. 상세 페이지 상단 · 개요는 스크롤 등장 제외.
+- v3.10 (2026-10-07): 스크롤 등장에서 흐림 제거(투명 → 선명 + 위로). 배운 것 카드의 점 항목을 알맞은 선 아이콘으로(`lucide-react` 추가), Firestore는 데이터베이스 아이콘. 푸터는 스크롤 등장 제외.
+- v3.9 (2026-10-07): 사이트 전체 스크롤 등장 연출 — `useScrollReveal` + `data-reveal` (About · 작품 소개 · 상세 페이지, 푸터는 제외). 흐림 없이 투명 → 선명 + 위로. `$duration-reveal` · `$easing-reveal` 토큰 추가.
 - v3.8 (2026-10-07): About 꾸미기 — 역할 · 큰 이름, 숫자 칸 4개, 배운 것을 흰 카드 4개 + 기술 아이콘(`simple-icons` 추가)으로, 사진 빈 자리에 이니셜. `profile.learned` 항목을 `{ label, icon }`으로, `ABOUT_TEXT` 추가. 헤더 커서 색을 글자색과 같게.
 - v3.7 (2026-10-07): 로고 — 헤더 `YG` + 깜빡이는 커서, 탭 아이콘 `public/favicon.svg`(검정 둥근 사각 + 흰 YG). 정리 — 안 쓰는 `/projects` 페이지·`ProjectCard`·`SectionTitle`·`skills.js`·`docs/design/book/`·안 쓰는 이미지 삭제, 데이터에서 `points`·`featured`·`images`(최상위) 필드 제거.
 - v3.6 (2026-10-07): 상세 페이지 — 기능 사진을 사용 흐름 순서로 재정리(BlueLine 쇼핑·상세·장바구니, 드로잉 되돌리기, F1 회원가입·로그인·내 글 화면 추가, 멍냥허브·드로잉 썸네일 교체). 사진으로 안 보이는 기능 6개는 **코드 카드**(`code`)로 실제 코드 일부 표시. `$font-family-mono` 토큰 추가. 작품 카드 2열 · 6개 모두 노출.

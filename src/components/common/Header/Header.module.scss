@@ -6,7 +6,7 @@
   inset: 0 0 auto;
   z-index: 10;
   height: $header-height;
-  backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(180%) blur(12px); // 밝은 테마 값은 @mixin frosted-light와 같음
   transition:
     background-color $duration-base $easing-base,
     color $duration-base $easing-base;
@@ -15,7 +15,7 @@
 // ---- 아래 섹션에 맞춘 3가지 테마 ----
 // 구분선 없음: 배경색이 아래 섹션과 같아서 헤더가 페이지와 이어져 보인다 (Apple 방식)
 .light {
-  background-color: rgba($color-bg, 0.8);
+  @include frosted-light;
   color: $color-text;
 }
 
@@ -67,7 +67,20 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
 
-  a { @include hover-underline; }
+  a {
+    @include hover-underline;
+    opacity: 0.72;
+    transition: opacity $duration-fast $easing-base, text-decoration-color $duration-fast $easing-base;
+
+    &:hover { opacity: 1; }
+  }
 
   @include mobile { gap: $space-4; }
+}
+
+// 지금 보고 있는 섹션 메뉴 — 진하게 + 밑줄 (Apple 서브 메뉴처럼)
+.nav a.active {
+  opacity: 1;
+  font-weight: $font-weight-semibold;
+  text-decoration-color: currentColor;
 }

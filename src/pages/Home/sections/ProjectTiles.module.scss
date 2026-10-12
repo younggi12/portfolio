@@ -4,6 +4,7 @@
 // 같은 크기 카드 2열 (모바일 1열), 카드 사이 여유 있게
 .section {
   @include container;
+  max-width: $content-wide-max-width + $side-padding-desktop * 2; // 다른 섹션보다 넓게 — 사진 · 기술 패널을 크게
   padding-block: $space-20;
 }
 
@@ -34,18 +35,83 @@
 // 카드: 썸네일과 같은 2:1 → 꽉 차고 잘리는 곳 없음
 .media {
   position: relative;
+  // 사진 + 패널을 한 덩어리로 합친 뒤 둥근 모서리로 자름 → 모서리에 사진(검은 부분)이 비치지 않음
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: linear-gradient(#000, #000);
   aspect-ratio: 2 / 1;
   overflow: hidden;
   border-radius: $radius-lg;
   background-color: $color-band-solid;
   box-shadow: 0 4px 20px rgba($color-black, 0.08);
+
+  // 연한 1px 테두리 — 사진 위에 얹어야 보임 (흰 썸네일인 드로잉 앱도 카드 모양이 보이게)
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba($color-black, 0.08);
+    pointer-events: none;
+  }
   transition: transform $duration-base $easing-base, box-shadow $duration-base $easing-base;
 
   // 마우스를 올리면 카드째 살짝 떠오름 (사진은 확대하지 않아 잘리지 않음)
   .tile:hover & {
-    transform: translateY(-4px);
     box-shadow: 0 10px 28px rgba($color-black, 0.14);
   }
+}
+
+// 기술 태그 패널 — 마우스를 올리면(키보드 포커스 포함) 아래에서 올라옴
+// 배경 = 그 작품 사이트의 헤더 색 그대로(--panel-bg, projects.js의 headerColor — 단색 또는 그라데이션)
+.panel {
+  --panel-bg: #{$color-bg};
+  position: absolute;
+  z-index: 2; // 테두리(::after) 위
+  inset: auto -1px -1px; // 1px 넘치게 → 둥근 모서리에서 사진이 검게 비치지 않음(카드가 잘라줌)
+  padding: $space-4 $space-5 calc(#{$space-4} + 1px);
+  background: var(--panel-bg);
+  color: var(--panel-text, #{$color-text}); // 글자 = 그 작품 사이트 헤더 글자색(headerText)
+  text-shadow: 0 0 8px var(--panel-glow, transparent); // headerGlow가 있는 작품만 빛 번짐
+  transform: translateY(100%);
+  transition: transform $duration-panel $easing-reveal;
+
+  .media:hover & { transform: none; }
+
+  @media (hover: none) { display: none; } // 휴대폰은 마우스가 없어 숨김
+}
+
+// 어두운 헤더 작품(F1 · 멍냥허브 등) — 흰 글자 (작품 헤더 글자색이 따로 있으면 그 색: --panel-text)
+.panelDark { color: var(--panel-text, #{$color-on-panel}); }
+
+.stack {
+  display: flex;
+  flex-wrap: nowrap; // 한 줄 — 넘치는 기술은 StackLine이 "+N"으로 묶음
+  overflow: hidden;
+  gap: $space-2;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px $space-3;
+    border-radius: $radius-pill;
+    background-color: rgba($color-black, 0.06);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    white-space: nowrap;
+
+    .panelDark & { background-color: rgba($color-on-panel, 0.16); }
+    .panelAccent & { background-color: rgba($color-on-panel, 0.08); } // 빨강처럼 색 글자는 칩을 더 어둡게 (4.6:1)
+  }
+}
+
+// 너비 측정용 (보이지 않음)
+.measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  width: max-content;
 }
 
 .image {
@@ -76,6 +142,18 @@
 .subtitle {
   font-size: $font-size-md;
   word-break: keep-all;
+}
+
+// 팀 프로젝트 카드의 "담당 …" 한 줄
+.role {
+  margin-top: $space-1;
+  font-size: $font-size-sm;
+  word-break: keep-all;
+
+  b {
+    margin-right: $space-1;
+    font-weight: $font-weight-bold;
+  }
 }
 
 // Apple 방식: 파란 버튼 + 파란 글자 링크

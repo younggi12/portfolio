@@ -2,11 +2,15 @@
 // 내용은 data/projects.js의 detail 필드 (hasDetail: true인 작품만)
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { PATHS, SECTION_IDS } from "@/routes/paths";
-import { getProjectById } from "@/data/projects";
-import { DETAIL_TEXT, UI_TEXT } from "@/data/site";
+import { PATHS, SECTION_IDS, toProjectDetail } from "@/routes/paths";
+import { getAdjacentProjects, getProjectById } from "@/data/projects";
+import { DETAIL_TEXT, LIGHTBOX_TEXT, UI_TEXT } from "@/data/site";
 import { getProjectImage } from "@/utils/getProjectImage";
 import NotFound from "@/pages/NotFound/NotFound";
+import Lightbox from "@/components/common/Lightbox/Lightbox";
+import SkillIcon from "@/components/common/SkillIcon/SkillIcon";
+import { getStackIcon } from "@/utils/skillIcons";
+import { Maximize2 } from "lucide-react";
 import styles from "./ProjectDetail.module.scss";
 
 // 문장 속 `코드`를 <code>로 표시
@@ -52,9 +56,11 @@ const CODE = "__code__";
 
 const Feature = ({ feature }) => {
   const [current, setCurrent] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false); // 사진 크게 보기
   const { title, text, images = [], code } = feature;
   const items = code ? [...images, CODE] : images;
   const active = items[current];
+  const imageUrls = images.map(getProjectImage);
 
   return (
     <div className={styles.feature} data-reveal>
@@ -64,7 +70,16 @@ const Feature = ({ feature }) => {
           <pre><code>{code.snippet}</code></pre>
         </figure>
       ) : (
-        active && <img src={getProjectImage(active)} alt={`${title} 화면`} className={styles.featureMain} loading="lazy" />
+        active && (
+          // 큰 사진을 누르면 화면 가득 크게 보기
+          <button type="button" className={styles.zoom} onClick={() => setIsZoomed(true)} aria-label={`${title} ${LIGHTBOX_TEXT.open}`}>
+            <img src={getProjectImage(active)} alt={`${title} 화면`} className={styles.featureMain} loading="lazy" />
+            <span className={styles.zoomIcon} aria-hidden="true"><Maximize2 size={16} strokeWidth={2} /></span>
+          </button>
+        )
+      )}
+      {isZoomed && (
+        <Lightbox images={imageUrls} index={current} title={title} onChange={setCurrent} onClose={() => setIsZoomed(false)} />
       )}
       {/* 칸이 1개여도 작은 칸 줄을 둬서 세 카드의 제목 줄을 맞춤 */}
       {items.length > 0 && (
@@ -97,9 +112,11 @@ const ProjectDetail = () => {
 
   const { name, category, type, teamSize, period, role, summary, stack, thumbnail, links, detail } = project;
   const [title, subtitle] = name.split(" — ");
+  const { prev, next } = getAdjacentProjects(projectId);
 
   return (
-    <article className={styles.page} data-header-theme="light">
+    // key: 이전 / 다음 작품으로 넘어갈 때 페이지를 새로 그려 등장 연출 · 사진 선택을 처음부터
+    <article key={projectId} className={styles.page} data-header-theme="light">
       {/* 상단 */}
       <header className={styles.hero}>
         <Link to={{ pathname: PATHS.home, hash: `#${SECTION_IDS.projects}` }} className={styles.back}>
@@ -127,7 +144,19 @@ const ProjectDetail = () => {
       <dl className={styles.meta}>
         <div><dt>{DETAIL_TEXT.period}</dt><dd>{period}</dd></div>
         <div><dt>{DETAIL_TEXT.role}</dt><dd>{role}</dd></div>
-        <div><dt>{DETAIL_TEXT.stack}</dt><dd>{stack.join(" · ")}</dd></div>
+        <div>
+          <dt>{DETAIL_TEXT.stack}</dt>
+          <dd>
+            <ul className={styles.stackList}>
+              {stack.map((item) => (
+                <li key={item}>
+                  <SkillIcon name={getStackIcon(item)} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </dd>
+        </div>
       </dl>
 
       {detail.features && (
@@ -148,6 +177,19 @@ const ProjectDetail = () => {
         <Section title={DETAIL_TEXT.improvements}>
           <ul className={styles.list} data-reveal>{detail.improvements.map((c) => <li key={c}><Rich text={c} /></li>)}</ul>
         </Section>
+      )}
+      {/* 이전 / 다음 작품 */}
+      {prev && next && (
+        <nav className={styles.pager} data-reveal aria-label={`${DETAIL_TEXT.prev} / ${DETAIL_TEXT.next}`}>
+          <Link to={toProjectDetail(prev.projectId)} className={styles.pagerPrev}>
+            <span className={styles.pagerLabel}>‹ {DETAIL_TEXT.prev}</span>
+            <span className={styles.pagerName}>{prev.name.split(" — ")[0]}</span>
+          </Link>
+          <Link to={toProjectDetail(next.projectId)} className={styles.pagerNext}>
+            <span className={styles.pagerLabel}>{DETAIL_TEXT.next} ›</span>
+            <span className={styles.pagerName}>{next.name.split(" — ")[0]}</span>
+          </Link>
+        </nav>
       )}
     </article>
   );

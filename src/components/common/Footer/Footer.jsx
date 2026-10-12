@@ -1,5 +1,6 @@
 // 푸터 = 연락처 (헤더의 Contact 메뉴가 여기로 스크롤)
-// 위: 왼쪽 인사말 / 오른쪽 연락처(이메일 복사 · GitHub) + 이메일 보내기
+// 위: 왼쪽 인사말 / 오른쪽 연락처(이메일 + 복사 버튼 · GitHub)
+// 메일 앱이 없는 PC가 많아 mailto 링크 · "이메일 보내기" 버튼은 쓰지 않음 — 주소는 글자 + 복사
 // 아래: 저작권 · 만든 도구 / 맨 위로
 import { useEffect, useState } from "react";
 import { SECTION_IDS } from "@/routes/paths";
@@ -46,7 +47,7 @@ const Footer = () => {
               <div className={styles.row}>
                 <dt>{FOOTER_TEXT.emailLabel}</dt>
                 <dd>
-                  <a href={`mailto:${PROFILE.email}`} className={styles.value}>{PROFILE.email}</a>
+                  <span className={styles.value}>{PROFILE.email}</span>
                   <button type="button" className={styles.copy} onClick={handleCopy}>
                     {isCopied ? FOOTER_TEXT.copied : FOOTER_TEXT.copy}
                   </button>
@@ -60,7 +61,6 @@ const Footer = () => {
                 </dd>
               </div>
             </dl>
-            <a href={`mailto:${PROFILE.email}`} className={styles.primary}>{FOOTER_TEXT.sendMail}</a>
           </div>
         </div>
 

@@ -13,9 +13,11 @@ export const PROJECTS = [
     teamSize: 5,
     period: "2026.08 ~ 2026.09",
     role: "회원 인증, 고객센터(공지사항·FAQ·1:1 문의), 위시리스트, 통합 단계 AI 큐레이션 UI·모바일 반응형 보완",
-    summary: "취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰",
+    roleShort: "회원 인증 · 고객센터 · 위시리스트", // 작품 카드에 보이는 짧은 담당 (팀 프로젝트만)
+    summary: "취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰", // "한 상"은 줄바꿈 안 되는 공백(\u00a0)
     stack: ["React 19", "Vite", "Firebase Auth", "Firestore", "SCSS Modules"],
     thumbnail: "jajak-thumb.webp",
+    headerColor: "#f2ebe2", headerTone: "light", headerText: "#2c231b", // 헤더 배경은 한지 이미지(평균 색) · 글자 $color-text-primary
     links: [
       { label: "사이트", href: "https://jajak-ten.vercel.app" },
       { label: "GitHub", href: "https://github.com/jiwoo1012/TeamProject2" },
@@ -49,9 +51,11 @@ export const PROJECTS = [
     teamSize: 3,
     period: "2026.06 ~ 2026.07",
     role: "상품·장바구니 페이지, 브랜드·고객센터 페이지, 로그인 상태 헤더, 메인 슬라이드·리뷰, 모바일 반응형",
-    summary: "반려동물 용품을 둘러보고 장바구니에 담을 수 있는 쇼핑몰 팀 프로젝트",
+    roleShort: "상품 · 장바구니 · 브랜드 페이지",
+    summary: "HTML · CSS · JavaScript만으로 3명이 함께 만든 첫 팀 프로젝트",
     stack: ["HTML", "CSS", "JavaScript", "JSON", "localStorage"],
     thumbnail: "mungnyang-thumb.webp",
+    headerColor: "#587866", headerTone: "dark", headerText: "#ffffff", // header rgba(46, 90, 68, 0.8)가 화면에 겹쳐 실제로 보이는 색(배포 사이트 캡처 측정) · .gnb a #ffffff
     links: [
       { label: "사이트", href: "https://projectmangryung.github.io/teamproject/" },
       { label: "GitHub", href: "https://github.com/projectMangRyung/teamproject" },
@@ -83,9 +87,10 @@ export const PROJECTS = [
     teamSize: 1,
     period: "2026.09",
     role: "기획·디자인·개발 전체 (초기 일부 Codex 활용, 이후 기능·디자인 직접 구현)",
-    summary: "프레임워크 없이 바닐라 HTML/CSS/JS로 만든 5페이지 야구용품 쇼핑몰",
+    summary: "프레임워크 없이 상품 목록부터 상세 · 장바구니까지 5페이지를 직접 구현",
     stack: ["HTML5", "CSS3", "JavaScript", "localStorage", "IntersectionObserver"],
     thumbnail: "blueline-thumb.webp",
+    headerColor: "linear-gradient(135deg, #1d3a66, #2f6fed)", headerTone: "dark", headerText: "#ffffff", // style.css .top-bar (--navy → --blue) · .logo #fff
     links: [
       { label: "사이트", href: "https://younggi12.github.io/-4/index.html" },
       { label: "GitHub", href: "https://github.com/younggi12/-4" },
@@ -99,21 +104,21 @@ export const PROJECTS = [
       ],
       improvements: [
         "인트로 이미지 문구를 \"Good Gear Better Days\"로 다시 제작",
-        "저장소 이름(`-4`)을 `blueline`으로 정리",
       ],
     },
   },
   {
     projectId: "f1-fansite",
-    name: "F1 팬사이트 — 방명록",
+    name: "F1 팬사이트 — 응원 메시지를 남기는 방명록",
     type: "solo",
     category: "React",
     teamSize: 1,
     period: "2026.07",
     role: "기획·디자인·개발 전체",
-    summary: "로그인한 팬이 응원할 F1 드라이버를 골라 메시지를 남기는 방명록 사이트",
+    summary: "학습용 게시판(CRUD)에 디자인과 로그인 · 실시간 기능을 더해 완성한 React 방명록",
     stack: ["React 19", "React Router", "Zustand", "Firebase Auth", "Firestore", "SCSS Modules"],
     thumbnail: "f1-thumb.webp",
+    headerColor: "#000000", headerTone: "dark", headerText: "#ff0000", // Header.module.scss background-color: black · 메뉴 글자 color: red
     links: [
       { label: "방명록", href: "https://guestbook01-phi.vercel.app" },
       { label: "GitHub", href: "https://github.com/younggi12/guestbook01" },
@@ -135,21 +140,22 @@ export const PROJECTS = [
         lesson: "요소가 나중에 생기는 경우엔 useRef + useEffect보다 callback ref가 정확하다",
       },
       improvements: [
-        "학습용으로 만든 게시글 등록(CRUD) → 디자인과 기능을 더해 방명록으로 완성 (학습 버전도 링크로 함께 공개)",
+        "글 전체를 한 번에 구독한 뒤 화면에서 나눠 보여줌 → 글이 많아지면 `limit` · `startAfter`로 페이지 단위로 불러오기 필요",
       ],
     },
   },
   {
     projectId: "canvas-breaker",
-    name: "SPACE BREAKER — 캔버스 벽돌깨기",
+    name: "SPACE BREAKER — 우주 테마 벽돌깨기 게임",
     type: "solo",
     category: "Canvas",
     teamSize: 1,
     period: "2026.06",
     role: "기획·디자인·개발 전체",
-    summary: "Canvas API와 requestAnimationFrame으로 만든 우주 테마 벽돌깨기 게임",
+    summary: "공 · 패들 · 벽돌의 움직임과 충돌을 Canvas로 직접 계산한 게임",
     stack: ["HTML5 Canvas", "JavaScript", "CSS"],
     thumbnail: "breaker-thumb.webp",
+    headerColor: "#0c161f", headerTone: "dark", headerText: "#ffffff", headerGlow: "cyan", // 헤더 없음 → 배경 이미지 위쪽 평균 색 · 제목 #gameTitle: color white + text-shadow 0 0 15px cyan
     links: [
       { label: "플레이", href: "https://younggi12.github.io/breaker/js061201.html" },
       { label: "코드", href: "https://github.com/younggi12/breaker/blob/main/js061201.html" },
@@ -173,15 +179,16 @@ export const PROJECTS = [
   },
   {
     projectId: "canvas-draw",
-    name: "캔버스 드로잉 앱",
+    name: "캔버스 드로잉 앱 — 그리고 저장하는 그림판",
     type: "solo",
     category: "Canvas",
     teamSize: 1,
     period: "2026.06",
     role: "기획·디자인·개발 전체",
-    summary: "펜 색·굵기·배경색을 바꿔 그리고 PNG로 저장할 수 있는 드로잉 앱",
+    summary: "Pointer Events로 마우스 · 터치 · 펜을 한 번에 처리하고, 되돌리기와 PNG 저장까지 지원",
     stack: ["HTML5 Canvas", "JavaScript", "Pointer Events"],
     thumbnail: "draw-thumb.webp",
+    headerColor: "#00008b", headerTone: "dark", headerText: "#ffffff", // #toolbar background-color: darkblue · 글자 white
     links: [
       { label: "사용해보기", href: "https://younggi12.github.io/draw-app/js060901.html" },
       { label: "GitHub", href: "https://github.com/younggi12/draw-app" },
@@ -207,3 +214,14 @@ export const PROJECTS = [
 // ---- 조회 헬퍼 ----
 export const getProjectsByType = (type) => PROJECTS.filter((p) => p.type === type);
 export const getProjectById = (projectId) => PROJECTS.find((p) => p.projectId === projectId);
+
+// 상세 페이지 아래 "이전 / 다음 작품" — 상세 페이지가 있는 작품만, 화면 순서대로, 끝에서는 처음으로 이어짐
+export const getAdjacentProjects = (projectId) => {
+  const list = PROJECTS.filter((p) => p.hasDetail);
+  const i = list.findIndex((p) => p.projectId === projectId);
+  if (i === -1 || list.length < 2) return { prev: null, next: null };
+  return {
+    prev: list[(i - 1 + list.length) % list.length],
+    next: list[(i + 1) % list.length],
+  };
+};

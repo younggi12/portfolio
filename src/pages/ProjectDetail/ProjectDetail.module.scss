@@ -1,326 +1,177 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
 
-.page {
+// 같은 크기 카드 2열 (모바일 1열), 카드 사이 여유 있게
+.section {
   @include container;
-
-  dd { margin: 0; }
-
-  padding-block: $space-16 $space-20;
+  max-width: $content-wide-max-width + $side-padding-desktop * 2; // 다른 섹션보다 넓게 — 사진 · 기술 패널을 크게
+  padding-block: $space-20;
 }
 
-// ---- 상단 ----
-.hero {
+.group + .group { margin-top: $space-16; }
+
+.groupTitle {
+  margin-bottom: $space-6;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-black;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);   // 2열 — 카드가 커서 세로도 높아짐
+  gap: $space-10 $space-8;
+
+  @include tablet { grid-template-columns: repeat(2, 1fr); }
+  @include mobile { grid-template-columns: 1fr; }
+}
+
+.tile {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: $space-4;
+}
+
+// 카드 = 작품 사진만
+// 카드: 썸네일과 같은 2:1 → 꽉 차고 잘리는 곳 없음
+.media {
+  position: relative;
+  // 사진 + 패널을 한 덩어리로 합친 뒤 둥근 모서리로 자름 → 모서리에 사진(검은 부분)이 비치지 않음
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: linear-gradient(#000, #000);
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  border-radius: $radius-lg;
+  background-color: $color-band-solid;
+  box-shadow: 0 4px 20px rgba($color-black, 0.08);
+
+  // 연한 1px 테두리 — 사진 위에 얹어야 보임 (흰 썸네일인 드로잉 앱도 카드 모양이 보이게)
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba($color-black, 0.08);
+    pointer-events: none;
+  }
+  transition: transform $duration-base $easing-base, box-shadow $duration-base $easing-base;
+
+  // 마우스를 올리면 카드째 살짝 떠오름 (사진은 확대하지 않아 잘리지 않음)
+  .tile:hover & {
+    box-shadow: 0 10px 28px rgba($color-black, 0.14);
+  }
+}
+
+// 기술 태그 패널 — 마우스를 올리면(키보드 포커스 포함) 아래에서 올라옴
+// 배경 = 그 작품 사이트의 헤더 색 그대로(--panel-bg, projects.js의 headerColor — 단색 또는 그라데이션)
+.panel {
+  --panel-bg: #{$color-bg};
+  position: absolute;
+  z-index: 2; // 테두리(::after) 위
+  inset: auto -1px -1px; // 1px 넘치게 → 둥근 모서리에서 사진이 검게 비치지 않음(카드가 잘라줌)
+  padding: $space-4 $space-5 calc(#{$space-4} + 1px);
+  background: var(--panel-bg);
+  color: var(--panel-text, #{$color-text}); // 글자 = 그 작품 사이트 헤더 글자색(headerText)
+  text-shadow: 0 0 8px var(--panel-glow, transparent); // headerGlow가 있는 작품만 빛 번짐
+  transform: translateY(100%);
+  transition: transform $duration-panel $easing-reveal;
+
+  .media:hover & { transform: none; }
+
+  @media (hover: none) { display: none; } // 휴대폰은 마우스가 없어 숨김
+}
+
+// 어두운 헤더 작품(F1 · 멍냥허브 등) — 흰 글자 (작품 헤더 글자색이 따로 있으면 그 색: --panel-text)
+.panelDark { color: var(--panel-text, #{$color-on-panel}); }
+
+.stack {
+  display: flex;
+  flex-wrap: nowrap; // 한 줄 — 넘치는 기술은 StackLine이 "+N"으로 묶음
+  overflow: hidden;
   gap: $space-2;
-  text-align: center;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px $space-3;
+    border-radius: $radius-pill;
+    background-color: rgba($color-black, 0.06);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    white-space: nowrap;
+
+    .panelDark & { background-color: rgba($color-on-panel, 0.16); }
+    .panelAccent & { background-color: rgba($color-on-panel, 0.08); } // 빨강처럼 색 글자는 칩을 더 어둡게 (4.6:1)
+  }
 }
 
-// 들어올 때 글자(위에서부터 한 줄씩) → 이미지 → 개요 순서로 천천히 나타남 (투명 → 선명, 움직임 없음, 헤더 제외)
-.hero > *,
-.meta {
-  animation: pageFadeIn $duration-page ease-out both;
+// 너비 측정용 (보이지 않음)
+.measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  width: max-content;
 }
 
-// 글자는 위에서부터 0.15초 간격으로 한 줄씩, 그다음 이미지 → 개요
-.hero > .eyebrow { animation-delay: 150ms; }
-.hero > .title { animation-delay: 300ms; }
-.hero > .subtitle { animation-delay: 450ms; }
-.hero > .summary { animation-delay: 600ms; }
-.hero > .links { animation-delay: 750ms; }
-.hero > .heroImage { animation-delay: 1000ms; }
-.meta { animation-delay: 1300ms; }
-
-@keyframes pageFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;          // 카드와 사진 비율이 같아 꽉 차고 잘리지 않음
 }
 
-.back {
-  align-self: flex-start;
-  margin-bottom: $space-8;
-  font-size: $font-size-sm;
-  @include hover-underline;
+// 카드 아래 글
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-1;
 }
 
 .eyebrow {
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
 }
 
 .title {
-  font-size: clamp(40px, 6vw, $font-size-4xl);
-  font-weight: $font-weight-black;
-  line-height: 1.05;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
 }
 
 .subtitle {
-  font-size: clamp(18px, 2vw, $font-size-xl);
-  font-weight: $font-weight-semibold;
-}
-
-.summary {
-  max-width: 40ch;
-  margin-top: $space-2;
-  line-height: $line-height-base;
+  font-size: $font-size-md;
   word-break: keep-all;
 }
 
-.links {
+// 팀 프로젝트 카드의 "담당 …" 한 줄
+.role {
+  margin-top: $space-1;
+  font-size: $font-size-sm;
+  word-break: keep-all;
+
+  b {
+    margin-right: $space-1;
+    font-weight: $font-weight-bold;
+  }
+}
+
+// Apple 방식: 파란 버튼 + 파란 글자 링크
+.actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
   gap: $space-2 $space-6;
   margin-top: $space-4;
 }
 
 .primary { @include button-primary; }
+
 .secondary { @include button-link; }
 
-.heroImage {
-  width: 100%;
-  margin-top: $space-10;
-  aspect-ratio: 2 / 1;
-  object-fit: cover;
-  border-radius: $radius-lg;
-  box-shadow: 0 10px 40px rgba($color-black, 0.1);
-}
-
-// ---- 개요 표 ----
-.meta {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1.5fr;
-  gap: $space-6;
-  margin-top: $space-10;
-  padding-block: $space-6;
-  border-block: 1px solid $color-border;
-
-  dt {
-    margin-bottom: $space-1;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-bold;
-  }
-
-  dd {
-    line-height: $line-height-base;
-    word-break: keep-all;
-  }
-
-  @include mobile { grid-template-columns: 1fr; }
-}
-
-// ---- 섹션 공통 ----
-.section {
-  margin-top: $space-10;
-
-  @include mobile { margin-top: $space-10; }
-}
-
-.sectionTitle {
-  margin-bottom: $space-6;
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-black;
-}
-
-.text {
-  max-width: $text-max-width;
-  line-height: $line-height-base;
-  word-break: keep-all;
-}
-
-// ---- 내가 만든 기능: 3열 (사진 + 제목 + 한 줄) ----
-.features {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)); // minmax(0) — 긴 코드 줄이 칸을 넓히지 않게
-  gap: $space-6;
-
-  @include tablet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  @include mobile { grid-template-columns: 1fr; }
-}
-
-.feature {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-
-  h3 {
-    margin-top: $space-4;
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-  }
-
-  p {
-    margin-top: $space-1;
-    font-size: $font-size-sm;
-    line-height: $line-height-base;
-    word-break: keep-all;
-  }
-}
-
-.featureMain {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  object-position: top;
-  border-radius: $radius-md;
-  border: 1px solid $color-border;
-}
-
-// 작은 사진 줄 — 누르면 위 큰 사진이 바뀜
-.thumbs {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: $space-2;
-  margin-top: $space-2;
-}
-
-.thumb {
-  overflow: hidden;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  opacity: 0.55;
-  transition: opacity $duration-fast $easing-base;
-
-  img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    object-position: top;
-  }
-
-  &:hover { opacity: 0.85; }
-}
-
-.thumbActive {
-  opacity: 1;
-  border-color: $color-panel;
-}
-
-// 코드 카드 — 사진 대신 실제 코드 일부 (큰 사진과 같은 16:10 크기)
-.code {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  border-radius: $radius-md;
-  background-color: $color-panel;
-  color: $color-on-panel;
-
-  pre {
-    flex: 1;
-    margin: 0;
-    padding: $space-3 $space-4;
-    overflow: auto;
-    font-family: $font-family-mono;
-    font-size: $font-size-xs;
-    line-height: 1.6;
-    white-space: pre;
-
-    code { padding: 0; border-radius: 0; background: none; color: inherit; font-size: inherit; }
-  }
-}
-
-.codeFile {
-  padding: $space-2 $space-4;
-  border-bottom: 1px solid rgba($color-on-panel, 0.15);
-  font-family: $font-family-mono;
-  font-size: $font-size-xs;
-  color: $color-panel-point;
-}
-
-// 코드 칸 — 작은 사진과 같은 크기의 남색 칸
-.thumbCode {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 16 / 10;
-  background-color: $color-panel;
-  color: $color-on-panel;
-  font-family: $font-family-mono;
-  font-size: $font-size-xs;
-}
-
-// ---- 문제 해결 ----
-.problem {
-  padding: $space-8;
-  border-radius: $radius-lg;
-  background-color: $color-band-solid;
-
-  @include mobile { padding: $space-5; }
-}
-
-.problemTitle {
-  margin-bottom: $space-5;
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
-  word-break: keep-all;
-}
-
-
-.steps {
-  display: flex;
-  flex-direction: column;
-  gap: $space-4;
-}
-
-.step {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  gap: $space-4;
-
-  dt {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-bold;
-    padding-top: 2px;
-  }
-
-  dd {
-    line-height: $line-height-base;
-    word-break: keep-all;
-  }
-
-  li + li { margin-top: $space-1; }
-
-  @include mobile { grid-template-columns: 1fr; gap: $space-1; }
-}
-
-.lesson {
-  margin-top: $space-5;
-  padding-top: $space-4;
-  border-top: 1px solid $color-border;
-  font-weight: $font-weight-bold;
-}
-
-// ---- 목록 (협업, 개선할 점) ----
-.list {
-  max-width: $text-max-width;
-
-  li {
-    position: relative;
-    padding-left: $space-5;
-    line-height: $line-height-base;
-    word-break: keep-all;
-
-    &::before {
-      content: "—";
-      position: absolute;
-      left: 0;
-    }
-  }
-
-  li + li { margin-top: $space-3; }
-}
-
-// 문장 속 코드
-.page code {
-  padding: 1px 6px;
-  border-radius: $radius-sm;
-  background-color: rgba($color-panel, 0.08);
-  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
-  font-size: 0.9em;
+// 더보기 / 접기
+.more {
+  display: block;
+  margin: $space-10 auto 0;
+  @include button-link;
 }

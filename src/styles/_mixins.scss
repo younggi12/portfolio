@@ -65,6 +65,12 @@
   &:hover { opacity: 0.85; }
 }
 
+// 반투명 흰 유리 — 헤더(밝은 테마)와 작품 카드 기술 패널이 같이 사용
+@mixin frosted-light {
+  background-color: rgba($color-bg, 0.8);
+  backdrop-filter: saturate(180%) blur(12px);
+}
+
 // 전체 너비 섹션 띠 배경
 @mixin band {
   background-color: $color-band;

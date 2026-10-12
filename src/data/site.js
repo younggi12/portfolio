@@ -21,6 +21,7 @@ export const UI_TEXT = {
   notFoundAction: "홈으로 가기",
   teamSize: (n) => `${n}인 팀`,
   solo: "개인",
+  myRole: "담당",
   showMore: "더보기",
   showLess: "접기",
 };
@@ -30,11 +31,10 @@ export const ABOUT_TEXT = {
   stats: {
     projects: "작품",
     team: "팀 프로젝트",
-    solo: "개인 프로젝트",
     months: "교육 과정",
   },
   unit: { count: "개", months: "개월" },
-  learned: "과정에서 배운 것",
+  learned: (school) => `${school}에서 배운 것`,
 };
 
 // 푸터 (연락처 겸용)
@@ -44,7 +44,6 @@ export const FOOTER_TEXT = {
   subMessage: "채용 · 협업 제안, 작품에 대한 질문 모두 편하게 연락 주세요.",
   emailLabel: "이메일",
   githubLabel: "GitHub",
-  sendMail: "이메일 보내기",
   copy: "복사",
   copied: "복사됨",
   toTop: "맨 위로",
@@ -72,4 +71,14 @@ export const DETAIL_TEXT = {
   solution: "해결",
   lesson: "배운 점",
   improvements: "개선할 점",
+  prev: "이전 작품",
+  next: "다음 작품",
+};
+
+// 사진 크게 보기 (상세 페이지 기능 사진)
+export const LIGHTBOX_TEXT = {
+  open: "크게 보기",
+  close: "닫기",
+  prev: "이전 사진",
+  next: "다음 사진",
 };

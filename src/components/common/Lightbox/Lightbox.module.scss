@@ -1,0 +1,89 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100; // 헤더(10)보다 위
+  display: grid;
+  place-items: center;
+  padding: $space-16 $space-20;
+  background-color: rgba($color-black, 0.88);
+  animation: fadeIn $duration-base $easing-base;
+
+  @include mobile { padding: $space-16 $space-3; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+}
+
+.image {
+  max-width: 100%;
+  max-height: calc(100vh - #{$space-16 * 2 + $space-10});
+  border-radius: $radius-md;
+  object-fit: contain;
+}
+
+.caption {
+  display: flex;
+  gap: $space-3;
+  color: $color-on-panel;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.count {
+  font-weight: $font-weight-regular;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+// 닫기 · 화살표 버튼 — 반투명 흰 원
+%round-button {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba($color-on-panel, 0.14);
+  color: $color-on-panel;
+  transition: background-color $duration-fast $easing-base;
+
+  &:hover { background-color: rgba($color-on-panel, 0.28); }
+  &:focus-visible { outline-color: $color-on-panel; }
+}
+
+.close {
+  @extend %round-button;
+  top: $space-5;
+  right: $space-5;
+  font-size: $font-size-md;
+}
+
+.arrow {
+  @extend %round-button;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: $font-size-2xl;
+  line-height: 1;
+  padding-bottom: 4px;
+}
+
+.prev { left: $space-5; }
+.next { right: $space-5; }
+
+@include mobile {
+  .arrow { top: auto; bottom: $space-4; transform: none; }
+}

@@ -3,7 +3,7 @@ import { SECTION_IDS } from "@/routes/paths";
 import { PROFILE } from "@/data/profile";
 import { PROJECTS } from "@/data/projects";
 import { ABOUT_TEXT, SECTION_TITLES } from "@/data/site";
-import { SKILL_ICONS } from "@/utils/skillIcons";
+import SkillIcon from "@/components/common/SkillIcon/SkillIcon";
 import styles from "./About.module.scss";
 
 const PHOTO_SRC = PROFILE.photo ? `${import.meta.env.BASE_URL}images/${PROFILE.photo}` : "";
@@ -12,24 +12,8 @@ const PHOTO_SRC = PROFILE.photo ? `${import.meta.env.BASE_URL}images/${PROFILE.p
 const STATS = [
   { value: PROJECTS.length, unit: ABOUT_TEXT.unit.count, label: ABOUT_TEXT.stats.projects },
   { value: PROJECTS.filter((p) => p.type === "team").length, unit: ABOUT_TEXT.unit.count, label: ABOUT_TEXT.stats.team },
-  { value: PROJECTS.filter((p) => p.type === "solo").length, unit: ABOUT_TEXT.unit.count, label: ABOUT_TEXT.stats.solo },
   { value: PROFILE.education.months, unit: ABOUT_TEXT.unit.months, label: ABOUT_TEXT.stats.months },
 ];
-
-// 브랜드 아이콘(simple-icons: path 데이터) / 개념 아이콘(lucide: 컴포넌트)
-const SkillIcon = ({ name }) => {
-  const icon = SKILL_ICONS[name];
-  if (!icon) return null;
-  if (!icon.path) {
-    const LineIcon = icon;
-    return <LineIcon size={16} strokeWidth={2} className={styles.iconLine} aria-hidden="true" />;
-  }
-  return (
-    <svg viewBox="0 0 24 24" className={styles.icon} aria-hidden="true">
-      <path d={icon.path} />
-    </svg>
-  );
-};
 
 const About = () => (
   <section data-header-theme="band" id={SECTION_IDS.about} className={styles.about} aria-label={SECTION_TITLES.about}>
@@ -46,25 +30,30 @@ const About = () => (
         <div className={styles.content}>
           <p className={styles.role} data-reveal>{PROFILE.role}</p>
           <h2 className={styles.name} data-reveal>{PROFILE.name}</h2>
-          {PROFILE.intro.map((line) => <p key={line} className={styles.intro} data-reveal>{line}</p>)}
+          {/* 첫 문장은 크게(한 줄 소개), 나머지는 본문 */}
+          {PROFILE.intro.map((line, i) => (
+            <p key={line} className={i === 0 ? styles.lead : styles.intro} data-reveal>{line}</p>
+          ))}
 
-          <ul className={styles.stats}>
+          <ul className={styles.stats} data-reveal>
             {STATS.map((stat) => (
               <li key={stat.label} data-reveal>
-                <strong>{stat.value}<small>{stat.unit}</small></strong>
                 <span>{stat.label}</span>
+                <strong>{stat.value}{stat.unit}</strong>
               </li>
             ))}
           </ul>
 
-          <dl className={styles.education} data-reveal>
-            <dt>{PROFILE.education.name}</dt>
-            <dd>{PROFILE.education.period}</dd>
-          </dl>
         </div>
       </div>
 
-      <h3 className={styles.learnedTitle} data-reveal>{ABOUT_TEXT.learned}</h3>
+      {/* 배운 곳 = 제목, 과정 · 기간 = 아래 작은 줄 */}
+      <div className={styles.learnedHead} data-reveal>
+        <h3 className={styles.learnedTitle}>{ABOUT_TEXT.learned(PROFILE.education.school)}</h3>
+        <p className={styles.course}>
+          {PROFILE.education.course} · <span className={styles.period}>{PROFILE.education.period}</span>
+        </p>
+      </div>
       <div className={styles.learned}>
         {PROFILE.learned.map((group) => (
           <div key={group.title} className={styles.card} data-reveal>

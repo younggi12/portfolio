@@ -81,6 +81,7 @@ $space-20: 80px;
 
 // ---- 4-4. 레이아웃 ----
 $content-max-width: 1280px;
+$content-wide-max-width: 1600px; // 작품 소개처럼 사진을 크게 보여줄 영역 (Apple 제품 사진 방식)
 $side-padding-desktop: 80px;
 $side-padding-tablet: 40px;
 $side-padding-mobile: 20px;
@@ -101,5 +102,6 @@ $duration-fast: 0.15s;
 $duration-base: 0.3s;
 $duration-reveal: 0.9s;                     // 스크롤 등장
 $duration-page: 1.2s;                       // 상세 페이지 들어올 때 페이드 인
+$duration-panel: 0.7s;                      // 작품 카드 기술 패널이 올라오는 속도
 $easing-reveal: cubic-bezier(0.2, 0.7, 0.2, 1);
 $easing-base: ease;

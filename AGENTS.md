@@ -122,11 +122,14 @@ URL은 `src/routes/paths.js`에서만 정의합니다. 컴포넌트에서 문자
 - 전체 목록 페이지(`/projects`)는 없습니다 — 작품 목록은 Home의 작품 소개 섹션이 전부입니다. 상세의 "작품 목록으로"는 `/#projects`로 돌아감
 - 헤더 로고: 이니셜 `YG`(`profile.logo`) + 깜빡이는 커서(글자와 같은 색, 동작 줄이기 설정이면 멈춤), 누르면 홈. 헤더 아래 구분선 없음
 - 탭 아이콘: `public/favicon.svg` — 검정 둥근 사각형 + 흰 YG(글자를 도형으로 변환해 폰트와 무관)
-- About 구성: 사진 | 역할 · 이름(큰 글자) · 소개 · 숫자 칸 4개(작품 · 팀 · 개인 수는 `projects.js`에서 계산, 교육 개월 수는 `profile.education.months`) · 교육 과정 → 아래 "과정에서 배운 것" 흰 카드 4개(모든 항목에 아이콘 — 기술은 브랜드 아이콘, 개념은 선 아이콘)
+- 링크 미리보기: `public/og-image.png`(1200×630, 검정 배경 + 흰 문구 "디자인을 코드로 / 화면을 경험으로" + YG| · 이름 — 인트로와 같은 느낌) + `index.html`의 `og:*` 태그. **배포 후 `og:image`를 `https://배포주소/og-image.png` 전체 주소로 바꾸고 `og:url` 추가** `[확정 필요]`
+- About 구성: 사진 | 역할 · 이름(큰 글자) · 소개 · 숫자 칸 3개(위 라벨 → 아래 숫자, 단위도 같은 크기 / 작품 · 팀 프로젝트 수는 `projects.js`에서 계산, 교육 개월 수는 `profile.education.months`) · 교육 과정 → 아래 "과정에서 배운 것" 흰 카드 4개(모든 항목에 아이콘 — 기술은 브랜드 아이콘, 개념은 선 아이콘)
 - About 사진: `public/images/`에 넣고 `profile.photo`에 파일명만 적음(세로 4:5). 비어 있으면 진한 칸에 이니셜 `YG` 표시
 - About은 Home 안의 섹션, **Contact는 푸터**입니다 (헤더 Contact 메뉴 → 푸터로 스크롤). Skills는 "나중에 추가" 목록.
-- 푸터(Apple 푸터처럼 작은 글자 + 얇은 구분선): 왼쪽 CONTACT · 인사말(24px) · 한 줄 설명 / 오른쪽 연락처 목록(이메일 + 복사 버튼, GitHub ↗) + "이메일 보내기" 버튼 / 맨 아래 © · 만든 도구 | 맨 위로. 문구는 `FOOTER_TEXT`
+- 푸터(Apple 푸터처럼 작은 글자 + 얇은 구분선): 왼쪽 CONTACT · 인사말(24px) · 한 줄 설명 / 오른쪽 연락처 목록(이메일 글자 + 복사 버튼, GitHub ↗) — mailto 링크 · "이메일 보내기" 버튼 없음(메일 앱 없는 PC에서 동작 안 함) / 맨 아래 © · 만든 도구 | 맨 위로. 문구는 `FOOTER_TEXT`
 - 헤더 메뉴(About / Projects / Contact)는 Home의 각 섹션으로 스크롤 이동합니다. 다른 페이지에서 누르면 Home으로 이동한 뒤 해당 섹션으로 스크롤합니다.
+- 헤더 메뉴 현재 위치(`useActiveSection`): 지금 보고 있는 섹션 메뉴를 진하게 + 밑줄(`aria-current`), 나머지는 72% 투명도. 상세 페이지는 Projects, 페이지 맨 아래는 Contact
+- 상세 페이지 기능 사진: 큰 사진을 누르면 **크게 보기**(`components/common/Lightbox`) — ← / → · Esc · 배경 클릭, 닫기 버튼 포커스 · 스크롤 잠금. 맨 아래 **이전 / 다음 작품** 카드(`getAdjacentProjects`, 상세 있는 작품만 · 끝에서 처음으로 이어짐)
 - 프로젝트가 늘어나도 페이지는 늘리지 않고 `projects.js`에 데이터만 추가합니다.
 - Vercel에서 새로고침 시 404가 나지 않도록 루트에 `vercel.json` rewrites 설정 필수.
 
@@ -143,6 +146,7 @@ portfolio/
 ├── vercel.json
 ├── public/
 │   ├── favicon.svg          # 탭 아이콘
+│   ├── og-image.png         # 링크 미리보기 그림 (1200×630)
 │   └── images/              # About 사진 (profile.webp, 세로 4:5) — 사진 넣을 때 폴더 생성
 └── src/
     ├── main.jsx             # global.scss는 여기서 한 번만 import
@@ -150,7 +154,7 @@ portfolio/
     ├── assets/
     │   └── images/projects/ # 프로젝트 스크린샷 (webp, 파일명 영문 소문자 + 하이픈)
     ├── components/
-    │   └── common/          # SiteLayout, Header, Footer, ScrollToTop, Intro
+    │   └── common/          # SiteLayout, Header, Footer, ScrollToTop, Intro, Lightbox
     ├── data/
     │   ├── profile.js       # 이름, 로고, 소개, 사진, 교육 과정, 배운 것, 연락처
     │   ├── projects.js      # 프로젝트 목록 + 상세(detail) + 조회 헬퍼
@@ -163,7 +167,8 @@ portfolio/
     │   └── NotFound/
     ├── hooks/
     │   ├── useHeaderTheme.js   # 헤더 아래 섹션의 테마(light/band/dark) 감지
-    │   └── useScrollReveal.js  # data-reveal 요소 스크롤 등장
+    │   ├── useScrollReveal.js  # data-reveal 요소 스크롤 등장
+    │   └── useActiveSection.js # 지금 보고 있는 섹션 (헤더 메뉴 표시)
     ├── routes/
     │   └── paths.js         # PATHS, toProjectDetail(), SECTION_IDS
     ├── utils/
@@ -254,7 +259,7 @@ portfolio/
 - `global.scss`는 `main.jsx`에서 한 번만 import
 - 각 `*.module.scss`는 `@use "@/styles/variables" as *;` 형태로 토큰을 불러옴
 - 색·간격·폰트 크기 하드코딩 금지(토큰 없으면 `_variables.scss`에 먼저 추가)
-- 모션은 네 가지만: 인트로(한 글자씩 등장) · **스크롤 등장** · 상세 페이지 첫 화면 페이드 인(`pageFadeIn`) · 헤더 로고 커서 깜빡임. 새 애니메이션 추가 금지
+- 모션은 다섯 가지만: 인트로(한 글자씩 등장) · **스크롤 등장** · 상세 페이지 첫 화면 페이드 인(`pageFadeIn`) · 헤더 로고 커서 깜빡임 · 크게 보기 열릴 때 페이드. 새 애니메이션 추가 금지
 - **스크롤 등장**(`hooks/useScrollReveal.js`, SiteLayout에서 1회 실행): 요소에 `data-reveal`만 붙이면 화면에 들어올 때 흐림 없이 투명 → 선명 + 32px 아래에서 위로(0.9s, Apple 방식). 같이 들어온 요소는 90ms씩 순서대로(최대 6칸). 인트로 중엔 기다렸다가 끝나면 시작(`html[data-intro="playing"]` + `introdone` 이벤트). 새 섹션을 만들면 제목 · 카드 단위로 `data-reveal`을 붙임 (푸터, 페이지 첫 화면(상세 상단 · 개요)에는 붙이지 않음 — 들어가자마자 움직이면 어색함) (글자 하나하나, 버튼 하나하나에는 붙이지 않음)
 - **작품 소개 규칙** (`pages/Home/sections/ProjectTiles.jsx`)
   - 팀 프로젝트 → 개인 프로젝트 순서로 나눠 보여줌 (`type` 기준)
@@ -316,6 +321,10 @@ portfolio/
 - 폴더 구조 / Routes / 데이터 계약(7장) / 디자인 토큰 / Dependency / Git 워크플로우 / 인트로 규칙
 
 ## 16. 버전 히스토리
+- v3.20 (2026-10-12): About 숫자 칸을 3개(작품 · 팀 프로젝트 · 교육 과정)로 줄이고 Apple 사양표 방식(라벨 위, 숫자 · 단위 같은 크기 32px)으로. 개인 프로젝트 칸 · `ABOUT_TEXT.stats.solo` 삭제.
+- v3.19 (2026-10-12): 푸터 "이메일 보내기" 버튼 · 이메일 mailto 링크 제거(주소 글자 + 복사 버튼만). `FOOTER_TEXT.sendMail` 삭제.
+- v3.18 (2026-10-12): 상세 페이지 사진 크게 보기(`Lightbox`), 이전 / 다음 작품 카드(`getAdjacentProjects`, `article key`로 넘어갈 때 새로 그림), 헤더 메뉴 현재 위치 표시(`useActiveSection`). JAJAK 썸네일을 팝업 없는 메인 화면으로 교체. 문구 `DETAIL_TEXT.prev/next`, `LIGHTBOX_TEXT` 추가.
+- v3.17 (2026-10-12): 링크 미리보기 추가 — `public/og-image.png`(검정 · 인트로 느낌), `index.html`에 `og:*` · `twitter:card` 태그. 배포 후 전체 주소로 교체 필요.
 - v3.16 (2026-10-12): 모바일 · 태블릿 점검 — About 숫자 칸 태블릿에서도 2칸(줄바꿈 방지), 교육 과정 이름 · 푸터 인사말 단어 단위 줄바꿈(`keep-all`). 가로 넘침 없음 확인(390 · 768px). 상세 기능 카드: 코드 카드가 칸을 넓히던 문제 수정(`minmax(0, 1fr)`), 태블릿 2열.
 - v3.15 (2026-10-07): 주요 버튼 호버를 밝은 파랑(#0077ED)으로, 보조 링크 호버 밑줄이 `›` 아래엔 안 생기게.
 - v3.14 (2026-10-07): 버튼을 Apple 방식으로 — 주요 버튼 파란 알약(`$color-action`), 보조는 파란 글자 링크 + `›`(`button-link`, `$color-link`). `button-outline` 삭제. 작품 카드 버튼 크기 키움.

@@ -4,12 +4,13 @@
 // 둘 다 쓰는 것만 import → 빌드에 필요한 아이콘만 포함
 import {
   siHtml5, siCss, siSass, siJavascript, siJquery,
-  siReact, siReactrouter, siFirebase, siNodedotjs,
+  siReact, siReactrouter, siFirebase, siNodedotjs, siMysql,
   siGit, siGithub, siVite, siVercel, siFigma,
 } from "simple-icons";
 import {
   Brush, MonitorSmartphone, Blocks, Webhook, Box,
   Database, ArrowRightLeft, FileText,
+  Braces, HardDrive, ScanEye, MousePointerClick,
 } from "lucide-react";
 
 export const SKILL_ICONS = {
@@ -23,6 +24,7 @@ export const SKILL_ICONS = {
   reactRouter: siReactrouter,
   firebase: siFirebase,
   node: siNodedotjs,
+  mysql: siMysql,
   git: siGit,
   github: siGithub,
   vite: siVite,
@@ -37,4 +39,31 @@ export const SKILL_ICONS = {
   database: Database,
   api: ArrowRightLeft,
   document: FileText,
+  json: Braces,
+  storage: HardDrive,
+  observer: ScanEye,
+  pointer: MousePointerClick,
 };
+
+// 상세 페이지 "기술" 칸 — projects.js의 stack 글자 → 아이콘 키 (없는 기술은 글자만)
+const STACK_ICON_KEYS = {
+  "React 19": "react",
+  "React Router": "reactRouter",
+  Vite: "vite",
+  Zustand: "store",
+  "Firebase Auth": "firebase",
+  Firestore: "database",
+  "SCSS Modules": "sass",
+  HTML: "html5",
+  HTML5: "html5",
+  CSS: "css",
+  CSS3: "css",
+  JavaScript: "javascript",
+  JSON: "json",
+  localStorage: "storage",
+  IntersectionObserver: "observer",
+  "HTML5 Canvas": "canvas",
+  "Pointer Events": "pointer",
+};
+
+export const getStackIcon = (label) => STACK_ICON_KEYS[label] ?? null;

@@ -1,0 +1,14 @@
+// 브랜드 아이콘 (채운 모양)
+.brand {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+// 개념 아이콘 (선 모양, lucide)
+.line {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}

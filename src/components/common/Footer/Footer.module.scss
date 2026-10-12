@@ -85,8 +85,9 @@
 
 .value {
   overflow-wrap: anywhere;
-  @include hover-underline;
 }
+
+a.value { @include hover-underline; }
 
 .copy {
   flex-shrink: 0;
@@ -99,8 +100,6 @@
 
   &:hover { border-color: currentColor; }
 }
-
-.primary { @include button-primary; }
 
 // ---- 아래: 저작권 | 맨 위로 ----
 .bottom {

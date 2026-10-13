@@ -1,12 +1,12 @@
-// 작품 소개 — 무신사 기업 사이트 방식
-// 화면이 멈추고(흰 배경이 꽉 차면) 상단에 그룹 제목 등장 → 스크롤하는 만큼 작품이 아래에서 위로 하나씩 지나감
+// 작품 소개 — 애플 제품 페이지 방식: 한 화면에 작품 하나
+// 화면이 멈추고(흰 배경이 꽉 차면) 큰 그룹 제목(TEAM · SOLO) 등장 → 스크롤하면 큰 썸네일 + 설명이 한 세트로 하나씩 바뀜
 // isMore: true인 작품은 처음엔 숨기고 "더보기"로 펼침 (대표 작품이 먼저 보이게 앞으로 정렬)
-// 썸네일, 글(분류·이름·부제·담당·버튼)은 사진 반대쪽(사진 왼쪽 → 글 오른쪽, 사진 오른쪽 → 글 왼쪽)
+// PC · 태블릿: 큰 썸네일 아래에 설명(왼쪽 이름 · 부제 / 오른쪽 담당 · 버튼) / 휴대폰: 썸네일 + 설명 목록
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SECTION_IDS, toProjectDetail } from "@/routes/paths";
 import { getProjectsByType } from "@/data/projects";
-import { PROJECT_GROUP_TEXT, SECTION_TITLES, UI_TEXT } from "@/data/site";
+import { PROJECT_GROUP_WORD, SECTION_TITLES, UI_TEXT } from "@/data/site";
 import { getProjectImage } from "@/utils/getProjectImage";
 import { getStackIcon } from "@/utils/skillIcons";
 import SkillIcon from "@/components/common/SkillIcon/SkillIcon";
@@ -83,23 +83,23 @@ const StackLine = ({ stack }) => {
 };
 
 
-// 스크롤 연출 — 무신사 기업 사이트 방식 (PC · 태블릿)
-// 그룹마다 화면 하나(stage)가 멈춰 있고(sticky), 스크롤하는 만큼 작품이 아래에서 위로 하나씩 지나감
-// 1) 그룹 제목(화면 가운데): 흰 배경이 꽉 찬 뒤 스크롤하는 만큼 서서히 등장 → 고정하지 않고 첫 작품과 함께 위로 지나감
-// 2) 작품은 하나씩 — 아래에서 서서히 나타나며 올라와 제목 위를 지나 화면 위로 빠져나감 (사라지는 효과 없음)
+// 스크롤 연출 — 애플 제품 페이지 방식 (PC · 태블릿): 한 화면에 작품 하나
+// 그룹마다 화면 하나(stage)가 멈춰 있고(sticky), 스크롤하는 만큼 장면이 바뀜
+// 1) 그룹 제목(TEAM · SOLO): 화면 끝까지 흐르는 띠 — 흰 배경이 꽉 찬 뒤 윤곽선 글자로 서서히 등장 → 스크롤하는 만큼 왼쪽부터 검정으로 채워짐
+// 2) 작품: 큰 썸네일 + 설명이 한 세트로 화면 가운데 — 앞 장면이 위로 살짝 빠지며 흐려진 뒤, 아래에서 서서히 들어와 머묾
 // 휴대폰 · "동작 줄이기" 사용자는 멈춤 없이 보통 목록 (제목은 화면에 들어오면 등장)
-const NEXT_AT = 0.85;    // 앞 작품이 이만큼(진행도) 올라가 화면 위로 거의 빠져나가면 다음 작품이 들어옴
-const FADE_IN = 0.35;    // 진행도 0 → 0.35 동안 서서히 나타남 (아래에서 올라오며)
-const SCALE_FROM = 0.95; // 나타날 때 크기 (다 나타나면 1)
-const HEAD_IN = 0.3;     // 화면이 멈춘 뒤(흰 배경이 꽉 찬 뒤) 이만큼(화면 높이 배수) 스크롤하는 동안 제목이 서서히 나타남
-const SCROLL_PER_MOVE = 1; // 작품이 1px 움직이는 데 필요한 스크롤(px) — 1 = 스크롤한 만큼 (사이트 다른 곳과 같은 속도)
-const EASE = 0.4;        // 화면 가운데에서 느려지는 정도 (0 = 일정한 속도, 1 = 가운데서 거의 멈춤)
-const SMOOTH = 0.15;     // 스크롤을 따라가는 부드러움 (작을수록 더 미끄러지듯 따라옴) — 페이지 스크롤 자체가 부드러워서(useSmoothScroll) 살짝만
+const HEAD_IN = 0.3;    // 제목이 서서히 나타나는 스크롤 (화면 높이 배수)
+const HEAD_HOLD = 0.45; // 제목만 보이는 스크롤 — 이 동안 윤곽선 글자가 왼쪽부터 검정으로 채워짐
+const CHANGE = 0.6;     // 장면이 바뀌는 데(나가고 · 들어오는) 걸리는 스크롤 — 클수록 천천히 바뀜
+const HOLD = 0.7;       // 작품 하나가 가만히 보이는 스크롤
+const MARQUEE_REPEAT = 4; // 흐르는 띠에 단어를 몇 번 이어 쓸지 (끊김 없이 돌도록 두 벌)
+const SHIFT = 60;       // 들어올 때 아래에서 · 나갈 때 위로 움직이는 거리(px)
+const SMOOTH = 0.15;    // 스크롤을 따라가는 부드러움 (작을수록 더 미끄러지듯 따라옴)
 
-// 0~1 진행도 → 들어올 때 빠르게, 가운데서 천천히, 나갈 때 다시 빠르게
-const easeMiddle = (u) => u + (EASE * Math.sin(2 * Math.PI * u)) / (2 * Math.PI);
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 const smoothstep = (v) => v * v * (3 - 2 * v); // 시작 · 끝을 부드럽게
+
+const clearStyles = (el, props) => props.forEach((prop) => el?.style.removeProperty(prop));
 
 const useProjectScroll = (sectionRef) => {
   useEffect(() => {
@@ -108,36 +108,34 @@ const useProjectScroll = (sectionRef) => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     const wide = window.matchMedia("(min-width: 768px)");
     let frame = 0;
-    let layout = []; // 그룹별 [{ group, stage, head, tiles, starts, span, travel }]
+    let layout = []; // 그룹별 { group, head, tiles, starts, change, hold }
 
     const isPinned = () => wide.matches && !reduce.matches;
 
-    // 그룹 높이 · 작품 시작 위치 계산 (처음 · 화면 크기 바뀔 때)
+    // 그룹 높이 · 장면 시작 위치 계산 (처음 · 화면 크기 바뀔 때)
     const measure = () => {
       const pinned = isPinned();
       section.classList.toggle(styles.pinned, pinned);
       const vh = window.innerHeight;
       layout = [...section.querySelectorAll(`.${styles.group}`)].map((group) => {
-        const stage = group.querySelector(`.${styles.stage}`);
         const head = group.querySelector(`.${styles.groupHead}`);
         const tiles = [...group.querySelectorAll(`.${styles.tile}`)];
         if (!pinned) {
           group.style.removeProperty("height");
-          tiles.forEach((t) => { t.style.removeProperty("transform"); t.style.removeProperty("opacity"); t.style.removeProperty("visibility"); });
-          [...head.children].forEach((el) => { el.style.removeProperty("transform"); el.style.removeProperty("opacity"); });
-          head.style.removeProperty("transform");
+          tiles.forEach((t) => clearStyles(t, ["transform", "opacity", "visibility"]));
+          clearStyles(head, ["transform", "opacity"]);
+          [...head.children].forEach((el) => clearStyles(el, ["transform", "opacity", "--fill"]));
           return { group, head, tiles, pinned };
         }
-        // 작품: 화면 아래(vh)에서 화면 위 밖(-작품 높이)까지 움직임
-        const travel = vh + Math.max(...tiles.map((t) => t.offsetHeight));
-        const span = travel * SCROLL_PER_MOVE; // 작품 하나가 지나가는 데 필요한 스크롤
-        // 제목이 다 나타나면 첫 작품 시작 (제목은 그때부터 스크롤만큼 위로 지나감)
-        const starts = tiles.map((_, i) => vh * HEAD_IN + i * span * NEXT_AT);
-        const cardsEnd = starts[starts.length - 1] + span; // 마지막 작품이 화면 위로 다 빠져나가는 지점
-        // 작품이 다 지나갈 때까지 스크롤할 거리 + 화면 하나 (제목은 계속 보이다가 화면과 함께 올라감)
-        group.style.height = `${Math.ceil(vh + cardsEnd)}px`; // 그룹 맨 위부터 마지막 작품이 빠져나갈 때까지 + 화면 하나
+        const change = vh * CHANGE;
+        const hold = vh * HOLD;
+        // 작품 i가 들어오기 시작하는 지점 — 제목(나타남 + 머묾) 뒤로, 한 작품마다 바뀜 + 머묾
+        const headEnd = vh * (HEAD_IN + HEAD_HOLD);
+        const starts = tiles.map((_, i) => headEnd + i * (change + hold));
+        const end = starts[starts.length - 1] + change + hold; // 마지막 작품이 머문 뒤 화면이 풀림
+        group.style.height = `${Math.ceil(vh + end)}px`;
         const prev = layout.find((g) => g.group === group);
-        return { group, stage, head, tiles, starts, span, cardsEnd, travel, pinned, smooth: prev?.smooth ?? null };
+        return { group, head, tiles, starts, change, hold, headEnd, pinned, smooth: prev?.smooth ?? null };
       });
     };
 
@@ -146,50 +144,96 @@ const useProjectScroll = (sectionRef) => {
       const vh = window.innerHeight;
       let moving = false;
       layout.forEach((item) => {
-        const { group, head, tiles, starts, span, travel, pinned } = item;
+        const { group, head, tiles, starts, change, hold, headEnd, pinned } = item;
         const top = group.getBoundingClientRect().top;
         if (!pinned) {
           if (head.getBoundingClientRect().top < vh * 0.8) head.classList.add(styles.headShown);
           return;
         }
-        // 제목: 화면이 멈춘 뒤(흰 배경이 꽉 찬 상태)부터 스크롤하는 만큼 서서히 나타남
-        // 한 번 나타나면 계속 보임 (작품이 다 지나가면 화면과 함께 위로 올라감)
-        const h = Math.max(0, Math.min(1, -top / (vh * HEAD_IN)));
-        // 다 나타난 뒤에는 고정하지 않고 스크롤한 만큼 위로 지나감
-        head.style.transform = `translateY(${(-Math.max(0, -top - vh * HEAD_IN)).toFixed(1)}px)`;
-        [...head.children].forEach((el, k) => {
-          const v = Math.max(0, Math.min(1, h * 1.25 - k * 0.25)); // 설명은 제목보다 조금 늦게
-          el.style.opacity = v.toFixed(3);
-          el.style.transform = `translateY(${((1 - v) * 40).toFixed(1)}px)`;
-        });
         const target = Math.max(0, -top); // 멈춘 화면 안에서 스크롤한 거리
         // 스크롤 값을 바로 쓰지 않고 조금씩 따라감 → 휠을 끊어 굴려도 미끄러지듯 부드럽게
         if (item.smooth === null || Math.abs(target - item.smooth) > vh * 2) item.smooth = target;
         item.smooth += (target - item.smooth) * SMOOTH;
         if (Math.abs(target - item.smooth) < 0.5) item.smooth = target;
         else moving = true;
+        const p = item.smooth;
 
+        // 제목: 흰 배경이 꽉 찬 뒤 서서히 나타남 → 첫 작품이 들어올 때 위로 살짝 빠지며 흐려짐
+        const hIn = clamp01(target / (vh * HEAD_IN));
+        const hOut = smoothstep(clamp01((p - headEnd) / (change * 0.5)));
+        // 윤곽선으로 나타난 뒤, 스크롤하는 만큼 왼쪽부터 검정으로 채워짐
+        const fill = smoothstep(clamp01((p - vh * HEAD_IN) / (vh * HEAD_HOLD * 0.85)));
+        [...head.children].forEach((el) => {
+          el.style.opacity = hIn.toFixed(3);
+          el.style.transform = `translateY(${((1 - hIn) * 40).toFixed(1)}px)`;
+          el.style.setProperty("--fill", fill.toFixed(3));
+        });
+        head.style.opacity = (1 - hOut).toFixed(3);
+        head.style.transform = `translateY(${(-hOut * SHIFT).toFixed(1)}px) scale(${(1 - hOut * 0.04).toFixed(4)})`;
+
+        // 작품: 들어옴(아래 → 제자리, 흐림 → 선명) → 머묾 → 나감(제자리 → 위, 선명 → 흐림, 다음 작품과 겹쳐서)
         tiles.forEach((tile, i) => {
-          const u = Math.max(0, Math.min(1, (item.smooth - starts[i]) / span));
-          const y = vh - easeMiddle(u) * travel; // 아래(vh)에서 화면 위 밖까지
-          // 올라오며 서서히 나타남 (사라지는 효과는 없음 — 그대로 화면 위로 빠져나감)
-          const opacity = smoothstep(clamp01(u / FADE_IN));
-          const scale = SCALE_FROM + (1 - SCALE_FROM) * opacity;
-          tile.style.transform = `translateY(${y.toFixed(1)}px) scale(${scale.toFixed(4)})`;
+          // 바뀌는 구간의 앞 절반에 앞 장면이 빠지고, 뒤 절반에 새 장면이 들어옴 (두 장면이 겹쳐 보이지 않게)
+          const enter = smoothstep(clamp01((p - starts[i] - change * 0.45) / (change * 0.55)));
+          const isLast = i === tiles.length - 1;
+          const leave = isLast ? 0 : smoothstep(clamp01((p - starts[i] - change - hold) / (change * 0.5)));
+          const opacity = Math.min(enter, 1 - leave);
+          const y = (1 - enter) * SHIFT - leave * SHIFT;
+          const scale = 1 - (1 - enter) * 0.03 - leave * 0.03;
           tile.style.opacity = opacity.toFixed(3);
-          tile.style.visibility = opacity === 0 || u >= 1 ? "hidden" : "visible"; // 안 보이는 작품은 클릭 · Tab 안 되게
+          tile.style.transform = `translateY(${y.toFixed(1)}px) scale(${scale.toFixed(4)})`;
+          tile.style.visibility = opacity < 0.05 ? "hidden" : "visible"; // 안 보이는 작품은 클릭 · Tab 안 되게
         });
       });
+      updateNav();
       if (moving) request(); // 다 따라갈 때까지 계속
     };
 
-    // Tab으로 작품 버튼에 들어오면 그 작품이 화면 가운데 오도록 스크롤
+    // 오른쪽 점 메뉴: 작품 소개 화면 안에서만 보이고, 지금 보고 있는 작품 점을 채움
+    const nav = section.querySelector(`.${styles.dots}`);
+    const dots = nav ? [...nav.querySelectorAll("button[data-group]")] : [];
+    const updateNav = () => {
+      if (!nav) return;
+      const vh = window.innerHeight;
+      const rect = section.getBoundingClientRect();
+      const inView = layout.some((g) => g.pinned) && rect.top <= 1 && rect.bottom >= vh;
+      nav.classList.toggle(styles.dotsShown, inView);
+      let active = null;
+      layout.forEach((item, g) => {
+        if (!item.pinned) return;
+        const top = item.group.getBoundingClientRect().top;
+        if (top > 1 || top + item.group.offsetHeight < vh) return; // 이 그룹 화면이 아님
+        const p = Math.max(0, -top);
+        item.starts.forEach((start, i) => { if (p >= start + item.change * 0.45) active = `${g}-${i}`; });
+        if (active === null) active = `${g}-0`; // 제목 화면에서는 그 그룹 첫 작품
+      });
+      dots.forEach((dot) => {
+        const on = `${dot.dataset.group}-${dot.dataset.index}` === active;
+        dot.classList.toggle(styles.dotActive, on);
+        if (on) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+      });
+    };
+
+    // 점을 누르면 그 작품이 가만히 보이는 위치로 스크롤
+    const onDotClick = (e) => {
+      const dot = e.target.closest?.("button[data-group]");
+      const item = dot && layout[Number(dot.dataset.group)];
+      if (!item?.pinned) return;
+      const i = Number(dot.dataset.index);
+      const progress = item.starts[i] + item.change + item.hold / 2;
+      const groupTop = item.group.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: groupTop + progress, behavior: "smooth" });
+    };
+
+    // Tab으로 작품 버튼에 들어오면 그 작품이 다 보이는 위치로 스크롤
     const onFocus = (e) => {
+      if (e.target.closest?.(`.${styles.dots}`)) return; // 점 메뉴는 제외
       const tile = e.target.closest?.(`.${styles.tile}`);
       const item = tile && layout.find((g) => g.pinned && g.tiles.includes(tile));
       if (!item) return;
       const i = item.tiles.indexOf(tile);
-      const progress = item.starts[i] + item.span / 2; // 가운데쯤
+      const progress = item.starts[i] + item.change + item.hold / 2; // 머무는 구간 가운데
       const groupTop = item.group.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: groupTop + progress, behavior: "instant" });
       item.smooth = progress;
@@ -203,7 +247,9 @@ const useProjectScroll = (sectionRef) => {
     wide.addEventListener("change", relayout);
     reduce.addEventListener("change", relayout);
     section.addEventListener("focusin", onFocus);
+    nav?.addEventListener("click", onDotClick);
     return () => {
+      nav?.removeEventListener("click", onDotClick);
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", request);
       window.removeEventListener("resize", relayout);
@@ -215,7 +261,7 @@ const useProjectScroll = (sectionRef) => {
 };
 
 const Tile = ({ project }) => {
-  const { projectId, name, type, category, teamSize, roleShort, stack, thumbnail, headerColor, headerTone, headerText, headerGlow, links, hasDetail } = project;
+  const { projectId, name, roleShort, stack, thumbnail, headerColor, headerTone, headerText, headerGlow, links, hasDetail } = project;
   const { title, subtitle } = splitName(name);
   // 버튼 2개: 상세 페이지가 있으면 [자세히 보기, 첫 링크], 없으면 [첫 링크, 둘째 링크]
   const [first, second] = links;
@@ -261,9 +307,7 @@ const Tile = ({ project }) => {
         )}
       </div>
       <div className={styles.text} data-reveal>
-        <p className={styles.eyebrow}>
-          {category} · {type === "team" ? UI_TEXT.teamSize(teamSize) : UI_TEXT.solo}
-        </p>
+        {/* 이름(크게) → 부제 / 담당(팀만) → 버튼 */}
         <h3 className={styles.title}>{title}</h3>
         {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         {/* 팀 프로젝트: 내 담당 한 줄 */}
@@ -282,7 +326,7 @@ const Tile = ({ project }) => {
   );
 };
 
-// 그룹 = 멈춰 있는 화면 + 상단 제목 + 아래에서 위로 지나가는 작품(좌우 번갈아)
+// 그룹 = 멈춰 있는 화면 + 큰 제목(TEAM · SOLO) + 한 화면에 하나씩 바뀌는 작품
 const ProjectGroup = ({ type, title }) => {
   const [isOpen, setIsOpen] = useState(false);
   const projects = getProjectsByType(type);
@@ -292,11 +336,22 @@ const ProjectGroup = ({ type, title }) => {
 
   return (
     <div className={styles.group}>
-      {/* stage = 멈춰 있는 화면 (PC · 태블릿) — 제목은 나타난 뒤 스크롤하면 위로 지나감(고정 안 함) */}
+      {/* stage = 멈춰 있는 화면 (PC · 태블릿) */}
       <div className={styles.stage}>
         <div className={styles.groupHead}>
-          <h2 className={styles.groupTitle}>{title}</h2>
-          <p className={styles.groupDesc}>{PROJECT_GROUP_TEXT[type]}</p>
+          <h2 className={styles.groupTitle}>
+            <span className={styles.srOnly}>{title}</span>
+            {/* 흐르는 띠 — 윤곽선 줄 위에 검정 줄을 겹치고, 검정 줄을 왼쪽부터 드러냄(--fill) */}
+            <span className={styles.marquee} aria-hidden="true">
+              {["outline", "fill"].map((layer) => (
+                <span key={layer} className={`${styles.marqueeLayer} ${layer === "fill" ? styles.marqueeFill : ""}`}>
+                  <span className={styles.track}>
+                    {Array.from({ length: MARQUEE_REPEAT * 2 }, (_, i) => <span key={i}>{PROJECT_GROUP_WORD[type]}</span>)}
+                  </span>
+                </span>
+              ))}
+            </span>
+          </h2>
         </div>
         <div className={styles.cards}>
           {visible.map((project) => <Tile key={project.projectId} project={project} />)}
@@ -311,6 +366,30 @@ const ProjectGroup = ({ type, title }) => {
   );
 };
 
+
+// 오른쪽에 고정된 점 메뉴 — 점 하나 = 작품 하나, 누르면 그 작품으로 이동 (PC · 태블릿, 작품 소개 화면 안에서만 보임)
+const ProjectDots = () => (
+  <nav className={styles.dots} aria-label={UI_TEXT.projectNav}>
+    {GROUPS.map((group, g) => (
+      <div key={group.type} className={styles.dotGroup}>
+        <span className={styles.dotLabel} aria-hidden="true">{PROJECT_GROUP_WORD[group.type]}</span>
+        <ul>
+          {getProjectsByType(group.type).filter((p) => !p.isMore).map((project, i) => {
+            const { title } = splitName(project.name);
+            return (
+              <li key={project.projectId}>
+                <button type="button" className={styles.dot} data-group={g} data-index={i} aria-label={title}>
+                  <span className={styles.dotName} aria-hidden="true">{title}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))}
+  </nav>
+);
+
 const ProjectTiles = () => {
   const sectionRef = useRef(null);
   useProjectScroll(sectionRef);
@@ -318,6 +397,7 @@ const ProjectTiles = () => {
   return (
     <section ref={sectionRef} id={SECTION_IDS.projects} data-header-theme="light" className={styles.section} aria-label={SECTION_TITLES.projects}>
       {GROUPS.map((group) => <ProjectGroup key={group.type} type={group.type} title={group.title} />)}
+      <ProjectDots />
     </section>
   );
 };

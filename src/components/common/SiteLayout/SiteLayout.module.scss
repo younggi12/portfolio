@@ -9,4 +9,5 @@
 .main {
   flex: 1;
   padding-top: $header-height; // 고정 헤더 높이만큼
+  overflow-x: clip; // 화면 끝까지 차는 배경(작품 소개)이 가로 스크롤을 만들지 않게 (clip은 sticky를 막지 않음)
 }

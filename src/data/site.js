@@ -15,7 +15,13 @@ export const SECTION_TITLES = {
   solo: "개인 프로젝트",
 };
 
-// 작품 소개 그룹 — 상단에 고정되는 제목 아래 한 줄
+// 작품 소개 그룹 — 화면 가운데 큰 영문 제목 (화면 읽기에는 SECTION_TITLES의 한글 제목)
+export const PROJECT_GROUP_WORD = {
+  team: "TEAM",
+  solo: "SOLO",
+};
+
+// 작품 소개 그룹 — 큰 영문 제목 아래 한 줄
 export const PROJECT_GROUP_TEXT = {
   team: "여럿이 함께 만들고, 맡은 기능은 끝까지",
   solo: "기획부터 디자인 · 개발 · 배포까지 혼자서",
@@ -28,6 +34,7 @@ export const UI_TEXT = {
   teamSize: (n) => `${n}인 팀`,
   solo: "개인",
   myRole: "담당",
+  projectNav: "작품 바로 가기",
   showMore: "더보기",
   showLess: "접기",
 };

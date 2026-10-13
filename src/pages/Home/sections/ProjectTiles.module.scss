@@ -1,3 +1,5 @@
+@use "sass:math";
+@use "sass:list";
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
 
@@ -7,7 +9,6 @@
   @include container;
   max-width: $content-wide-max-width + $side-padding-desktop * 2; // 다른 섹션보다 넓게 — 사진 · 기술 패널을 크게
   padding-block: 0 $space-20;
-  overflow-x: clip; // 가로 스크롤 방지 (clip은 sticky를 막지 않음)
 }
 
 .group + .group { margin-top: $space-20; }
@@ -35,8 +36,10 @@
 
 .headShown > * { opacity: 1; transform: none; }
 
-// ---- 멈춘 화면 방식 (PC · 태블릿) ----
-// .group 높이는 JS가 계산(화면 하나 + 작품이 지나갈 스크롤 거리)
+// ---- 멈춘 화면 방식 (PC · 태블릿) — 한 화면에 작품 하나 ----
+// .group 높이는 JS가 계산(화면 하나 + 장면이 바뀌는 스크롤 거리)
+$showcase-width: min(72%, calc((100svh - 320px) * 2)); // 썸네일(2:1) + 설명이 한 화면에 다 들어가는 너비
+
 .section.pinned {
   .group + .group { margin-top: 0; }
 
@@ -45,20 +48,31 @@
     position: sticky;
     top: 0;
     height: 100svh;
-    overflow: clip;
+    overflow-x: visible; // 흐르는 띠는 화면 끝까지 (가로 넘침은 SiteLayout이 잘라줌)
+    overflow-y: clip;    // 화면 아래 · 위는 안 보이게
   }
 
-  // 제목이 나타나는 정도는 JS가 스크롤에 맞춰 직접 정함
-  .groupHead > * { transition: none; }
-
-  // 제목은 화면 가운데 — 나타난 뒤엔 JS가 스크롤만큼 위로 올림(고정 안 함)
+  // 큰 제목(TEAM · SOLO) — 왼쪽 정렬, 세로 가운데 / 첫 작품이 들어오면 위로 살짝 빠지며 흐려짐 (JS)
   .groupHead {
     position: absolute;
     inset: 0;
     min-height: 0;
+    align-items: flex-start;
+    text-align: left;
   }
 
-  // 작품은 화면 맨 위 기준으로 놓고 JS가 translateY로 아래 → 위 이동
+  .groupHead > * { transition: none; }
+
+  .groupTitle {
+    width: 100%;
+    font-size: clamp(120px, 18vw, 340px); // 영문 4글자(TEAM · SOLO)라 크게
+    letter-spacing: -0.045em;
+    line-height: 1;
+
+    @include tablet { font-size: 16vw; }
+  }
+
+  // 작품 한 장면 = 큰 썸네일 + 아래 설명, 화면 가운데 (나타남 · 사라짐은 JS)
   .cards {
     position: absolute;
     inset: 0;
@@ -66,15 +80,54 @@
     padding: 0;
   }
 
-  .tile {
+  .tile,
+  .tile:nth-child(even) {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-8;
+    width: 100%;
+    height: 100%;
+    padding-top: $space-10;
+    opacity: 0;
     will-change: transform, opacity;
-
-    &:nth-child(even) { left: auto; right: 0; }
   }
+
+  .card {
+    flex: none;
+    width: $showcase-width;
+  }
+
+  // 설명 — 썸네일과 같은 너비, 왼쪽(이름 · 부제) | 오른쪽(담당 · 버튼)
+  .text,
+  .tile:nth-child(even) .text {
+    flex: none; // 남는 높이로 늘어나지 않게 (줄 사이가 벌어짐)
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: $space-10;
+    align-items: end;
+    width: $showcase-width;
+    text-align: left;
+  }
+
+  .title { grid-area: 1 / 1; font-size: clamp(32px, 3vw, 48px); letter-spacing: $letter-spacing-title; line-height: 1.1; }
+  .subtitle { grid-area: 2 / 1; margin-top: $space-2; font-size: clamp(16px, 1.3vw, 20px); }
+
+  .role,
+  .actions,
+  .tile:nth-child(even) .actions {
+    grid-column: 2;
+    justify-self: end;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .role { grid-row: 1; margin-top: 0; }
+  .actions { grid-row: 2; margin-top: $space-3; }
 
   // 스크롤 등장(data-reveal)은 쓰지 않음 — 움직임은 위 연출이 대신함
   [data-reveal] { opacity: 1; transform: none; }
@@ -87,10 +140,6 @@
   line-height: $line-height-tight;
 }
 
-.groupDesc {
-  margin-top: $space-2;
-  font-size: $font-size-lg;
-}
 
 // 카드 목록 — 좌우 번갈아, 카드 사이 간격을 넓게 둬서 하나씩 지나가게
 .cards {
@@ -235,9 +284,14 @@
   gap: $space-1;
 }
 
-.eyebrow {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
+// 화면 읽기 전용 (큰 영문 제목의 한글 이름)
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .title {
@@ -280,4 +334,151 @@
   display: block;
   margin: $space-10 auto 0;
   @include button-link;
+}
+
+// ---- 오른쪽 점 메뉴 (화면에 고정) — PC · 태블릿, 작품 소개 화면 안에서만 보임(.dotsShown) ----
+.dots {
+  position: fixed;
+  top: 50%;
+  right: $space-8;
+  z-index: 5;
+  display: none;
+  flex-direction: column;
+  gap: $space-6;
+  transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $duration-base $easing-base, visibility $duration-base;
+
+  @include tablet { right: $space-4; }
+}
+
+.section.pinned .dots { display: flex; }
+
+.dotsShown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dotGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-1;
+  }
+}
+
+// 그룹 이름 (TEAM · SOLO) — 아주 작게
+.dotLabel {
+  font-size: 10px;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.08em;
+}
+
+// 점 — 누르기 쉽게 버튼은 크게, 보이는 점은 작게
+.dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+
+  &::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid $color-text;
+    border-radius: 50%;
+    transition: background-color $duration-fast $easing-base, transform $duration-fast $easing-base;
+  }
+
+  &:hover::before { transform: scale(1.3); }
+}
+
+.dotActive::before {
+  background-color: $color-text;
+  transform: scale(1.2);
+}
+
+// 점에 마우스를 올리면(키보드 포커스 포함) 왼쪽에 작품 이름
+.dotName {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + #{$space-2});
+  padding: 2px $space-2;
+  border-radius: $radius-sm;
+  background-color: $color-text;
+  color: $color-on-panel;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(4px, -50%);
+  transition: opacity $duration-fast $easing-base, transform $duration-fast $easing-base;
+  pointer-events: none;
+
+  .dot:hover &,
+  .dot:focus-visible & {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+// ---- 그룹 제목 흐르는 띠 (TEAM TEAM TEAM …) ----
+// 윤곽선은 글자 둘레 그림자로 그림 — text-stroke는 글자 속 겹친 선(A의 가로획 등)까지 그려져 지저분함
+@function outline-shadow($width, $color) {
+  $shadows: ();
+  @for $i from 0 to 16 {
+    $angle: $i * 22.5deg;
+    $shadows: list.append($shadows, (math.cos($angle) * $width) (math.sin($angle) * $width) 0 $color, comma);
+  }
+  @return $shadows;
+}
+
+.marquee {
+  position: relative;
+  display: block;
+  width: 100vw;
+  margin-left: calc(50% - 50vw); // 콘텐츠 폭이 아니라 화면 끝에서 끝까지
+  overflow: hidden;
+}
+
+.marqueeLayer {
+  display: block;
+  white-space: nowrap;
+  color: $color-bg; // 글자 속은 흰색 + 둘레 그림자 = 윤곽선
+  text-shadow: outline-shadow(2px, $color-text);
+}
+
+// 검정 줄 — 윤곽선 줄 위에 겹쳐, 왼쪽부터 드러남 (휴대폰 · 동작 줄이기는 처음부터 검정)
+.marqueeFill {
+  position: absolute;
+  inset: 0;
+  color: $color-text;
+  text-shadow: none;
+}
+
+.section.pinned .marqueeFill {
+  clip-path: inset(0 calc((1 - var(--fill, 0)) * 100%) 0 0);
+}
+
+// 같은 단어를 두 벌 이어 놓고 반만큼 움직이면 끊김 없이 계속 흐름 (두 줄이 같이 움직여 어긋나지 않음)
+.track {
+  display: inline-flex;
+  gap: 0.25em;
+  padding-left: 0.25em;
+  animation: marquee 40s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }

@@ -1,7 +1,8 @@
-// 헤더는 화면 위에 고정되고(작품 소개에서 아래로 스크롤할 땐 숨김), 배경색은 아래에 깔린 섹션 색에 맞춰 바뀐다 (Apple 방식)
-import { Link } from "react-router-dom";
+// 헤더는 화면 위에 고정되고(작품 소개 화면에서는 숨김), 배경색은 아래에 깔린 섹션 색에 맞춰 바뀐다 (Apple 방식)
+import { Link, matchPath, useLocation } from "react-router-dom";
 import { PATHS, SECTION_IDS } from "@/routes/paths";
 import { PROFILE } from "@/data/profile";
+import { getProjectById } from "@/data/projects";
 import { NAV_ITEMS } from "@/data/site";
 import useHeaderTheme from "@/hooks/useHeaderTheme";
 import useActiveSection from "@/hooks/useActiveSection";
@@ -14,14 +15,23 @@ const SECTION_ORDER = NAV_ITEMS.map((item) => item.sectionId); // About → Proj
 const Header = () => {
   const theme = useHeaderTheme(HEADER_HEIGHT);
   // 지금 보고 있는 메뉴 (상세 페이지에서는 Projects)
-  const active = useActiveSection(SECTION_ORDER, SECTION_IDS.projects);
-  // 작품 소개 섹션에서만: 아래로 스크롤하면 숨김, 위로 올리면 다시 보임
+  // 상세 페이지(있는 작품)는 Projects 표시, 404 등 다른 페이지는 표시 없음
+  const { pathname } = useLocation();
+  const detailId = matchPath(PATHS.projectDetail, pathname)?.params.projectId;
+  const isDetail = Boolean(getProjectById(detailId)?.hasDetail);
+  const active = useActiveSection(SECTION_ORDER, isDetail ? SECTION_IDS.projects : null);
+  // 작품 소개 섹션이 화면을 덮는 동안 숨김
   const isHidden = useHideOnScroll(SECTION_IDS.projects, HEADER_HEIGHT);
 
   return (
     <header className={`${styles.header} ${styles[theme]} ${isHidden ? styles.hidden : ""}`}>
       <div className={styles.inner}>
-        <Link to={PATHS.home} className={styles.logo} aria-label={`${PROFILE.name} 홈으로`}>
+        {/* 로고 → Home의 About (다른 페이지에서도 Home으로 와서 About으로) */}
+        <Link
+          to={{ pathname: PATHS.home, hash: `#${SECTION_IDS.about}` }}
+          className={styles.logo}
+          aria-label={`${PROFILE.name} 소개로`}
+        >
           {PROFILE.logo}
           <span className={styles.cursor} aria-hidden="true" />
         </Link>

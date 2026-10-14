@@ -27,10 +27,17 @@ export const PROJECT_GROUP_TEXT = {
   solo: "기획부터 디자인 · 개발 · 배포까지 혼자서",
 };
 
+// 404 페이지 — 없는 주소 · 상세 페이지가 없는 작품
+export const NOT_FOUND_TEXT = {
+  code: "404",
+  title: "페이지를 찾을 수 없어요",
+  description: "주소가 바뀌었거나 없는 페이지예요.\n홈이나 작품 소개로 돌아갈 수 있어요.",
+  home: "홈으로 가기",
+  projects: "작품 소개 보기",
+};
+
 export const UI_TEXT = {
   viewDetail: "자세히 보기",
-  notFoundTitle: "페이지를 찾을 수 없어요",
-  notFoundAction: "홈으로 가기",
   teamSize: (n) => `${n}인 팀`,
   solo: "개인",
   myRole: "담당",
@@ -84,8 +91,8 @@ export const DETAIL_TEXT = {
   solution: "해결",
   lesson: "배운 점",
   improvements: "개선할 점",
-  prev: "이전 작품",
-  next: "다음 작품",
+  others: "다른 작품 보기",
+  current: "지금 보는 작품",
 };
 
 // 사진 크게 보기 (상세 페이지 기능 사진)

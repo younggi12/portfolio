@@ -9,6 +9,7 @@ import { getProjectsByType } from "@/data/projects";
 import { PROJECT_GROUP_WORD, SECTION_TITLES, UI_TEXT } from "@/data/site";
 import { getProjectImage } from "@/utils/getProjectImage";
 import { getStackIcon } from "@/utils/skillIcons";
+import { scrollToY } from "@/utils/scrollToY";
 import SkillIcon from "@/components/common/SkillIcon/SkillIcon";
 import styles from "./ProjectTiles.module.scss";
 
@@ -215,15 +216,22 @@ const useProjectScroll = (sectionRef) => {
       });
     };
 
-    // 점을 누르면 그 작품이 가만히 보이는 위치로 스크롤
+    // 점을 누르면 그 작품이 가만히 보이는 위치로, TEAM · SOLO 글자를 누르면 큰 띠가 다 채워진 위치로 스크롤
     const onDotClick = (e) => {
+      const label = e.target.closest?.("button[data-head]");
+      const head = label && layout[Number(label.dataset.head)];
+      if (head?.pinned) {
+        const groupTop = head.group.getBoundingClientRect().top + window.scrollY;
+        scrollToY(groupTop + head.headEnd);
+        return;
+      }
       const dot = e.target.closest?.("button[data-group]");
       const item = dot && layout[Number(dot.dataset.group)];
       if (!item?.pinned) return;
       const i = Number(dot.dataset.index);
       const progress = item.starts[i] + item.change + item.hold / 2;
       const groupTop = item.group.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: groupTop + progress, behavior: "smooth" });
+      scrollToY(groupTop + progress);
     };
 
     // Tab으로 작품 버튼에 들어오면 그 작품이 다 보이는 위치로 스크롤
@@ -261,7 +269,7 @@ const useProjectScroll = (sectionRef) => {
 };
 
 const Tile = ({ project }) => {
-  const { projectId, name, roleShort, stack, thumbnail, headerColor, headerTone, headerText, headerGlow, links, hasDetail } = project;
+  const { projectId, name, roleShort, summary, teamSize, category, type, stack, thumbnail, headerColor, headerTone, headerText, headerGlow, links, hasDetail } = project;
   const { title, subtitle } = splitName(name);
   // 버튼 2개: 상세 페이지가 있으면 [자세히 보기, 첫 링크], 없으면 [첫 링크, 둘째 링크]
   const [first, second] = links;
@@ -307,10 +315,14 @@ const Tile = ({ project }) => {
         )}
       </div>
       <div className={styles.text} data-reveal>
-        {/* 이름(크게) → 부제 / 담당(팀만) → 버튼 */}
+        {/* 왼쪽: 이름(크게) → 부제 → 한 줄 소개 / 오른쪽: 담당 → 버튼 → 인원 · 분류 */}
         <h3 className={styles.title}>{title}</h3>
         {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-        {/* 팀 프로젝트: 내 담당 한 줄 */}
+        {summary && <p className={styles.summary}>{summary}</p>}
+        <p className={styles.meta}>
+          {[type === "team" ? UI_TEXT.teamSize(teamSize) : UI_TEXT.solo, category].join(" · ")}
+        </p>
+        {/* 내 담당 한 줄 (개인 작품은 기획 · 디자인 · 개발 전체) */}
         {roleShort && (
           <p className={styles.role}>
             <b>{UI_TEXT.myRole}</b> {roleShort}
@@ -372,7 +384,10 @@ const ProjectDots = () => (
   <nav className={styles.dots} aria-label={UI_TEXT.projectNav}>
     {GROUPS.map((group, g) => (
       <div key={group.type} className={styles.dotGroup}>
-        <span className={styles.dotLabel} aria-hidden="true">{PROJECT_GROUP_WORD[group.type]}</span>
+        {/* TEAM · SOLO 글자를 누르면 그 그룹 첫 화면(큰 TEAM · SOLO 띠)으로 */}
+        <button type="button" className={styles.dotLabel} data-head={g} aria-label={group.title}>
+          {PROJECT_GROUP_WORD[group.type]}
+        </button>
         <ul>
           {getProjectsByType(group.type).filter((p) => !p.isMore).map((project, i) => {
             const { title } = splitName(project.name);

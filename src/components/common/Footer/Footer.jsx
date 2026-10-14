@@ -7,6 +7,7 @@ import { SECTION_IDS } from "@/routes/paths";
 import { PROFILE } from "@/data/profile";
 import { FOOTER_TEXT } from "@/data/site";
 import styles from "./Footer.module.scss";
+import { scrollToY } from "@/utils/scrollToY";
 
 const COPIED_MS = 2000; // "복사됨" 표시 시간
 
@@ -30,7 +31,7 @@ const Footer = () => {
     }
   };
 
-  const handleToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleToTop = () => scrollToY(0);
 
   return (
     <footer id={SECTION_IDS.contact} className={styles.footer} data-header-theme="band">

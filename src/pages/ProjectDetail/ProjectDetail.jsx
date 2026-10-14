@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { PATHS, SECTION_IDS, toProjectDetail } from "@/routes/paths";
-import { getAdjacentProjects, getProjectById } from "@/data/projects";
+import { getDetailProjects, getProjectById } from "@/data/projects";
 import { DETAIL_TEXT, LIGHTBOX_TEXT, UI_TEXT } from "@/data/site";
 import { getProjectImage } from "@/utils/getProjectImage";
 import NotFound from "@/pages/NotFound/NotFound";
@@ -54,6 +54,19 @@ const Problem = ({ problem }) => {
 // 화면으로 보여주기 어려운 기능은 실제 코드 일부(code)를 함께 보여줌 — 사진 뒤 마지막 칸 "</>"
 const CODE = "__code__";
 
+// 사진이 2:1에 가까우면 칸을 꽉 채우고(잘림 없음), 세로로 긴 사진(F1 방명록 등)은 잘리지 않게 전체를 보여줌
+const handleFit = (e) => {
+  const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+  e.currentTarget.dataset.fit = w / h < 1.9 ? "contain" : "cover";
+};
+
+// 마우스 위치(사진 안 %) → 확대 기준점
+const handleZoomMove = (e) => {
+  const box = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty("--zoom-x", `${((e.clientX - box.left) / box.width) * 100}%`);
+  e.currentTarget.style.setProperty("--zoom-y", `${((e.clientY - box.top) / box.height) * 100}%`);
+};
+
 const Feature = ({ feature }) => {
   const [current, setCurrent] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false); // 사진 크게 보기
@@ -72,8 +85,21 @@ const Feature = ({ feature }) => {
       ) : (
         active && (
           // 큰 사진을 누르면 화면 가득 크게 보기
-          <button type="button" className={styles.zoom} onClick={() => setIsZoomed(true)} aria-label={`${title} ${LIGHTBOX_TEXT.open}`}>
-            <img src={getProjectImage(active)} alt={`${title} 화면`} className={styles.featureMain} loading="lazy" />
+          // 마우스를 올리면 마우스가 있는 곳을 확대해서 보여줌 (위치만 CSS 변수로 넘김)
+          <button
+            type="button"
+            className={styles.zoom}
+            onClick={() => setIsZoomed(true)}
+            onMouseMove={handleZoomMove}
+            aria-label={`${title} ${LIGHTBOX_TEXT.open}`}
+          >
+            <img
+              src={getProjectImage(active)}
+              alt={`${title} 화면`}
+              className={styles.featureMain}
+              loading="lazy"
+              onLoad={handleFit}
+            />
             <span className={styles.zoomIcon} aria-hidden="true"><Maximize2 size={16} strokeWidth={2} /></span>
           </button>
         )
@@ -112,7 +138,6 @@ const ProjectDetail = () => {
 
   const { name, category, type, teamSize, period, role, summary, stack, thumbnail, links, detail } = project;
   const [title, subtitle] = name.split(" — ");
-  const { prev, next } = getAdjacentProjects(projectId);
 
   return (
     // key: 이전 / 다음 작품으로 넘어갈 때 페이지를 새로 그려 등장 연출 · 사진 선택을 처음부터
@@ -178,19 +203,35 @@ const ProjectDetail = () => {
           <ul className={styles.list} data-reveal>{detail.improvements.map((c) => <li key={c}><Rich text={c} /></li>)}</ul>
         </Section>
       )}
-      {/* 이전 / 다음 작품 */}
-      {prev && next && (
-        <nav className={styles.pager} data-reveal aria-label={`${DETAIL_TEXT.prev} / ${DETAIL_TEXT.next}`}>
-          <Link to={toProjectDetail(prev.projectId)} className={styles.pagerPrev}>
-            <span className={styles.pagerLabel}>‹ {DETAIL_TEXT.prev}</span>
-            <span className={styles.pagerName}>{prev.name.split(" — ")[0]}</span>
-          </Link>
-          <Link to={toProjectDetail(next.projectId)} className={styles.pagerNext}>
-            <span className={styles.pagerLabel}>{DETAIL_TEXT.next} ›</span>
-            <span className={styles.pagerName}>{next.name.split(" — ")[0]}</span>
-          </Link>
-        </nav>
-      )}
+      {/* 다른 작품 보기 — 상세 페이지가 있는 작품 전부를 썸네일 한 줄로, 지금 보는 작품은 표시만 */}
+      <nav className={styles.others} data-reveal aria-label={DETAIL_TEXT.others}>
+        <h2 className={styles.othersTitle}>{DETAIL_TEXT.others}</h2>
+        <ul>
+          {getDetailProjects().map((item) => {
+            const isCurrent = item.projectId === projectId;
+            const inner = (
+              <>
+                <span className={styles.othersMedia}>
+                  <img src={getProjectImage(item.thumbnail)} alt="" loading="lazy" />
+                </span>
+                <span className={styles.othersName}>
+                  {item.name.split(" — ")[0]}
+                  {isCurrent && <span className={styles.othersCurrent}>{DETAIL_TEXT.current}</span>}
+                </span>
+              </>
+            );
+            return (
+              <li key={item.projectId}>
+                {isCurrent ? (
+                  <span className={`${styles.othersItem} ${styles.othersOn}`} aria-current="page">{inner}</span>
+                ) : (
+                  <Link to={toProjectDetail(item.projectId)} className={styles.othersItem}>{inner}</Link>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
     </article>
   );
 };

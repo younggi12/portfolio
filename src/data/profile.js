@@ -23,6 +23,8 @@ export const PROFILE = {
   learned: [
     {
       title: "화면 구현",
+      emoji: "emoji-monitor.svg", // 카드 오른쪽 위 그림 (emojiFront = 카드에 마우스를 올리면 돌아서 보이는 정면 그림)
+      emojiFront: "emoji-monitor-front.svg",
       items: [
         { label: "HTML5", icon: "html5" },
         { label: "CSS3", icon: "css" },
@@ -33,6 +35,8 @@ export const PROFILE = {
     },
     {
       title: "JavaScript",
+      emoji: "emoji-javascript.svg",
+      emojiFront: "emoji-javascript-front.svg",
       items: [
         { label: "JavaScript (ES6+)", icon: "javascript" },
         { label: "Canvas API", icon: "canvas" },
@@ -44,6 +48,8 @@ export const PROFILE = {
     },
     {
       title: "React",
+      emoji: "emoji-react.svg",
+      emojiFront: "emoji-react-front.svg",
       items: [
         { label: "React", icon: "react" },
         { label: "React Router", icon: "reactRouter" },
@@ -54,6 +60,8 @@ export const PROFILE = {
     },
     {
       title: "데이터 · 서버",
+      emoji: "emoji-server.svg",
+      emojiFront: "emoji-server-front.svg",
       items: [
         { label: "Firebase Auth", icon: "firebase" },
         { label: "Firestore · 보안 규칙", icon: "database" },
@@ -65,6 +73,8 @@ export const PROFILE = {
     },
     {
       title: "협업 · 도구",
+      emoji: "emoji-tools.svg",
+      emojiFront: "emoji-tools-front.svg",
       items: [
         { label: "Git", icon: "git" },
         { label: "GitHub", icon: "github" },

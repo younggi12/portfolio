@@ -4,9 +4,10 @@
 // - 같은 페이지 안에서 메뉴로 섹션 이동할 때만 부드럽게
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { scrollToElement } from "@/utils/scrollToY";
 
 const ScrollToTop = () => {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, key } = useLocation();
   const prevPathname = useRef(pathname);
 
   useEffect(() => {
@@ -17,12 +18,12 @@ const ScrollToTop = () => {
     if (hash) {
       // 페이지가 그려진 다음 프레임에 찾아야 섹션이 존재한다
       requestAnimationFrame(() => {
-        document.getElementById(hash.slice(1))?.scrollIntoView({ behavior });
+        scrollToElement(document.getElementById(hash.slice(1)), { smooth: behavior === "smooth" });
       });
       return;
     }
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [pathname, hash]);
+  }, [pathname, hash, key]); // key: 같은 메뉴 · 로고를 다시 눌러도 이동
 
   return null;
 };

@@ -1,9 +1,10 @@
-// About — 위: 사진 + (역할 · 이름 · 소개 · 숫자 칸 · 교육 과정) / 아래: 배운 것 카드 4개
+// About — 위: 사진 + (역할 · 이름 · 소개 · 숫자 칸 · 교육 과정) / 아래: 배운 것 카드 5개(오른쪽 위 이모지)
 import { SECTION_IDS } from "@/routes/paths";
 import { PROFILE } from "@/data/profile";
 import { PROJECTS } from "@/data/projects";
 import { ABOUT_TEXT, SECTION_TITLES } from "@/data/site";
 import SkillIcon from "@/components/common/SkillIcon/SkillIcon";
+import { getEmojiImage } from "@/utils/getEmojiImage";
 import styles from "./About.module.scss";
 
 const PHOTO_SRC = PROFILE.photo ? `${import.meta.env.BASE_URL}images/${PROFILE.photo}` : "";
@@ -57,6 +58,13 @@ const About = () => (
       <div className={styles.learned}>
         {PROFILE.learned.map((group) => (
           <div key={group.title} className={styles.card} data-reveal>
+            {/* 카드 오른쪽 위 그림 — 마우스를 올리면 옆모습(아이소메트릭)이 돌아서 정면 그림으로 */}
+            {group.emoji && (
+              <span className={styles.emoji} aria-hidden="true">
+                <img src={getEmojiImage(group.emoji)} alt="" className={styles.emojiSide} loading="lazy" />
+                {group.emojiFront && <img src={getEmojiImage(group.emojiFront)} alt="" className={styles.emojiFront} loading="lazy" />}
+              </span>
+            )}
             <h4 className={styles.cardTitle}>{group.title}</h4>
             <ul className={styles.items}>
               {group.items.map((item) => (

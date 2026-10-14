@@ -176,15 +176,34 @@
   }
 }
 
+$feature-zoom: 2.5; // 마우스를 올렸을 때 확대 배율
+
 // 큰 사진 = 크게 보기 버튼 (오른쪽 위 확대 아이콘은 마우스를 올리면 보임)
+// 마우스를 올리면 사진이 커지고, 마우스가 있는 곳을 따라 확대된 부분이 움직임 (터치 화면은 없음)
 .zoom {
   position: relative;
   display: block;
   width: 100%;
+  overflow: hidden;
+  border-radius: $radius-md;
   cursor: zoom-in;
+
+  // 테두리는 사진 위에 따로 — 사진이 커져도 테두리는 그대로
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid $color-border;
+    border-radius: inherit;
+    pointer-events: none;
+  }
 
   &:hover .zoomIcon,
   &:focus-visible .zoomIcon { opacity: 1; }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .featureMain { transform: scale($feature-zoom); }
+  }
 }
 
 .zoomIcon {
@@ -207,11 +226,21 @@
 .featureMain {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 2 / 1; // 기능 사진 원본 비율(1600×800) — 잘리지 않음
   object-fit: cover;
   object-position: top;
-  border-radius: $radius-md;
-  border: 1px solid $color-border;
+
+  // 세로로 긴 사진은 전체를 보여주고 남는 양옆은 검정 (JS가 data-fit을 붙임)
+  &[data-fit="contain"] {
+    object-fit: contain;
+    object-position: center;
+    background-color: $color-black;
+  }
+
+  transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%); // 마우스 위치 (JS)
+  transition: transform $duration-base $easing-base;
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
 }
 
 // 작은 사진 줄 — 누르면 위 큰 사진이 바뀜
@@ -232,7 +261,7 @@
   img {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 2 / 1;
     object-fit: cover;
     object-position: top;
   }
@@ -245,12 +274,12 @@
   border-color: $color-panel;
 }
 
-// 코드 카드 — 사진 대신 실제 코드 일부 (큰 사진과 같은 16:10 크기)
+// 코드 카드 — 사진 대신 실제 코드 일부 (큰 사진과 같은 2:1 크기, 길면 칸 안에서 스크롤)
 .code {
   display: flex;
   flex-direction: column;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 2 / 1;
   overflow: hidden;
   border-radius: $radius-md;
   background-color: $color-panel;
@@ -283,7 +312,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 2 / 1;
   background-color: $color-panel;
   color: $color-on-panel;
   font-family: $font-family-mono;
@@ -370,44 +399,74 @@
   font-size: 0.9em;
 }
 
-// ---- 이전 / 다음 작품 ----
-.pager {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $space-4;
+// 다른 작품 보기 — 상세 있는 작품 썸네일 한 줄 (PC 6열 · 태블릿 3열 · 모바일 2열)
+.others {
   margin-top: $space-20;
-  padding-top: $space-8;
+  padding-top: $space-10;
   border-top: 1px solid $color-border;
+
+  ul {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: $space-4;
+    margin-top: $space-5;
+
+    @include tablet { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @include mobile { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: $space-4 $space-3; }
+  }
 
   @include mobile { margin-top: $space-16; }
 }
 
-.pagerPrev,
-.pagerNext {
-  display: flex;
-  flex-direction: column;
-  gap: $space-1;
-  padding: $space-5 $space-6;
-  border-radius: $radius-lg;
-  background-color: $color-band;
-  transition: background-color $duration-fast $easing-base;
-
-  &:hover { background-color: rgba($color-panel-soft, 0.6); }
-
-  @include mobile { padding: $space-4; }
-}
-
-.pagerNext { align-items: flex-end; text-align: right; }
-
-.pagerLabel {
-  font-size: $font-size-sm;
-  color: $color-link;
-}
-
-.pagerName {
+.othersTitle {
   font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   letter-spacing: $letter-spacing-heading;
-
-  @include mobile { font-size: $font-size-lg; }
 }
+
+// 작품 하나 — 다른 작품은 흐리게, 마우스를 올리면 선명 + 썸네일 살짝 확대
+.othersItem {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  opacity: 0.6;
+  transition: opacity $duration-base $easing-base;
+
+  &:hover,
+  &:focus-visible { opacity: 1; }
+
+  &:hover img { transform: scale(1.05); }
+}
+
+.othersMedia {
+  display: block;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.6s ease-out;
+  }
+}
+
+.othersName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  word-break: keep-all;
+}
+
+// 지금 보는 작품 — 선명하게 + 진한 테두리, 누를 수 없음
+.othersOn {
+  opacity: 1;
+
+  .othersMedia { border: 2px solid $color-panel; }
+}
+
+// 이름 아래 작은 줄
+.othersCurrent { display: block; font-size: $font-size-xs; font-weight: $font-weight-regular; opacity: 0.7; }

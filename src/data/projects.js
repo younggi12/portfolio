@@ -13,7 +13,7 @@ export const PROJECTS = [
     teamSize: 5,
     period: "2026.08 ~ 2026.09",
     role: "회원 인증, 고객센터(공지사항·FAQ·1:1 문의), 위시리스트, 통합 단계 AI 큐레이션 UI·모바일 반응형 보완",
-    roleShort: "회원 인증 · 고객센터 · 위시리스트", // 작품 카드에 보이는 짧은 담당 (팀 프로젝트만)
+    roleShort: "회원 인증 · 고객센터 · 위시리스트", // 작품 카드에 보이는 짧은 담당
     summary: "취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰", // "한 상"은 줄바꿈 안 되는 공백(\u00a0)
     stack: ["React 19", "Vite", "Firebase Auth", "Firestore", "SCSS Modules"],
     thumbnail: "jajak-thumb.webp",
@@ -38,7 +38,7 @@ export const PROJECTS = [
         lesson: "증상만 보고 추측하지 말고, 실제 에러 로그부터 확인하기",
       },
       improvements: [
-        "문의 내역을 전체 조회 후 화면에서 걸러냄 → `where('userId', '==', uid)` 쿼리 + 보안 규칙으로 본인 것만 읽게 개선 필요",
+        "문의 내역을 전부 불러온 뒤 화면에서 걸러냄 → `where('userId', '==', uid)` 쿼리와 보안 규칙으로 본인 문의만 읽도록 개선 필요",
         "찜 목록이 할인 전 가격으로 표시됨 → `discountRate`로 할인가 계산 필요",
       ],
     },
@@ -87,6 +87,7 @@ export const PROJECTS = [
     teamSize: 1,
     period: "2026.09",
     role: "기획·디자인·개발 전체 (초기 일부 Codex 활용, 이후 기능·디자인 직접 구현)",
+    roleShort: "기획 · 디자인 · 개발 전체 (초기 일부 Codex 활용)",
     summary: "프레임워크 없이 상품 목록부터 상세 · 장바구니까지 5페이지를 직접 구현",
     stack: ["HTML5", "CSS3", "JavaScript", "localStorage", "IntersectionObserver"],
     thumbnail: "blueline-thumb.webp",
@@ -98,9 +99,9 @@ export const PROJECTS = [
     hasDetail: true,
     detail: {
       features: [
-        { title: "상품 · 상세", text: "JSON 상품 데이터를 fetch로 불러와 카테고리 필터, 옵션 칩 · 수량 · 관련 상품이 있는 상세 페이지", images: ["blueline-shop.webp", "blueline-list.webp", "blueline-product.webp"] },
-        { title: "장바구니", text: "localStorage로 새로고침해도 유지, 2만 원 이상 무료배송 자동 계산, 담기 피드백과 커스텀 모달", images: ["blueline-cart.webp", "blueline-cart-empty.webp"] },
-        { title: "화면 연출", text: "IntersectionObserver 스크롤 등장, 무한 루프 캐러셀, 인트로는 sessionStorage로 1회만 재생", code: { file: "app.js", snippet: "// 인트로는 탭을 닫기 전까지 1회만\nif (sessionStorage.getItem(\"blueline_intro_shown\")) {\n  intro.classList.add(\"is-hidden\");\n  return;\n}\nsessionStorage.setItem(\"blueline_intro_shown\", \"1\");\n\n// 섹션이 화면에 들어오면 카드 등장\nconst observer = new IntersectionObserver((entries) => {\n  entries.forEach((entry) => {\n    if (entry.isIntersecting) {\n      items.forEach((el) => el.classList.add(\"is-visible\"));\n      observer.unobserve(entry.target);\n    }\n  });\n}, { threshold: 0.25 });" } },
+        { title: "상품 · 상세", text: "fetch로 불러온 JSON 상품 데이터로 카테고리 필터와 상세 페이지(옵션 칩 · 수량 · 관련 상품)", images: ["blueline-shop.webp", "blueline-list.webp", "blueline-product.webp"] },
+        { title: "장바구니", text: "새로고침해도 남는 장바구니(localStorage), 2만 원 이상 무료배송 자동 계산, 담기 피드백과 커스텀 모달", images: ["blueline-cart.webp", "blueline-cart-empty.webp"] },
+        { title: "화면 연출", text: "스크롤 등장(IntersectionObserver), 무한 루프 캐러셀, 한 번만 나오는 인트로(sessionStorage)", code: { file: "app.js", snippet: "// 인트로는 탭을 닫기 전까지 1회만\nif (sessionStorage.getItem(\"blueline_intro_shown\")) {\n  intro.classList.add(\"is-hidden\");\n  return;\n}\nsessionStorage.setItem(\"blueline_intro_shown\", \"1\");\n\n// 섹션이 화면에 들어오면 카드 등장\nconst observer = new IntersectionObserver((entries) => {\n  entries.forEach((entry) => {\n    if (entry.isIntersecting) {\n      items.forEach((el) => el.classList.add(\"is-visible\"));\n      observer.unobserve(entry.target);\n    }\n  });\n}, { threshold: 0.25 });" } },
       ],
       improvements: [
         "인트로 이미지 문구를 \"Good Gear Better Days\"로 다시 제작",
@@ -115,6 +116,7 @@ export const PROJECTS = [
     teamSize: 1,
     period: "2026.07",
     role: "기획·디자인·개발 전체",
+    roleShort: "기획 · 디자인 · 개발 전체",
     summary: "학습용 게시판(CRUD)에 디자인과 로그인 · 실시간 기능을 더해 완성한 React 방명록",
     stack: ["React 19", "React Router", "Zustand", "Firebase Auth", "Firestore", "SCSS Modules"],
     thumbnail: "f1-thumb.webp",
@@ -128,9 +130,9 @@ export const PROJECTS = [
     hasDetail: true,
     detail: {
       features: [
-        { title: "로그인 · 방명록", text: "Firebase Auth 로그인 후에만 작성 가능, 응원할 드라이버를 골라 메시지 작성, 팀별 필터 · 페이지네이션", images: ["f1-signup.webp", "f1-login.webp", "f1-guestbook-form.webp", "f1-guestbook-list.webp"] },
+        { title: "로그인 · 방명록", text: "로그인한 사람만 작성(Firebase Auth), 응원할 드라이버를 골라 메시지 작성, 팀별 필터 · 페이지네이션", images: ["f1-signup.webp", "f1-login.webp", "f1-guestbook-form.webp", "f1-guestbook-list.webp"] },
         { title: "본인 글만 수정 · 삭제", text: "작성자 uid 기준으로 화면에서 버튼을 숨기고, Firestore 보안 규칙에서도 한 번 더 차단", images: ["f1-owner.webp"], code: { file: "Guestbook.jsx · firestore.rules", snippet: "// 화면 — 내 글에만 수정 · 삭제 버튼\nconst isOwner =\n  user && item.authorUid === user.uid\n\n{isOwner && (\n  <div className={styles.postActions}>\n    <button onClick={...}>수정</button>\n    <button onClick={...}>삭제</button>\n  </div>\n)}\n\n// 서버 — 보안 규칙에서 한 번 더 차단\nallow delete: if request.auth != null\n  && resource.data.authorUid\n     == request.auth.uid;" } },
-        { title: "실시간 · 스크롤 연출", text: "Firestore 실시간 구독으로 새로고침 없이 반영, 커스텀 훅으로 스크롤 등장 애니메이션", code: { file: "Guestbook.jsx · About.jsx", snippet: "// 실시간 구독 — 새 글이 바로 목록에 반영\nconst unsubscribe = onSnapshot(q, (snap) => {\n  setPost(snap.docs.map((d) => ({\n    id: d.id, ...d.data(),\n  })))\n})\nreturn () => unsubscribe()\n\n// 스크롤 등장 — callback ref로\n// 요소가 생기는 순간 observer 연결\nconst ref = (el) => setNode(el)\nuseEffect(() => {\n  if (!node) return\n  const observer = new IntersectionObserver(\n    ([entry]) => {\n      if (entry.isIntersecting) {\n        setVisible(true)\n        observer.unobserve(entry.target)\n      }\n    }, { threshold: 0.2 })\n  observer.observe(node)\n}, [node])" } },
+        { title: "실시간 · 스크롤 연출", text: "새로고침 없이 바로 반영되는 글 목록(Firestore 실시간 구독), 커스텀 훅으로 만든 스크롤 등장 애니메이션", code: { file: "Guestbook.jsx · About.jsx", snippet: "// 실시간 구독 — 새 글이 바로 목록에 반영\nconst unsubscribe = onSnapshot(q, (snap) => {\n  setPost(snap.docs.map((d) => ({\n    id: d.id, ...d.data(),\n  })))\n})\nreturn () => unsubscribe()\n\n// 스크롤 등장 — callback ref로\n// 요소가 생기는 순간 observer 연결\nconst ref = (el) => setNode(el)\nuseEffect(() => {\n  if (!node) return\n  const observer = new IntersectionObserver(\n    ([entry]) => {\n      if (entry.isIntersecting) {\n        setVisible(true)\n        observer.unobserve(entry.target)\n      }\n    }, { threshold: 0.2 })\n  observer.observe(node)\n}, [node])" } },
       ],
       problem: {
         title: "인트로가 끝난 뒤 스크롤 애니메이션이 동작하지 않던 문제",
@@ -140,7 +142,7 @@ export const PROJECTS = [
         lesson: "요소가 나중에 생기는 경우엔 useRef + useEffect보다 callback ref가 정확하다",
       },
       improvements: [
-        "글 전체를 한 번에 구독한 뒤 화면에서 나눠 보여줌 → 글이 많아지면 `limit` · `startAfter`로 페이지 단위로 불러오기 필요",
+        "글 전체를 한 번에 구독하고 화면에서 나눠 보여줌 → 글이 많아지면 `limit` · `startAfter`로 페이지 단위로 불러오기 필요",
       ],
     },
   },
@@ -152,6 +154,7 @@ export const PROJECTS = [
     teamSize: 1,
     period: "2026.06",
     role: "기획·디자인·개발 전체",
+    roleShort: "기획 · 디자인 · 개발 전체",
     summary: "공 · 패들 · 벽돌의 움직임과 충돌을 Canvas로 직접 계산한 게임",
     stack: ["HTML5 Canvas", "JavaScript", "CSS"],
     thumbnail: "breaker-thumb.webp",
@@ -163,7 +166,7 @@ export const PROJECTS = [
     hasDetail: true,
     detail: {
       features: [
-        { title: "게임 루프", text: "requestAnimationFrame으로 그리기 → 이동 → 충돌 검사, 점수 · 목숨 3개 · 서브 대기", images: ["breaker-start.webp", "breaker-play.webp"] },
+        { title: "게임 루프", text: "requestAnimationFrame으로 그리기 → 이동 → 충돌 검사 반복, 점수 · 목숨 3개 · 서브 대기", images: ["breaker-start.webp", "breaker-play.webp"] },
         { title: "반사 각도", text: "패들에 맞은 위치에 따라 최대 60°까지 반사 각도를 바꾸고 공의 빠르기는 유지", code: { file: "js061201.html", snippet: "// 패들 중심 기준 맞은 위치: 왼쪽 -1 ~ 가운데 0 ~ 오른쪽 +1\nlet hitPos = (ballX - (barX + barW / 2)) / (barW / 2)\nhitPos = Math.max(-1, Math.min(1, hitPos))\n\n// 맞은 위치에 비례해 최대 60°까지 기울임\nconst angle = hitPos * MAX_BOUNCE_ANGLE * Math.PI / 180\n\n// 각도만 바꾸고 빠르기(BALL_SPEED)는 유지\nballSpeedX = BALL_SPEED * Math.sin(angle)\nballSpeedY = -BALL_SPEED * Math.cos(angle)" } },
         { title: "결과 화면", text: "클리어 · 실패 화면과 최종 점수, 다시 시작", images: ["breaker-clear.webp", "breaker-fail.webp"] },
       ],
@@ -185,6 +188,7 @@ export const PROJECTS = [
     teamSize: 1,
     period: "2026.06",
     role: "기획·디자인·개발 전체",
+    roleShort: "기획 · 디자인 · 개발 전체",
     summary: "Pointer Events로 마우스 · 터치 · 펜을 한 번에 처리하고, 되돌리기와 PNG 저장까지 지원",
     stack: ["HTML5 Canvas", "JavaScript", "Pointer Events"],
     thumbnail: "draw-thumb.webp",
@@ -196,8 +200,8 @@ export const PROJECTS = [
     hasDetail: true,
     detail: {
       features: [
-        { title: "그리기", text: "Pointer Events로 마우스 · 터치 · 펜을 한 번에 처리, 캔버스 밖으로 나가도 획이 끊기지 않음", images: ["draw-main.webp", "draw-drawn.webp"] },
-        { title: "되돌리기", text: "버튼 · Ctrl+Z로 최근 20단계 — 획을 그리기 직전 화면을 getImageData로 저장", images: ["draw-drawn.webp", "draw-undo.webp"] },
+        { title: "그리기", text: "마우스 · 터치 · 펜을 Pointer Events 하나로 처리, 캔버스 밖으로 나가도 획이 끊기지 않음", images: ["draw-main.webp", "draw-drawn.webp"] },
+        { title: "되돌리기", text: "버튼이나 Ctrl+Z로 최근 20단계까지 되돌리기 (획을 긋기 직전 화면을 getImageData로 저장)", images: ["draw-drawn.webp", "draw-undo.webp"] },
         { title: "PNG 저장", text: "배경색 · 펜 색 · 굵기를 바꿔 그리고 PNG로 다운로드", code: { file: "js060901.html", snippet: "// 임시 캔버스에 배경색 + 그림을 합침\nconst tempCanvas = document.createElement(\"canvas\");\nconst tempCtx = tempCanvas.getContext(\"2d\");\ntempCanvas.width = canvas.width;\ntempCanvas.height = canvas.height;\n\ntempCtx.fillStyle = bgColor;\ntempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);\ntempCtx.drawImage(canvas, 0, 0);\n\n// PNG로 다운로드\nlet link = document.createElement(\"a\");\nlink.download = \"drawing.png\";\nlink.href = tempCanvas.toDataURL(\"image/png\");\nlink.click();" } },
       ],
       problem: {
@@ -215,13 +219,5 @@ export const PROJECTS = [
 export const getProjectsByType = (type) => PROJECTS.filter((p) => p.type === type);
 export const getProjectById = (projectId) => PROJECTS.find((p) => p.projectId === projectId);
 
-// 상세 페이지 아래 "이전 / 다음 작품" — 상세 페이지가 있는 작품만, 화면 순서대로, 끝에서는 처음으로 이어짐
-export const getAdjacentProjects = (projectId) => {
-  const list = PROJECTS.filter((p) => p.hasDetail);
-  const i = list.findIndex((p) => p.projectId === projectId);
-  if (i === -1 || list.length < 2) return { prev: null, next: null };
-  return {
-    prev: list[(i - 1 + list.length) % list.length],
-    next: list[(i + 1) % list.length],
-  };
-};
+// 상세 페이지가 있는 작품 (상세 페이지 아래 "다른 작품 보기" 줄, 배열 순서 그대로)
+export const getDetailProjects = () => PROJECTS.filter((p) => p.hasDetail);

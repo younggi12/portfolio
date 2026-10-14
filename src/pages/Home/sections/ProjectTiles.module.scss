@@ -117,6 +117,7 @@ $showcase-width: min(72%, calc((100svh - 320px) * 2)); // 썸네일(2:1) + 설�
   .title { grid-area: 1 / 1; font-size: clamp(32px, 3vw, 48px); letter-spacing: $letter-spacing-title; line-height: 1.1; }
   .subtitle { grid-area: 2 / 1; margin-top: $space-2; font-size: clamp(16px, 1.3vw, 20px); }
 
+
   .role,
   .actions,
   .tile:nth-child(even) .actions {
@@ -128,6 +129,10 @@ $showcase-width: min(72%, calc((100svh - 320px) * 2)); // 썸네일(2:1) + 설�
 
   .role { grid-row: 1; margin-top: 0; }
   .actions { grid-row: 2; margin-top: $space-3; }
+
+  // 아래 줄: 한 줄 소개(왼쪽) | 인원 · 분류(오른쪽)
+  .summary { grid-area: 3 / 1; margin-top: $space-5; }
+  .meta { grid-area: 3 / 2; justify-self: end; margin-top: $space-5; text-align: right; }
 
   // 스크롤 등장(data-reveal)은 쓰지 않음 — 움직임은 위 연출이 대신함
   [data-reveal] { opacity: 1; transform: none; }
@@ -304,7 +309,18 @@ $showcase-width: min(72%, calc((100svh - 320px) * 2)); // 썸네일(2:1) + 설�
   word-break: keep-all;
 }
 
-// 팀 프로젝트 카드의 "담당 …" 한 줄
+// 한 줄 소개 · 인원 · 분류 — 작게, 조금 흐리게
+.summary,
+.meta {
+  margin-top: $space-2;
+  font-size: $font-size-sm;
+  opacity: 0.72;
+  word-break: keep-all;
+}
+
+.meta { white-space: nowrap; }
+
+// "담당 …" 한 줄
 .role {
   margin-top: $space-1;
   font-size: $font-size-sm;
@@ -375,10 +391,14 @@ $showcase-width: min(72%, calc((100svh - 320px) * 2)); // 썸네일(2:1) + 설�
 }
 
 // 그룹 이름 (TEAM · SOLO) — 아주 작게
+// TEAM · SOLO 글자 — 누르면 그 그룹 첫 화면으로 (호버 시 밑줄)
 .dotLabel {
+  padding: $space-1;
   font-size: 10px;
   font-weight: $font-weight-bold;
   letter-spacing: 0.08em;
+  cursor: pointer;
+  @include hover-underline;
 }
 
 // 점 — 누르기 쉽게 버튼은 크게, 보이는 점은 작게
@@ -473,7 +493,7 @@ $showcase-width: min(72%, calc((100svh - 320px) * 2)); // 썸네일(2:1) + 설�
   display: inline-flex;
   gap: 0.25em;
   padding-left: 0.25em;
-  animation: marquee 40s linear infinite;
+  animation: marquee 24s linear infinite;
 
   @media (prefers-reduced-motion: reduce) { animation: none; }
 }

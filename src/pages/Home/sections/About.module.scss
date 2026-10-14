@@ -1,6 +1,9 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
 
+$card-flip: 0.35s; // 그림이 반 바퀴 도는 시간 (옆 → 정면은 두 번 이어서 = 0.7초)
+$card-lift: 0.6s;  // 카드가 떠오르는 속도 (천천히)
+
 .about {
   @include band;
   padding-block: $space-20;
@@ -12,12 +15,20 @@
 
 // ---- 위: 사진 + 소개 ----
 .top {
+  // PC: 아래 카드 5열과 같은 칸 — 사진 = 카드 2칸 너비(크게), 소개 = 나머지 3칸
   display: grid;
-  grid-template-columns: minmax(240px, 360px) 1fr;
-  gap: $space-16;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: $space-4;
   align-items: center;
 
-  @include tablet { gap: $space-10; }
+  > .photo { grid-column: 1 / span 2; }
+  > .content { grid-column: 3 / -1; padding-left: $space-8; }
+
+  @include below-desktop {
+    grid-template-columns: minmax(260px, 2fr) 3fr;
+    gap: $space-10;
+    > .photo, > .content { grid-column: auto; padding-left: 0; }
+  }
   @include mobile {
     grid-template-columns: 1fr;
     gap: $space-8;
@@ -37,7 +48,7 @@
     object-fit: cover;
   }
 
-  @include mobile { max-width: 280px; }
+  @include mobile { max-width: 400px; }
 }
 
 .placeholder {
@@ -54,7 +65,8 @@
   display: flex;
   flex-direction: column;
   gap: $space-4;
-  max-width: $text-max-width;
+
+  > p { max-width: $text-max-width; }
 }
 
 .role {
@@ -91,19 +103,20 @@
   white-space: pre-line; // profile.intro의 \n에서 줄바꿈
 }
 
-// 숫자 칸 3개 — Apple 사양표처럼: 위 작은 라벨 → 아래 숫자(단위도 같은 크기)
+// 숫자 칸 3개 — 아래 카드와 같은 흰 상자 (위 작은 라벨 → 아래 큰 숫자)
 .stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: $space-4;
   margin-top: $space-4;
-  padding-top: $space-4;
-  border-top: 1px solid $color-border;
 
   li {
     display: flex;
     flex-direction: column;
-    gap: $space-1;
+    gap: $space-2;
+    padding: $space-5;
+    border-radius: $radius-lg;
+    background-color: $color-bg;
   }
 
   span {
@@ -113,12 +126,16 @@
 
   strong {
     white-space: nowrap;
-    font-size: $font-size-2xl;
+    font-size: $font-size-3xl;
     font-weight: $font-weight-bold;
     letter-spacing: $letter-spacing-title;
     line-height: $line-height-tight;
     font-variant-numeric: tabular-nums;
+
+    @include below-desktop { font-size: $font-size-2xl; }
   }
+
+  @include mobile { gap: $space-2; li { padding: $space-4; } }
 }
 
 // ---- 아래: 배운 것 (제목 = 배운 곳, 카드 5개) ----
@@ -154,12 +171,22 @@
 }
 
 .card {
+  // 이모지 크기 — PC 5열은 카드가 좁아 화면 너비에 맞춰 44~64px, 태블릿 64px, 휴대폰 56px
+  --emoji-size: clamp(44px, 6.67vw - 36px, 64px);
+
+  @include below-desktop { --emoji-size: 64px; }
+  @include mobile { --emoji-size: 56px; }
+
+  position: relative;
   padding: $space-5;
   border-radius: $radius-lg;
   background-color: $color-bg;
 }
 
 .cardTitle {
+  min-height: calc(var(--emoji-size) - #{$space-5});  // 오른쪽 위 이모지 아래부터 항목이 시작되게
+  padding-right: calc(var(--emoji-size) - #{$space-2}); // 제목이 이모지와 겹치지 않게
+  white-space: nowrap; // "데이터 · 서버"가 두 줄로 나뉘지 않게
   margin-bottom: $space-4;
   font-size: $font-size-lg;
   font-weight: $font-weight-bold;
@@ -176,5 +203,77 @@
     gap: $space-2;
     font-size: $font-size-sm;
     word-break: keep-all;
+  }
+}
+
+// ---- 배운 것 카드 그림 — 오른쪽 위 ----
+// 카드에 마우스를 올리면: 카드가 살짝 떠오르고, 그림이 옆으로 돌아 정면 그림으로 바뀜(반 바퀴씩 이어서)
+.emoji {
+  position: absolute;
+  top: $space-4;
+  right: $space-4;
+  width: var(--emoji-size);
+  height: var(--emoji-size);
+  perspective: 400px;
+  pointer-events: none;
+
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+  }
+}
+
+// 마우스를 뗄 때 — 들어올 때와 같은 속도로 거꾸로: 정면 그림이 먼저 돌아 나가고 → 옆모습이 돌아 들어옴
+.emojiFront { transition: transform $card-flip ease-in, opacity 0s linear $card-flip; }
+.emojiSide { transition: transform $card-flip ease-out $card-flip, opacity 0s linear $card-flip; }
+
+// 스크롤 등장이 끝난 카드 — 등장 전환(투명도 · 위치)은 그대로 두고 떠오르기 전환만 더함
+// (global.scss `.reveal-on [data-reveal]`가 transition을 통째로 정하므로 같은 조건에서 다시 적음)
+:global(.reveal-on) .learned .card:global(.is-revealed) {
+  transition:
+    opacity $duration-reveal $easing-reveal,
+    transform $duration-reveal $easing-reveal,
+    translate $card-lift ease-out,
+    box-shadow $card-lift ease-out;
+  transition-delay: var(--reveal-delay, 0ms), var(--reveal-delay, 0ms), 0s, 0s;
+}
+
+.emojiFront {
+  opacity: 0;
+  transform: rotateY(-90deg);
+}
+
+.card {
+  // 떠오르기는 transform 대신 translate — 스크롤 등장(data-reveal)의 transform과 겹치지 않게
+  transition: translate $card-lift ease-out, box-shadow $card-lift ease-out;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      translate: 0 -4px;
+      box-shadow: 0 10px 24px rgba($color-panel, 0.12);
+    }
+
+    // 옆모습이 90° 돌아 사라진 뒤 → 정면 그림이 -90°에서 돌아 들어옴
+    &:hover .emojiSide {
+      opacity: 0;
+      transform: rotateY(90deg);
+      transition: transform $card-flip ease-in, opacity 0s linear $card-flip;
+    }
+
+    &:hover .emojiFront {
+      opacity: 1;
+      transform: rotateY(0deg);
+      transition: transform $card-flip ease-out $card-flip, opacity 0s linear $card-flip;
+    }
+  }
+
+  // 동작 줄이기: 떠오르기 · 회전 없이 그림만 바뀜
+  @media (prefers-reduced-motion: reduce) {
+    &, & img { transition: none !important; }
+    &:hover { translate: none; }
+    &:hover .emojiSide, &:hover .emojiFront { transform: none; }
   }
 }

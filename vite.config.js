@@ -9,6 +9,10 @@ export default defineConfig({
     // "@/styles/variables"처럼 src 기준 절대 경로로 import
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
+  build: {
+    // 첫 화면 3D(Three.js, heroScene)는 따로 나뉜 파일로 나중에 불러오므로 경고 기준만 올림
+    chunkSizeWarningLimit: 700,
+  },
   css: {
     preprocessorOptions: {
       // Sass 최신 API 사용 (구버전 API 경고 제거)

@@ -1,5 +1,6 @@
-// 작품 소개 — 애플 제품 페이지 방식: 한 화면에 작품 하나
-// 화면이 멈추고(흰 배경이 꽉 차면) 큰 그룹 제목(TEAM · SOLO) 등장 → 스크롤하면 큰 썸네일 + 설명이 한 세트로 하나씩 바뀜
+// 작품 소개 — 한 화면에 작품 하나 (Hero · About과 같은 결: 흰 바탕 · 큰 검은 글자 · 번호 · 선)
+// 화면이 멈추고 큰 그룹 제목(TEAM · SOLO) 띠 → 스크롤하면 [왼쪽 화면 끝까지 큰 사진 | 오른쪽 번호 · 큰 이름 · 선 목록 · 글자 버튼]이 하나씩 바뀜
+// 글 뒤에 큰 윤곽 번호(01~06), 오른쪽 번호 목록(지금 작품만 진하게), 화면 맨 아래 진행 막대
 // isMore: true인 작품은 처음엔 숨기고 "더보기"로 펼침 (대표 작품이 먼저 보이게 앞으로 정렬)
 // PC · 태블릿: 큰 썸네일 아래에 설명(왼쪽 이름 · 부제 / 오른쪽 담당 · 버튼) / 휴대폰: 썸네일 + 설명 목록
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -19,6 +20,8 @@ const GROUPS = [
   { type: "team", title: SECTION_TITLES.team },
   { type: "solo", title: SECTION_TITLES.solo },
 ];
+// 전체 작품 순서(팀 → 개인) — "01 / 06" 번호 · 큰 윤곽 번호 · 진행 막대에 씀
+const ALL_PROJECTS = GROUPS.flatMap((g) => getProjectsByType(g.type));
 
 // "JAJAK — 전통주 AI 큐레이션 쇼핑몰" → 제목 / 부제
 const splitName = (name) => {
@@ -89,6 +92,7 @@ const StackLine = ({ stack }) => {
 // 1) 그룹 제목(TEAM · SOLO): 화면 끝까지 흐르는 띠 — 흰 배경이 꽉 찬 뒤 윤곽선 글자로 서서히 등장 → 스크롤하는 만큼 왼쪽부터 검정으로 채워짐
 // 2) 작품: 큰 썸네일 + 설명이 한 세트로 화면 가운데 — 앞 장면이 위로 살짝 빠지며 흐려진 뒤, 아래에서 서서히 들어와 머묾
 // 휴대폰 · "동작 줄이기" 사용자는 멈춤 없이 보통 목록 (제목은 화면에 들어오면 등장)
+const HEAD_START = 0.35; // 섹션 윗변이 화면 위에서 이만큼(화면 높이 배수) 올라왔을 때 제목이 나타나기 시작
 const HEAD_IN = 0.3;    // 제목이 서서히 나타나는 스크롤 (화면 높이 배수)
 const HEAD_HOLD = 0.45; // 제목만 보이는 스크롤 — 이 동안 윤곽선 글자가 왼쪽부터 검정으로 채워짐
 const CHANGE = 0.6;     // 장면이 바뀌는 데(나가고 · 들어오는) 걸리는 스크롤 — 클수록 천천히 바뀜
@@ -123,7 +127,10 @@ const useProjectScroll = (sectionRef) => {
         const tiles = [...group.querySelectorAll(`.${styles.tile}`)];
         if (!pinned) {
           group.style.removeProperty("height");
-          tiles.forEach((t) => clearStyles(t, ["transform", "opacity", "visibility"]));
+          tiles.forEach((t) => {
+            clearStyles(t, ["transform", "opacity", "visibility"]);
+            clearStyles(t.querySelector(`.${styles.card}`), ["clip-path"]);
+          });
           clearStyles(head, ["transform", "opacity"]);
           [...head.children].forEach((el) => clearStyles(el, ["transform", "opacity", "--fill"]));
           return { group, head, tiles, pinned };
@@ -159,10 +166,11 @@ const useProjectScroll = (sectionRef) => {
         else moving = true;
         const p = item.smooth;
 
-        // 제목: 흰 배경이 꽉 찬 뒤 서서히 나타남 → 첫 작품이 들어올 때 위로 살짝 빠지며 흐려짐
-        const hIn = clamp01(target / (vh * HEAD_IN));
+        // 제목: 흰 배경이 화면 대부분을 덮을 즈음(위에서 35%) 나타나기 시작 → 화면에 붙고 조금 더 스크롤하면 다 나옴
+        //       (원래는 화면에 붙은 뒤에야 시작해서 빈 흰 화면이 길었고, 너무 일찍 나오면 앞 섹션과 겹쳐 짧게 느껴져서 중간으로)
+        const hIn = clamp01((vh * HEAD_START - top) / (vh * (HEAD_START + HEAD_IN)));
         const hOut = smoothstep(clamp01((p - headEnd) / (change * 0.5)));
-        // 윤곽선으로 나타난 뒤, 스크롤하는 만큼 왼쪽부터 검정으로 채워짐
+        // 윤곽선으로 다 나타난 뒤, 스크롤하는 만큼 왼쪽부터 검정으로 채워짐
         const fill = smoothstep(clamp01((p - vh * HEAD_IN) / (vh * HEAD_HOLD * 0.85)));
         [...head.children].forEach((el) => {
           el.style.opacity = hIn.toFixed(3);
@@ -184,6 +192,9 @@ const useProjectScroll = (sectionRef) => {
           tile.style.opacity = opacity.toFixed(3);
           tile.style.transform = `translateY(${y.toFixed(1)}px) scale(${scale.toFixed(4)})`;
           tile.style.visibility = opacity < 0.05 ? "hidden" : "visible"; // 안 보이는 작품은 클릭 · Tab 안 되게
+          // 사진은 아래에서 위로 열리듯 나타남 (나갈 땐 그대로 흐려짐)
+          const card = tile.querySelector(`.${styles.card}`);
+          if (card) card.style.clipPath = `inset(${((1 - enter) * 100).toFixed(1)}% 0 0 0)`;
         });
       });
       updateNav();
@@ -192,6 +203,7 @@ const useProjectScroll = (sectionRef) => {
 
     // 오른쪽 점 메뉴: 작품 소개 화면 안에서만 보이고, 지금 보고 있는 작품 점을 채움
     const nav = section.querySelector(`.${styles.dots}`);
+    const bar = section.querySelector(`.${styles.progress}`);
     const dots = nav ? [...nav.querySelectorAll("button[data-group]")] : [];
     const updateNav = () => {
       if (!nav) return;
@@ -199,6 +211,7 @@ const useProjectScroll = (sectionRef) => {
       const rect = section.getBoundingClientRect();
       const inView = layout.some((g) => g.pinned) && rect.top <= 1 && rect.bottom >= vh;
       nav.classList.toggle(styles.dotsShown, inView);
+      bar?.classList.toggle(styles.progressShown, inView);
       let active = null;
       layout.forEach((item, g) => {
         if (!item.pinned) return;
@@ -208,6 +221,11 @@ const useProjectScroll = (sectionRef) => {
         item.starts.forEach((start, i) => { if (p >= start + item.change * 0.45) active = `${g}-${i}`; });
         if (active === null) active = `${g}-0`; // 제목 화면에서는 그 그룹 첫 작품
       });
+      // 진행 막대 — 지금 작품이 전체 몇 번째인지 (팀 2개 다음 개인)
+      if (bar && active !== null) {
+        const n = dots.findIndex((dot) => `${dot.dataset.group}-${dot.dataset.index}` === active);
+        bar.style.setProperty("--progress", ((n + 1) / dots.length).toFixed(3));
+      }
       dots.forEach((dot) => {
         const on = `${dot.dataset.group}-${dot.dataset.index}` === active;
         dot.classList.toggle(styles.dotActive, on);
@@ -269,15 +287,15 @@ const useProjectScroll = (sectionRef) => {
 };
 
 const Tile = ({ project }) => {
-  const { projectId, name, roleShort, summary, teamSize, category, type, stack, thumbnail, headerColor, headerTone, headerText, headerGlow, links, hasDetail } = project;
+  const { projectId, name, roleShort, summary, teamSize, type, stack, thumbnail, headerColor, headerTone, headerText, headerGlow, links, hasDetail } = project;
   const { title, subtitle } = splitName(name);
+  const no = ALL_PROJECTS.indexOf(project) + 1; // 전체 순서 (01 ~ 06)
   // 버튼 2개: 상세 페이지가 있으면 [자세히 보기, 첫 링크], 없으면 [첫 링크, 둘째 링크]
   const [first, second] = links;
   const primary = hasDetail ? { label: UI_TEXT.viewDetail, to: toProjectDetail(projectId) } : first;
   const secondary = hasDetail ? first : second;
 
-  // 사진: 화면에 들어오면 서서히 등장(data-reveal — 사이트 공통 스크롤 등장)
-  //       마우스를 올리면 아래에서 기술 태그 패널이 올라옴 · 누르면 상세 페이지
+  // 사진: 마우스를 올리면 아래에서 기술 태그 패널이 올라옴 · 커서 원 안이 흑백(data-cursor-lens) · 누르면 상세 페이지
   const media = (
     <>
       <img src={getProjectImage(thumbnail)} alt={`${title} 화면`} className={styles.image} loading="lazy" />
@@ -303,35 +321,44 @@ const Tile = ({ project }) => {
 
   return (
     <article className={styles.tile}>
-      {/* 썸네일 */}
+      {/* 글 뒤 큰 윤곽 번호 (장식) */}
+      <span className={styles.bigNo} aria-hidden="true">{String(no).padStart(2, "0")}</span>
+      {/* 썸네일 — PC에선 화면 왼쪽 끝까지 */}
       <div className={styles.card} data-reveal>
         {hasDetail ? (
           // 사진 링크는 마우스용 — 키보드(Tab) · 화면 읽기에서는 건너뜀 ("자세히 보기" 버튼과 같은 곳이라 두 번 거치지 않게)
-          <Link to={toProjectDetail(projectId)} className={styles.media} tabIndex={-1} aria-hidden="true">
+          <Link to={toProjectDetail(projectId)} className={styles.media} tabIndex={-1} aria-hidden="true" data-cursor-lens>
             {media}
           </Link>
         ) : (
-          <div className={styles.media}>{media}</div>
+          <div className={styles.media} data-cursor-lens>{media}</div>
         )}
       </div>
+      {/* 글: 맨 위 작은 제목 → 번호 · 구분 → 큰 이름 → 부제 → 한 줄 소개 → 선 목록(담당 · 스택) → 글자 버튼 */}
       <div className={styles.text} data-reveal>
-        {/* 왼쪽: 이름(크게) → 부제 → 한 줄 소개 / 오른쪽: 담당 → 버튼 → 인원 · 분류 */}
+        <p className={styles.eyebrow}>{UI_TEXT.projectsEyebrow}</p>
+        <p className={styles.meta}>
+          {[UI_TEXT.projectCount(no, ALL_PROJECTS.length), type === "team" ? UI_TEXT.teamSize(teamSize) : UI_TEXT.solo].join("   ·   ")}
+        </p>
         <h3 className={styles.title}>{title}</h3>
         {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         {summary && <p className={styles.summary}>{summary}</p>}
-        <p className={styles.meta}>
-          {[type === "team" ? UI_TEXT.teamSize(teamSize) : UI_TEXT.solo, category].join(" · ")}
-        </p>
-        {/* 내 담당 한 줄 (개인 작품은 기획 · 디자인 · 개발 전체) */}
-        {roleShort && (
-          <p className={styles.role}>
-            <b>{UI_TEXT.myRole}</b> {roleShort}
-          </p>
-        )}
+        <dl className={styles.facts}>
+          {roleShort && (
+            <div>
+              <dt>{UI_TEXT.myRole}</dt>
+              <dd>{roleShort}</dd>
+            </div>
+          )}
+          <div>
+            <dt>{UI_TEXT.stackLabel}</dt>
+            <dd>{stack.join(" · ")}</dd>
+          </div>
+        </dl>
         <div className={styles.actions}>
-          {primary?.to && <Link to={primary.to} className={styles.primary}>{primary.label}</Link>}
-          {primary?.href && <a href={primary.href} target="_blank" rel="noreferrer" className={styles.primary}>{primary.label}</a>}
-          {secondary && <a href={secondary.href} target="_blank" rel="noreferrer" className={styles.secondary}>{secondary.label}</a>}
+          {primary?.to && <Link to={primary.to} className={styles.primary}>{primary.label} <b aria-hidden="true">→</b></Link>}
+          {primary?.href && <a href={primary.href} target="_blank" rel="noreferrer" className={styles.primary}>{primary.label} <b aria-hidden="true">↗</b></a>}
+          {secondary && <a href={secondary.href} target="_blank" rel="noreferrer" className={styles.secondary}>{secondary.label} ↗</a>}
         </div>
       </div>
     </article>
@@ -379,7 +406,7 @@ const ProjectGroup = ({ type, title }) => {
 };
 
 
-// 오른쪽에 고정된 점 메뉴 — 점 하나 = 작품 하나, 누르면 그 작품으로 이동 (PC · 태블릿, 작품 소개 화면 안에서만 보임)
+// 오른쪽에 고정된 번호 메뉴 — 번호 하나 = 작품 하나, 누르면 그 작품으로 이동 (PC · 태블릿, 작품 소개 화면 안에서만 보임)
 const ProjectDots = () => (
   <nav className={styles.dots} aria-label={UI_TEXT.projectNav}>
     {GROUPS.map((group, g) => (
@@ -393,7 +420,9 @@ const ProjectDots = () => (
             const { title } = splitName(project.name);
             return (
               <li key={project.projectId}>
+                {/* 번호 — 지금 작품만 진하게 + 앞에 선, 마우스를 올리면 왼쪽에 작품 이름 */}
                 <button type="button" className={styles.dot} data-group={g} data-index={i} aria-label={title}>
+                  {String(ALL_PROJECTS.indexOf(project) + 1).padStart(2, "0")}
                   <span className={styles.dotName} aria-hidden="true">{title}</span>
                 </button>
               </li>
@@ -413,6 +442,8 @@ const ProjectTiles = () => {
     <section ref={sectionRef} id={SECTION_IDS.projects} data-header-theme="light" className={styles.section} aria-label={SECTION_TITLES.projects}>
       {GROUPS.map((group) => <ProjectGroup key={group.type} type={group.type} title={group.title} />)}
       <ProjectDots />
+      {/* 화면 맨 아래 진행 막대 — 지금 몇 번째 작품인지 (작품 소개 화면 안에서만) */}
+      <div className={styles.progress} aria-hidden="true" />
     </section>
   );
 };

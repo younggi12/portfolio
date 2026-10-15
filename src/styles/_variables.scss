@@ -37,8 +37,6 @@ $color-action-hover: #0077ed;                // 주요 버튼 호버 (Apple처�
 $color-link: #0066cc;                        // 보조 링크 버튼 글자 (흰 5.57 / 띠 5.04)
 
 // 인트로 (어두운 화면으로 시작해 밝은 페이지로 열리는 연출)
-$color-intro-bg: #000000;   // 인트로 배경 (검정)
-$color-intro-text: #ffffff;
 
 // ---- 4-2. 타이포그래피 ----
 $font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "D2Coding", monospace;
@@ -87,6 +85,7 @@ $side-padding-tablet: 40px;
 $side-padding-mobile: 20px;
 $gutter: 24px;
 $header-height: 72px;
+$cursor-dot: 18px; // 점 커서 (CursorBadge)
 $text-max-width: 680px;  // 긴 본문 한 줄 최대 길이 (가독성)
 
 $breakpoint-mobile-max: 767px;

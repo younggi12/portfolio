@@ -44,17 +44,33 @@ export const UI_TEXT = {
   projectNav: "작품 바로 가기",
   showMore: "더보기",
   showLess: "접기",
+  // 작품 소개 — 맨 위 작은 제목 · "01 / 06" 번호 · 정보 줄 이름표
+  projectsEyebrow: "04 — PROJECTS",
+  projectCount: (n, total) => `${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,
+  stackLabel: "스택",
+  site: "사이트",
 };
 
 // About 숫자 칸 · 소제목
 export const ABOUT_TEXT = {
   stats: {
-    projects: "작품",
     team: "팀 프로젝트",
+    solo: "개인 프로젝트",
+    skills: "기술 분야",
     months: "교육 과정",
   },
   unit: { count: "개", months: "개월" },
-  learned: (school) => `${school}에서 배운 것`,
+  // 숫자 줄 오른쪽 — 누르면 이동
+  cta: { team: "팀 작품 보기", solo: "개인 작품 보기", skills: "배운 기술 보기", profile: "자기소개 보기" },
+  // 이름 장면 인사 — 두 줄이 타이핑되고, 이어서 YOUNG GI → "HELLO I'M YOUNG GI"
+  introHello: {
+    strong: "HELLO",
+    light: "I'M",
+    corners: ["00 — HELLO", "FRONTEND DEVELOPER", "PORTFOLIO · 2026", "SCROLL ↓"], // 왼쪽 위 · 오른쪽 위 · 왼쪽 아래 · 오른쪽 아래
+  },
+  // About 각 부분 맨 위 작은 제목 (모두 같은 모양)
+  parts: { facts: "01 — EDUCATION", profile: "02 — PROFILE", skills: "03 — SKILLS" },
+  skillsTitle: "배운 기술",
 };
 
 // 푸터 (연락처 겸용)
@@ -71,10 +87,10 @@ export const FOOTER_TEXT = {
 };
 
 
-// 첫 방문 인트로 — 한 줄 = 한 줄로 표시, 글자가 하나씩 서서히 나타남
-export const INTRO_TEXT = {
+// 첫 화면(Hero) — 스크롤하는 동안 lines[0] → lines[1]로 다시 타이핑됨
+export const HERO_TEXT = {
+  eyebrow: "FRONTEND DEVELOPER · LEE YOUNGGI",
   lines: ["디자인을 코드로", "화면을 경험으로"],
-  skip: "건너뛰기",
 };
 
 // 프로젝트 상세 페이지 소제목
@@ -93,6 +109,10 @@ export const DETAIL_TEXT = {
   improvements: "개선할 점",
   others: "다른 작품 보기",
   current: "지금 보는 작품",
+  // 검은 표지 · 왼쪽 고정 칸 · 오른쪽 부분 제목 (번호는 화면에서 붙임: "01 — FEATURE")
+  scroll: "SCROLL ↓",
+  toc: "이 작품 목차",
+  eyebrow: { feature: "FEATURE", problem: "PROBLEM SOLVING", improvements: "NEXT STEP", others: "MORE PROJECTS" },
 };
 
 // 사진 크게 보기 (상세 페이지 기능 사진)

@@ -1,0 +1,65 @@
+@use "@/styles/variables" as *;
+
+// 기본 커서 숨김 (마우스 기기에서 이 컴포넌트가 켜졌을 때만 html에 붙음)
+.noCursor,
+.noCursor * { cursor: none !important; }
+
+// 아래 화면과 색을 뒤집음 — 흰색으로 그리면 흰 바탕 위에선 검정, 어두운 사진 위에선 흰색으로 보임
+.cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 1000; // 헤더 · 크게 보기보다 위
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+// 위치(transform)는 JS가 정함 — 바깥 상자는 이동만, 안쪽 점은 크기 변화만
+.mover {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+// 자석 버튼에 붙을 때 · 떨어질 때만 점이 부드럽게 미끄러짐 (평소엔 마우스에 바로 붙음)
+.stuck .mover { transition: transform 0.25s ease-out; }
+
+.dot {
+  display: block;
+  width: $cursor-dot;
+  height: $cursor-dot;
+  border-radius: 50%;
+  background-color: #ffffff; // difference로 뒤집히는 색 — 팔레트 예외
+  translate: -50% -50%;
+  scale: 0;
+  transition: scale 0.3s $easing-reveal;
+}
+
+.shown .dot { scale: 1; }
+.shown.hover .dot { scale: 2.8; }  // 큰 링크(숫자 줄 · 카드 등) 위
+.shown.stuck .dot { scale: 0; }    // 작은 버튼 위 — 버튼 가운데로 빨려 들어가 사라짐
+.shown.press .dot { scale: 0.7; }  // 누르는 순간
+.shown.stuck.press .dot { scale: 0; }
+
+// ---- 작품 사진 위 — 큰 원(돋보기), 원 안에 보이는 부분만 흑백 ----
+// 원 안을 흑백으로 만드는 건 backdrop-filter — 색 뒤집기(difference)가 켜져 있으면 결과가 뒤집혀 보여서 이때만 끔
+$cursor-lens: 140px;
+
+.lensOn { mix-blend-mode: normal; }
+
+.lens {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: $cursor-lens;
+  height: $cursor-lens;
+  border-radius: 50%;
+  backdrop-filter: grayscale(1);
+  box-shadow: 0 0 0 1px rgba($color-on-panel, 0.6), 0 8px 24px rgba($color-black, 0.18); // 밝은 · 어두운 사진 위 모두 원 모양이 보이게
+  translate: -50% -50%;
+  scale: 0;
+  transition: scale 0.4s $easing-reveal;
+}
+
+.shown.lensOn .lens { scale: 1; }
+.shown.lensOn .dot { scale: 0; }
+.shown.lensOn.press .lens { scale: 0.9; }

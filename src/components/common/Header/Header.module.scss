@@ -17,9 +17,10 @@
 .hidden:not(:focus-within) { transform: translateY(-100%); }
 
 // ---- 아래 섹션에 맞춘 3가지 테마 ----
-// 구분선 없음: 배경색이 아래 섹션과 같아서 헤더가 페이지와 이어져 보인다 (Apple 방식)
+// 구분선 없음: 배경색이 아래 섹션과 같아서 헤더가 페이지와 이어져 보인다
 .light {
   @include frosted-light;
+  backdrop-filter: saturate(180%) blur(6px); // 뒤 글자가 덜 뭉개지게 (원래 12px)
   color: $color-text;
 }
 
@@ -28,8 +29,10 @@
   color: $color-text;
 }
 
+// 어두운 화면(이름 장면) 위 — 배경 없이 흰 글자만
 .dark {
-  background-color: rgba($color-black, 0.8); // 검정 책 섹션과 같은 색
+  background-color: transparent;
+  backdrop-filter: none;
   color: $color-on-panel;
 }
 
@@ -45,7 +48,7 @@
 .logo {
   display: inline-flex;
   align-items: center;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: $font-weight-black;
   letter-spacing: -0.04em;
 }
@@ -55,7 +58,7 @@
   height: 0.9em;
   margin-left: 3px;
   border-radius: 1px;
-  background-color: currentColor; // 로고 글자색과 같음 (밝은 배경 검정 / 어두운 배경 흰색)
+  background-color: currentColor;
   animation: blink 1.1s steps(1, end) infinite;
 
   @media (prefers-reduced-motion: reduce) { animation: none; }
@@ -82,9 +85,17 @@
   @include mobile { gap: $space-4; }
 }
 
-// 지금 보고 있는 섹션 메뉴 — 진하게 + 밑줄 (Apple 서브 메뉴처럼)
 .nav a.active {
   opacity: 1;
   font-weight: $font-weight-semibold;
   text-decoration-color: currentColor;
+}
+
+// 로고로 맨 위 이동할 때 잠깐 화면을 덮는 흰 막 (JS가 만들고 지움) — 헤더 · 커서보다 아래, 페이지보다 위
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  background-color: $color-bg;
+  pointer-events: none;
 }

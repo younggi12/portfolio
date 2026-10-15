@@ -3,7 +3,7 @@
 
 // Apple 푸터처럼 작은 글자 + 얇은 구분선
 .footer {
-  @include band;
+  background-color: $color-bg; // 사이트 전체 흰 바탕 — 위 구분선으로만 나눔
   border-top: 1px solid $color-border;
   padding-block: $space-16 $space-8;
 

@@ -34,7 +34,7 @@ const Footer = () => {
   const handleToTop = () => scrollToY(0);
 
   return (
-    <footer id={SECTION_IDS.contact} className={styles.footer} data-header-theme="band">
+    <footer id={SECTION_IDS.contact} className={styles.footer} data-header-theme="light">
       <div className={styles.inner}>
         <div className={styles.top}>
           <div className={styles.intro}>

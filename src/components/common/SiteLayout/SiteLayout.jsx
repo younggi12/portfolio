@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "@/components/common/Header/Header";
 import Footer from "@/components/common/Footer/Footer";
 import ScrollToTop from "@/components/common/ScrollToTop/ScrollToTop";
+import CursorBadge from "@/components/common/CursorBadge/CursorBadge";
 import useScrollReveal from "@/hooks/useScrollReveal";
 import useSmoothScroll from "@/hooks/useSmoothScroll";
 import styles from "./SiteLayout.module.scss";
@@ -18,6 +19,7 @@ const SiteLayout = () => {
       <Outlet />
     </main>
     <Footer />
+    <CursorBadge />
   </div>
   );
 };

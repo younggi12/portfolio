@@ -1,7 +1,6 @@
 // 스크롤 등장 — data-reveal 속성이 붙은 요소가 화면에 들어오면 서서히 나타남
-// (인트로와 같은 연출: 흐림 → 선명 + 살짝 위로, 스타일은 global.scss의 [data-reveal])
+// (투명 → 선명 + 살짝 위로, 스타일은 global.scss의 [data-reveal])
 // - 한 번에 같이 들어온 요소들은 위에서부터 순서대로 조금씩 늦게 등장 (카드 줄 등)
-// - 인트로가 재생 중이면 끝날 때까지 기다렸다가 시작 (Intro가 html[data-intro="playing"] 표시)
 // - 새로 생기는 요소(페이지 이동, 더보기)도 MutationObserver로 자동 등록
 // - "동작 줄이기" 사용자는 연출 없이 바로 보임
 import { useEffect } from "react";
@@ -17,9 +16,6 @@ const useScrollReveal = () => {
     const root = document.documentElement;
     root.classList.add("reveal-on"); // JS가 동작할 때만 숨김 (실패해도 내용은 보임)
 
-    const isIntroPlaying = () => root.dataset.intro === "playing";
-    const pending = new Set(); // 인트로 중 화면에 들어온 요소
-
     const show = (elements) => {
       elements
         .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
@@ -33,8 +29,7 @@ const useScrollReveal = () => {
       (entries) => {
         const entering = entries.filter((e) => e.isIntersecting).map((e) => e.target);
         entering.forEach((el) => observer.unobserve(el));
-        if (isIntroPlaying()) entering.forEach((el) => pending.add(el));
-        else show(entering);
+        show(entering);
       },
       { rootMargin: "0px 0px -10% 0px" },
     );
@@ -50,16 +45,9 @@ const useScrollReveal = () => {
     });
     mutation.observe(document.body, { childList: true, subtree: true });
 
-    const onIntroDone = () => {
-      show([...pending]);
-      pending.clear();
-    };
-    window.addEventListener("introdone", onIntroDone);
-
     return () => {
       observer.disconnect();
       mutation.disconnect();
-      window.removeEventListener("introdone", onIntroDone);
       root.classList.remove("reveal-on");
     };
   }, []);

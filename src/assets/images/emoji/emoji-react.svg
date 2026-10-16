@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <!-- React 카드 그림 — React 로고를 서버 그림과 같은 각도의 블록으로 직접 그림 -->
-  <polygon points="21.0,42.0 51.0,57.0 51.0,113.0 21.0,98.0" fill="#121418"/>
-  <polygon points="21.0,42.0 77.0,14.0 107.0,29.0 51.0,57.0" fill="#3A404D"/>
-  <polygon points="51.0,57.0 107.0,29.0 107.0,85.0 51.0,113.0" fill="#20232A"/>
-  <polyline points="21,42 51,57 107,29" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="1"/>
-  <g transform="matrix(0.56,-0.28,0,0.56,51,57)"><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="#61DAFB" stroke-width="5" transform="rotate(0 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="#61DAFB" stroke-width="5" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="#61DAFB" stroke-width="5" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="8" fill="#61DAFB"/></g>
-</svg>

@@ -1,7 +1,8 @@
 // 첫 화면(Hero) — "디자인을 코드로, 화면을 경험으로"를 연출로 보여줌
 // - 화면이 멈춘 채(sticky) 스크롤하는 동안: 3D YG가 선(코드) → 면(화면)으로 채워지고,
 //   왼쪽 아래 문구가 "디자인을 코드로" → "화면을 경험으로"로 다시 타이핑됨 (헤더 로고와 같은 깜빡이는 커서)
-// - 아래 가운데 화살표가 계속 통통 튀며 스크롤을 안내, 스크롤을 시작하면 사라짐
+// - 다 채워진 뒤 더 내리면 화면이 아래로 내려가지 않고 YG 속으로 들어가며 검게 → 그대로 HELLO 장면(About)
+// - 아래 가운데 화살표가 계속 통통 튀며 스크롤을 안내
 // - 3D는 Three.js를 따로 불러온 뒤 서서히 나타남, 마우스를 따라 기울어짐
 // - 동작 줄이기: 화면 하나 높이, 다 채워진 3D + 두 줄 문구 / WebGL이 안 되면 글자만
 import { useEffect, useRef, useState } from "react";
@@ -10,6 +11,8 @@ import styles from "./Hero.module.scss";
 
 const TYPE_SPEED = 90;   // 한 글자 나오는 간격(ms)
 const SWITCH_AT = 0.55;  // 스크롤 진행 이 지점부터 둘째 문구
+const MAIN_END = 0.5;    // 전체 진행 중 여기까지: 채워짐 · 문구
+const DIVE_FROM = 0.55;  // 여기부터 끝까지: YG 속으로 들어가며 화면이 검게 → 바로 HELLO 장면(About)으로 이어짐
 
 const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -35,19 +38,19 @@ const Hero = () => {
   const canvasRef = useRef(null);
   const [isReady, setIsReady] = useState(false); // 3D가 첫 장면을 그렸는지
   const [step, setStep] = useState(0);            // 0: 디자인을 코드로 / 1: 화면을 경험으로
-  const [scrolled, setScrolled] = useState(false); // 스크롤을 시작했는지 (화살표 숨김)
   const typed = useTyping(HERO_TEXT.lines[step]);
 
   useEffect(() => {
     const section = sectionRef.current;
     const canvas = canvasRef.current;
     if (!section || !canvas) return undefined;
+    const stage = canvas.parentElement;
 
     let scene = null;
     let cancelled = false;
 
     // 3D는 첫 화면에서만 필요하므로 따로 불러옴
-    import("./hero/heroScene")
+    import("./heroScene")
       .then(({ createHeroScene }) => {
         if (cancelled) return;
         scene = createHeroScene(canvas, { reduced });
@@ -64,10 +67,21 @@ const Hero = () => {
     const onScroll = () => {
       const rect = section.getBoundingClientRect();
       const range = Math.max(1, rect.height - window.innerHeight);
-      const p = Math.min(1, Math.max(0, -rect.top / range));
+      const all = Math.min(1, Math.max(0, -rect.top / range));
+      const p = Math.min(1, all / MAIN_END);
+      const dive = Math.min(1, Math.max(0, (all - DIVE_FROM) / (1 - DIVE_FROM)));
       scene?.scroll(p);
+      scene?.dive(dive);
       setStep(p >= SWITCH_AT ? 1 : 0);
-      setScrolled(p > 0.03);
+      stage.style.setProperty("--dive", dive.toFixed(3));
+      // 다음 HELLO 장면이 화면 맨 위에 붙으면 첫 화면은 숨김 — 그 장면의 검은 막이 걷힐 때 위로 밀려 올라가는 검은 판이 비치지 않게
+      stage.style.visibility = rect.bottom <= window.innerHeight + 1 ? "hidden" : "";
+      // 검게 바뀌면 헤더 글자도 흰색으로
+      const theme = dive > 0.5 ? "dark" : "light";
+      if (section.dataset.headerTheme !== theme) {
+        section.dataset.headerTheme = theme;
+        window.dispatchEvent(new Event("scroll"));
+      }
     };
 
     // 화면 밖이면 그리기 멈춤
@@ -79,6 +93,7 @@ const Hero = () => {
     if (!reduced) {
       window.addEventListener("pointermove", onPointerMove, { passive: true });
       window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
     }
 
     return () => {
@@ -108,8 +123,8 @@ const Hero = () => {
 
         </div>
 
-        {/* 아래로 내려가라는 화살표 — 계속 통통 튐, 스크롤을 시작하면 사라짐 */}
-        <span className={`${styles.scrollCue} ${scrolled ? styles.scrollCueHidden : ""}`} aria-hidden="true">
+        {/* 아래로 내려가라는 화살표 — 계속 통통 튐 (스크롤해도 계속 보임) */}
+        <span className={styles.scrollCue} aria-hidden="true">
           <svg viewBox="0 0 24 40">
             <path d="M12 2 V36 M3 27 L12 37 L21 27" fill="none" stroke="currentColor" strokeWidth="2" />
           </svg>

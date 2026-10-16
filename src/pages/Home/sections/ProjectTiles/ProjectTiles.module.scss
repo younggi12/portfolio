@@ -285,12 +285,6 @@ $bleed-left: max(#{$side-padding-desktop}, (100vw - #{$content-wide-max-width}) 
 }
 
 // ---- 글 — About과 같은 결: 작은 영문 줄 · 번호 · 큰 이름 · 옅은 부제 · 선 목록 · 글자 버튼 ----
-.eyebrow {
-  margin-bottom: $space-6;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0.12em;
-}
 
 .meta {
   font-size: $font-size-sm;
@@ -345,6 +339,20 @@ $bleed-left: max(#{$side-padding-desktop}, (100vw - #{$content-wide-max-width}) 
     padding-top: 3px;
     font-size: $font-size-xs;
     font-weight: $font-weight-semibold;
+  }
+}
+
+// 스택 — 아이콘 + 이름, 줄바꿈되면 다음 줄로
+.stackIcons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1 $space-4;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
   }
 }
 
@@ -591,6 +599,3 @@ $bleed-left: max(#{$side-padding-desktop}, (100vw - #{$content-wide-max-width}) 
   opacity: 1;
   visibility: visible;
 }
-
-// 휴대폰 · 동작 줄이기(목록) — 작은 제목은 작품마다 반복되지 않게 숨김
-.section:not(.pinned) .eyebrow { display: none; }

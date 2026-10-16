@@ -44,8 +44,8 @@ export const UI_TEXT = {
   projectNav: "작품 바로 가기",
   showMore: "더보기",
   showLess: "접기",
-  // 작품 소개 — 맨 위 작은 제목 · "01 / 06" 번호 · 정보 줄 이름표
-  projectsEyebrow: "04 — PROJECTS",
+  cursorView: "VIEW", // 작품 사진 위 큰 원 커서 글자
+  // 작품 소개 — "01 / 06" 번호 · 정보 줄 이름표
   projectCount: (n, total) => `${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,
   stackLabel: "스택",
   site: "사이트",
@@ -66,10 +66,8 @@ export const ABOUT_TEXT = {
   introHello: {
     strong: "HELLO",
     light: "I'M",
-    corners: ["00 — HELLO", "FRONTEND DEVELOPER", "PORTFOLIO · 2026", "SCROLL ↓"], // 왼쪽 위 · 오른쪽 위 · 왼쪽 아래 · 오른쪽 아래
+    corners: { topRight: "FRONTEND DEVELOPER", bottomLeft: "PORTFOLIO · 2026" }, // 화면 모서리 작은 글자
   },
-  // About 각 부분 맨 위 작은 제목 (모두 같은 모양)
-  parts: { facts: "01 — EDUCATION", profile: "02 — PROFILE", skills: "03 — SKILLS" },
   skillsTitle: "배운 기술",
 };
 
@@ -96,7 +94,6 @@ export const HERO_TEXT = {
 // 프로젝트 상세 페이지 소제목
 export const DETAIL_TEXT = {
   back: "작품 목록으로",
-  period: "기간",
   role: "담당",
   stack: "기술",
   features: "내가 만든 기능",

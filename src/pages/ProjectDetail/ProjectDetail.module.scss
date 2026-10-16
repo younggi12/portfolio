@@ -17,6 +17,8 @@ $aside-width: 340px;
 
 // ---- ① 검은 표지 — 위: 작품 목록 · 번호 / 이름 · 부제 · 소개 / 대표 사진 (모두 검은 배경 안) ----
 .cover {
+  position: relative;
+  overflow: hidden;
   margin-top: calc(-1 * #{$header-height}); // 헤더 자리(SiteLayout 위 여백)까지 검정으로 — 헤더가 검은 표지 위에 떠 있게
   background-color: $color-text;
   color: $color-on-panel;
@@ -27,18 +29,24 @@ $aside-width: 340px;
   display: flex;
   flex-direction: column;
   min-height: 100svh;
-  padding: calc(#{$header-height} + #{$space-8}) $edge $space-12;
+  padding: calc(#{$header-height} + #{$space-8}) $side-padding-desktop $space-12; // 화면 왼쪽에 더 붙게
+
+  position: relative;
+  z-index: 1; // 배경 사진 위
+  // 내릴 때 글은 살짝 위로 가며 흐려짐 (--cover-p: JS)
+  opacity: calc(1 - var(--cover-p, 0) * 1.4);
+  transform: translateY(calc(var(--cover-p, 0) * -60px));
 
   .coverTop,
-  .coverText > *,
-  .coverImage { animation: pageFadeIn $duration-page ease-out both; }
-  .coverTitle { animation-delay: 150ms; }
-  .coverSubtitle { animation-delay: 300ms; }
-  .coverSummary { animation-delay: 450ms; }
-  .coverImage { animation-delay: 600ms; }
+  .coverText > :first-child > *,
+  .coverLinks { animation: pageFadeIn $duration-page ease-out both; }
+  .coverTitle { animation-delay: 300ms; }
+  .coverSubtitle { animation-delay: 450ms; }
+  .coverSummary { animation-delay: 600ms; }
+  .coverLinks { animation-delay: 750ms; }
 
   @include tablet { padding-inline: $side-padding-tablet; }
-  @include mobile { min-height: 0; padding: calc(#{$header-height} + #{$space-6}) $side-padding-mobile $space-10; }
+  @include mobile { min-height: 88svh; padding: calc(#{$header-height} + #{$space-6}) $side-padding-mobile $space-10; }
 }
 
 .coverTop {
@@ -66,22 +74,45 @@ $aside-width: 340px;
   @include mobile { display: none; }
 }
 
-// 왼쪽 글 | 오른쪽 사진 — 세로 가운데 맞춤, 태블릿 · 휴대폰은 위아래로
+// 글은 왼쪽, 가운데보다 조금 아래 (아래 여백이 더 큼) — 휴대폰은 아래쪽
 .coverBody {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  display: flex;
   align-items: center;
-  gap: $space-12;
   flex: 1;
-  padding-top: $space-8;
+  padding-block: $space-8 $space-16;
 
-  @include below-desktop { grid-template-columns: 1fr; gap: $space-8; }
-  @include mobile { margin-top: $space-10; }
+  @include mobile { align-items: flex-end; padding-bottom: 0; }
 }
 
-// 이름 — 왼쪽 칸 폭에 맞춰 (긴 이름은 두 줄)
+.coverText {
+  container-type: inline-size; // 제목 크기를 글 칸 너비에 맞추려고
+  width: min(100%, 640px);
+}
+
+.coverLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-top: $space-8;
+
+  a {
+    padding: 10px 18px;
+    border: 1px solid rgba($color-on-panel, 0.3);
+    border-radius: 999px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    transition: background-color $duration-fast $easing-base, color $duration-fast $easing-base, border-color $duration-fast $easing-base;
+
+    &:first-child { background-color: $color-on-panel; border-color: $color-on-panel; color: $color-text; }
+    &:hover { background-color: $color-on-panel; border-color: $color-on-panel; color: $color-text; }
+    &:first-child:hover { background-color: transparent; color: $color-on-panel; }
+  }
+}
+
 .coverTitle {
-  font-size: clamp(44px, 5.4vw, 96px);
+  // 긴 단어(BREAKER 등)가 칸에 다 들어가게 — 칸 너비(cqi)에 맞춰 줄이고, 단어 중간에서 끊지 않음
+  font-size: clamp(44px, min(5.4vw, 100cqi / (var(--chars, 6) * 0.7)), 104px);
+  overflow-wrap: normal;
   font-weight: $font-weight-black;
   letter-spacing: -0.05em;
   line-height: 0.95;
@@ -95,6 +126,7 @@ $aside-width: 340px;
   letter-spacing: -0.02em;
   opacity: 0.55;
   word-break: keep-all;
+  text-wrap: balance; // 줄 길이를 고르게
 }
 
 .coverSummary {
@@ -104,15 +136,29 @@ $aside-width: 340px;
   line-height: $line-height-base;
   opacity: 0.6;
   word-break: keep-all;
+  text-wrap: balance;
+  white-space: pre-line; // 문장 속 \n에서 줄바꿈 (작품 소개 타일에선 띄어쓰기로 보임)
 }
 
-// 대표 사진 — 검은 표지 오른쪽 (2:1, 잘리지 않음)
+// 대표 사진 — 표지 전체 배경: 어둡게 + 아래로 갈수록 검정에 스며듦
+// (사진 맨 위 사이트 메뉴가 헤더와 겹치지 않게 아래쪽 기준으로 맞춤)
 .coverImage {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 2 / 1;
+  height: 100%;
   object-fit: cover;
-  border-radius: $radius-lg;
+  object-position: center 75%;
+  transform: scale(var(--cover-zoom, 1.15)); // 작품마다 다르게 (projects.js coverZoom)
+  transform-origin: center bottom;
+  filter: brightness(0.45);
+  mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
+  animation: coverImageIn 1.4s ease-out both;
+}
+
+@keyframes coverImageIn {
+  from { opacity: 0; transform: scale(calc(var(--cover-zoom, 1.15) + 0.07)); }
+  to { opacity: 1; transform: scale(var(--cover-zoom, 1.15)); }
 }
 
 // ---- ② 흰 부분: 왼쪽 고정 칸 + 오른쪽 ----
@@ -317,7 +363,7 @@ $aside-width: 340px;
   word-break: keep-all;
 }
 
-$feature-zoom: 2.5; // 마우스를 올렸을 때 확대 배율
+$feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
 
 // 큰 사진 = 크게 보기 버튼 (오른쪽 위 확대 아이콘은 마우스를 올리면 보임)
 // 마우스를 올리면 사진이 커지고, 마우스가 있는 곳을 따라 확대된 부분이 움직임 (터치 화면은 없음)
@@ -385,6 +431,18 @@ $feature-zoom: 2.5; // 마우스를 올렸을 때 확대 배율
 }
 
 // 작은 사진 줄 — 누르면 위 큰 사진이 바뀜
+.counter {
+  margin-top: $space-3;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.12em;
+  color: rgba($color-text, 0.55);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+
+  strong { color: $color-text; }
+}
+
 .thumbs {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -493,6 +551,7 @@ $feature-zoom: 2.5; // 마우스를 올렸을 때 확대 배율
   dd {
     line-height: $line-height-base;
     word-break: keep-all;
+    text-wrap: balance; // 두 줄일 때 둘째 줄이 너무 짧지 않게 고르게 나눔
   }
 
   li + li { margin-top: $space-1; }
@@ -530,6 +589,8 @@ $feature-zoom: 2.5; // 마우스를 올렸을 때 확대 배율
     line-height: $line-height-base;
     word-break: keep-all;
 
+    p { text-wrap: balance; }
+
     span {
       padding-top: 3px;
       font-size: $font-size-xs;
@@ -547,6 +608,8 @@ $feature-zoom: 2.5; // 마우스를 올렸을 때 확대 배율
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: 0.9em;
 }
+
+.page :not(pre) > code { white-space: nowrap; } // 코드 조각 중간에서 줄이 끊기지 않게
 
 // ---- ③ 다른 작품 — 번호 줄 목록 (선 · 검은 배경은 화면 끝까지) ----
 .others {
@@ -635,3 +698,4 @@ $feature-zoom: 2.5; // 마우스를 올렸을 때 확대 배율
 
 // 지금 보는 작품 — 누를 수 없음, 옅게
 .othersOn { opacity: 0.4; }
+

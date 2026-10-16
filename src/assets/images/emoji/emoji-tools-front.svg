@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <!-- 협업 · 도구 정면 (카드 호버 시) -->
-  <rect x="18" y="22" width="92" height="92" rx="10" fill="#384959"/><rect x="18" y="16" width="92" height="92" rx="10" fill="#6A89A7"/><g transform="translate(18,16) scale(0.92)"><path d="M32 80 L32 20" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M32 68 C32 48 68 54 68 32" stroke="#BDDDFC" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="32" cy="80" r="10" fill="#FFFFFF"/><circle cx="32" cy="20" r="10" fill="#FFFFFF"/><circle cx="68" cy="30" r="10" fill="#BDDDFC"/></g>
-</svg>

@@ -1,3 +1,4 @@
+@use "sass:math";
 @use "@/styles/variables" as *;
 
 // 기본 커서 숨김 (마우스 기기에서 이 컴포넌트가 켜졌을 때만 html에 붙음)
@@ -40,26 +41,52 @@
 .shown.press .dot { scale: 0.7; }  // 누르는 순간
 .shown.stuck.press .dot { scale: 0; }
 
-// ---- 작품 사진 위 — 큰 원(돋보기), 원 안에 보이는 부분만 흑백 ----
-// 원 안을 흑백으로 만드는 건 backdrop-filter — 색 뒤집기(difference)가 켜져 있으면 결과가 뒤집혀 보여서 이때만 끔
-$cursor-lens: 140px;
+// ---- 작품 사진 위 — "VIEW" 글자가 든 큰 원 (반투명 검정) ----
+// 끌 때: 글자가 먼저 사라지고 → 원이 점 크기까지 천천히 줄어듦 → 그 자리에서 점으로 바뀜 (빈틈 없이 이어지게)
+// 원이 떠 있는 동안(.lensKeep — 줄어드는 중 포함)은 색 뒤집기(difference)를 꺼서 원 색이 그대로 보이게
+$cursor-lens: 120px;
+$lens-in: 0.4s;
+$lens-out: 0.6s; // 줄어드는 시간 (JS LENS_OUT과 같게)
 
-.lensOn { mix-blend-mode: normal; }
+.lensKeep { mix-blend-mode: normal; }
 
 .lens {
   position: absolute;
   top: 0;
   left: 0;
+  display: grid;
+  place-items: center;
   width: $cursor-lens;
   height: $cursor-lens;
   border-radius: 50%;
-  backdrop-filter: grayscale(1);
-  box-shadow: 0 0 0 1px rgba($color-on-panel, 0.6), 0 8px 24px rgba($color-black, 0.18); // 밝은 · 어두운 사진 위 모두 원 모양이 보이게
+  background-color: rgba($color-text, 0.8);
+  color: transparent; // 글자는 원이 다 커졌을 때만
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.16em;
   translate: -50% -50%;
   scale: 0;
-  transition: scale 0.4s $easing-reveal;
+  opacity: 0;
+  transition:
+    scale $lens-out cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.15s ease-out;
 }
 
-.shown.lensOn .lens { scale: 1; }
-.shown.lensOn .dot { scale: 0; }
+// 켜짐 — 빠르게 커지고 글자 보임
+.shown.lensOn .lens {
+  scale: 1;
+  opacity: 1;
+  color: $color-on-panel;
+  transition: scale $lens-in $easing-reveal, color 0.2s ease-out 0.15s;
+}
+
+// 줄어드는 중 — 점 크기까지만 (점과 같은 지름)
+.shown.lensKeep:not(.lensOn) .lens {
+  scale: math.div($cursor-dot, $cursor-lens);
+  opacity: 1;
+}
+
+// 원이 떠 있는 동안 점은 숨김 → 원이 다 줄면 같은 자리에서 점으로 (커지는 연출 없이 바로)
+.shown.lensKeep .dot { scale: 0; }
+.lensSwap .dot { transition: none; }
 .shown.lensOn.press .lens { scale: 0.9; }

@@ -29,15 +29,15 @@ $card-flip: 0.35s; // 그림이 반 바퀴 도는 시간 (옆 → 정면은 두 
   z-index: 1;                 // 장면(검은 막)이 아래에서 올라오는 숫자 부분 위에 덮이게
   margin-bottom: -100svh;     // 장면 마지막 한 화면 동안 다음 숫자 부분이 밑에서 미리 올라옴 → 막이 걷히면 바로 이어짐
   pointer-events: none;      // 겹친 마지막 한 화면이 아래 숫자 줄을 가리지 않게 (검은 막일 때만 JS가 무대에 켬)
-  height: 460svh; // 빈 화면 → 인사 → YG → 풀네임 → 흰 화면, 단계가 많아 길게
+  height: 220svh; // 장면 맨 위에서 인사 → YG → 풀네임(시간으로) → 내리면 글자 퇴장 · 막이 걷히며 숫자 부분
 
-  @include mobile { height: 400svh; }
+  @include mobile { height: 200svh; }
 }
 
-// About 메뉴 도착 지점 — 장면 진행도 0.1(인사가 저절로 타이핑되는 구간, YG가 나오기 전) + 헤더 높이(이동 시 빼는 만큼)
+// About 메뉴 도착 지점 — 장면 맨 위(인사가 저절로 시작되는 곳) + 헤더 높이(이동 시 빼는 만큼)
 .introStart {
   position: absolute;
-  top: calc((100% - 100svh) * 0.1 + #{$header-height});
+  top: $header-height;
   left: 0;
   height: 0;
 }
@@ -62,6 +62,9 @@ $card-flip: 0.35s; // 그림이 반 바퀴 도는 시간 (옆 → 정면은 두 
   // 흰 배경 대신 투명 — 장면 끝에서 막이 걷히면 뒤(아래 숫자 부분)가 그대로 보임
   background-color: color-mix(in srgb, #{$color-text} calc(var(--dark, 0) * 100%), transparent);
   color: $color-on-panel;
+  // --curtain(0~1, JS): 풀네임 뒤 아래로 한 번 굴리면 검은 무대가 커튼처럼 통째로 위로 걷힘
+  transform: translateY(calc(var(--curtain, 0) * -100%));
+  box-shadow: 0 24px 48px -16px rgba(0, 0, 0, calc(var(--dark, 0) * 0.35)); // 걷힐 때 아래 끝 그림자
 
   @include tablet { --edge: #{$side-padding-tablet}; }
   @include mobile { --name-size: 15vw; --edge: #{$side-padding-mobile}; }
@@ -79,10 +82,32 @@ $card-flip: 0.35s; // 그림이 반 바퀴 도는 시간 (옆 → 정면은 두 
   @include mobile { display: none; }
 }
 
-.corner0 { top: calc(#{$header-height} + #{$space-8}); left: var(--edge); }
-.corner1 { top: calc(#{$header-height} + #{$space-8}); right: var(--edge); }
-.corner2 { bottom: $space-10; left: var(--edge); }
-.corner3 { bottom: $space-10; right: var(--edge); }
+.cornerTopRight { top: calc(#{$header-height} + #{$space-8}); right: var(--edge); }
+.cornerBottomLeft { bottom: $space-10; left: var(--edge); }
+
+// 아래 화살표 — 화면 아래 가운데, Hero 화살표와 같은 모양 · 움직임 (인사와 같이 나타나고 장면 끝에서 사라짐)
+.introCue {
+  position: absolute;
+  left: 50%;
+  bottom: $space-10;
+  width: 20px;
+  translate: -50% 0;
+  opacity: calc(var(--hi-in, 0) * (1 - var(--out, 0)));
+
+  svg {
+    display: block;
+    width: 100%;
+    animation: introCueBounce 1.6s ease-in-out infinite;
+  }
+
+  @include mobile { bottom: $space-6; }
+  @media (prefers-reduced-motion: reduce) { svg { animation: none; } }
+}
+
+@keyframes introCueBounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(12px); opacity: 0.45; }
+}
 
 // 인사 — 처음엔 크게 두 줄(HELLO / I'M), 이름 자리만큼 아래로 내려 화면 가운데
 //        → YG가 나오면 작아지며 제자리(이름 위)로
@@ -353,9 +378,17 @@ $fill-ms: 0.5s;           // 검은 배경이 차오르는 시간
   gap: $space-2 $space-6;
   font-size: clamp(18px, 2vw, 32px);
   letter-spacing: -0.02em;
+  // 커튼이 다 걷힌 뒤 숫자 줄과 함께 올라오며 나타남 (.courseIn)
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 
   b { font-weight: $font-weight-bold; }
+
+  @media (prefers-reduced-motion: reduce) { opacity: 1; transform: none; }
 }
+
+.courseIn { opacity: 1; transform: none; }
 
 .period { font-variant-numeric: tabular-nums; }
 

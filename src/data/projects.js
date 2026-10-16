@@ -52,9 +52,10 @@ export const PROJECTS = [
     period: "2026.06 ~ 2026.07",
     role: "상품·장바구니 페이지, 브랜드·고객센터 페이지, 로그인 상태 헤더, 메인 슬라이드·리뷰, 모바일 반응형",
     roleShort: "상품 · 장바구니 · 브랜드 페이지",
-    summary: "HTML · CSS · JavaScript만으로 3명이 함께 만든 첫 팀 프로젝트",
+    summary: "HTML · CSS · JavaScript만으로 3명이 함께 만든\n첫 팀 프로젝트",
     stack: ["HTML", "CSS", "JavaScript", "JSON", "localStorage"],
     thumbnail: "mungnyang-thumb.webp",
+    coverZoom: 1.07, // 상세 표지 배경 사진 확대 (기본 1.15 — 글자가 큰 배너라 덜 확대, 맨 위 사이트 메뉴만 가려지게)
     headerColor: "#587866", headerTone: "dark", headerText: "#ffffff", // header rgba(46, 90, 68, 0.8)가 화면에 겹쳐 실제로 보이는 색(배포 사이트 캡처 측정) · .gnb a #ffffff
     links: [
       { label: "사이트", href: "https://projectmangryung.github.io/teamproject/" },
@@ -122,7 +123,7 @@ export const PROJECTS = [
     thumbnail: "f1-thumb.webp",
     headerColor: "#000000", headerTone: "dark", headerText: "#ff0000", // Header.module.scss background-color: black · 메뉴 글자 color: red
     links: [
-      { label: "방명록", href: "https://guestbook01-phi.vercel.app" },
+      { label: "사이트", href: "https://guestbook01-phi.vercel.app" },
       { label: "GitHub", href: "https://github.com/younggi12/guestbook01" },
       { label: "게시글(학습 버전)", href: "https://re008-tzii.vercel.app/" },
       { label: "GitHub(학습 버전)", href: "https://github.com/younggi12/re008" },

@@ -334,9 +334,8 @@ const Tile = ({ project }) => {
           <div className={styles.media} data-cursor-lens>{media}</div>
         )}
       </div>
-      {/* 글: 맨 위 작은 제목 → 번호 · 구분 → 큰 이름 → 부제 → 한 줄 소개 → 선 목록(담당 · 스택) → 글자 버튼 */}
+      {/* 글: 번호 · 구분 → 큰 이름 → 부제 → 한 줄 소개 → 선 목록(담당 · 스택) → 글자 버튼 */}
       <div className={styles.text} data-reveal>
-        <p className={styles.eyebrow}>{UI_TEXT.projectsEyebrow}</p>
         <p className={styles.meta}>
           {[UI_TEXT.projectCount(no, ALL_PROJECTS.length), type === "team" ? UI_TEXT.teamSize(teamSize) : UI_TEXT.solo].join("   ·   ")}
         </p>
@@ -352,7 +351,12 @@ const Tile = ({ project }) => {
           )}
           <div>
             <dt>{UI_TEXT.stackLabel}</dt>
-            <dd>{stack.join(" · ")}</dd>
+            {/* 기술 — 아이콘 + 이름 (About · 상세 페이지와 같은 아이콘) */}
+            <dd className={styles.stackIcons}>
+              {stack.map((item) => (
+                <span key={item}><SkillIcon name={getStackIcon(item)} />{item}</span>
+              ))}
+            </dd>
           </div>
         </dl>
         <div className={styles.actions}>

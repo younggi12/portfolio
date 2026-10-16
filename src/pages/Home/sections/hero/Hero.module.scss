@@ -4,11 +4,13 @@
 // 첫 화면 — 흰 바탕, 화면 2.2개 길이 동안 화면이 멈춰 있고(sticky) 그 사이 연출이 진행됨
 .hero {
   position: relative;
-  height: 220svh;
+  height: 340svh;
   margin-top: -$header-height; // 헤더 뒤까지 꽉 차게 (main의 위 여백만큼 끌어올림)
+  // 마지막 한 화면은 다음 HELLO 장면과 겹침 → 검게 끝나는 순간 HELLO 장면이 그 자리에 바로 고정됨 (내려가는 화면 없음)
+  margin-bottom: -100svh;
   background-color: $color-bg;
 
-  @media (prefers-reduced-motion: reduce) { height: 100svh; }
+  @media (prefers-reduced-motion: reduce) { height: 100svh; margin-bottom: 0; }
 }
 
 .stage {
@@ -17,6 +19,18 @@
   height: 100svh;
   min-height: 560px;
   overflow: hidden;
+  // --dive(0~1, JS): YG 속으로 들어가는 정도 — 배경이 HELLO 장면과 같은 검정으로
+  background-color: color-mix(in srgb, #{$color-text} calc(var(--dive, 0) * 100%), #{$color-bg});
+
+  // 끝에서 남은 반사광까지 덮어 완전히 검게
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: $color-text;
+    opacity: clamp(0, (var(--dive, 0) - 0.7) * 3.4, 1);
+    pointer-events: none;
+  }
 }
 
 // 3D — 화면 전체 크기 / 준비되면 서서히 나타남
@@ -35,6 +49,7 @@
 
 // 왼쪽 아래 문구
 .text {
+  opacity: clamp(0, 1 - var(--dive, 0) * 4, 1); // 들어가기 시작하면 바로 사라짐
   position: absolute;
   left: $space-10;
   right: $space-10;
@@ -87,7 +102,7 @@
   bottom: $space-10;
   width: 20px;
   translate: -50% 0;
-  transition: opacity $duration-base $easing-base;
+  opacity: clamp(0, 1 - var(--dive, 0) * 4, 1);
 
   svg {
     display: block;
@@ -98,8 +113,6 @@
   @include mobile { bottom: $space-6; }
   @media (prefers-reduced-motion: reduce) { svg { animation: none; } }
 }
-
-.scrollCueHidden { opacity: 0; }
 
 @keyframes cueBounce {
   0%, 100% { transform: translateY(0); opacity: 1; }

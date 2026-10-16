@@ -29,6 +29,11 @@ const TILT_Y = 0.6;       // 마우스 좌우로 도는 최대 각도(rad)
 const SCROLL_TURN = 1.2;  // 첫 화면을 다 지나갈 때까지 도는 각도(rad)
 const FILL_END = 0.7;     // 스크롤 진행 이 지점에서 면이 다 채워짐 (0~1)
 const CAMERA_Z = 360;     // 카메라 거리 (작을수록 YG가 크게)
+const DIVE_SCALE = 46;    // 마지막에 YG 속으로 들어갈 때 커지는 배수 (검은 면이 화면을 가득 채울 만큼)
+// 들어가는 지점 — Y의 오른쪽 위 팔(굵은 면) 속으로 (YG 가운데 기준 x · y, 글자 단위 / y는 +가 아래)
+// → 화면이 글자 면으로 가득 차며 다음 HELLO 장면의 검은 배경과 자연스럽게 이어짐
+const DIVE_X = -18.8;
+const DIVE_Y = -18.6;
 
 export const createHeroScene = (canvas, { reduced = false } = {}) => {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
@@ -98,7 +103,7 @@ export const createHeroScene = (canvas, { reduced = false } = {}) => {
   scene.add(key);
 
   // 상태 — 목표값을 정하면 매 프레임 조금씩 따라감
-  const state = { mx: 0, my: 0, scroll: 0, rx: 0.12, ry: -0.35, fill: 0 };
+  const state = { mx: 0, my: 0, scroll: 0, rx: 0.12, ry: -0.35, fill: 0, dive: 0, d: 0 };
   let frame = 0;
   let visible = true;
   const start = performance.now();
@@ -126,10 +131,19 @@ export const createHeroScene = (canvas, { reduced = false } = {}) => {
     const t = (now - start) / 1000;
     const targetRx = 0.12 + state.my * TILT_X + Math.sin(t * 0.6) * 0.04;
     const targetRy = -0.35 + state.mx * TILT_Y + state.scroll * SCROLL_TURN + Math.sin(t * 0.4) * 0.06;
-    state.rx += (targetRx - state.rx) * FOLLOW;
-    state.ry += (targetRy - state.ry) * FOLLOW;
+    state.d += (state.dive - state.d) * 0.15; // 들어가기 진행 (조금 부드럽게)
+    const d = state.d;
+    const face = 1 - Math.min(1, d * 2.5); // 들어갈 때는 정면을 보게 (기울기 · 회전이 줄어듦)
+    state.rx += (targetRx * face - state.rx) * FOLLOW * (1 + d * 4);
+    state.ry += (targetRy * face - state.ry) * FOLLOW * (1 + d * 4);
     state.fill += (Math.min(1, state.scroll / FILL_END) - state.fill) * 0.1;
     group.rotation.set(state.rx, state.ry, 0);
+    // YG 속으로 — 처음엔 천천히, 끝으로 갈수록 빠르게 커짐
+    const k = 1 + (DIVE_SCALE - 1) * d ** 3;
+    group.scale.set(k, -k, k);
+    const aim = Math.min(1, d * 1.6);
+    group.position.x = -DIVE_X * k * aim; // 들어가는 지점이 화면 가운데로 오게 옆으로 이동
+    group.position.y = DIVE_Y * k * aim;  // (세로는 뒤집혀 있어서 + 방향)
     applyFill(state.fill);
     renderer.render(scene, camera);
     frame = requestAnimationFrame(tick);
@@ -152,6 +166,8 @@ export const createHeroScene = (canvas, { reduced = false } = {}) => {
     pointer(x, y) { state.mx = x; state.my = y; },
     // 첫 화면 스크롤 진행 (0 ~ 1)
     scroll(p) { state.scroll = p; },
+    // 마지막 YG 속으로 들어가기 (0 ~ 1)
+    dive(p) { state.dive = p; },
     setVisible(v) { visible = v; if (v) play(); },
     resize,
     dispose() {

@@ -2,12 +2,14 @@
 // - 기본 화살표 대신 작은 점이 마우스 위치에 붙어 다님
 // - 색을 아래 화면과 뒤집어(mix-blend-mode: difference) 흰 바탕에선 검정, 어두운 사진 위에선 흰색
 // - 작은 버튼 · 링크 위(자석): 점이 버튼 가운데로 빨려 들어가 사라지고, 버튼이 마우스 쪽으로 살짝 따라옴
-// - 작품 사진 위: 큰 원(돋보기)이 되고 원 안에 보이는 부분만 흑백
+// - 작품 사진 위: "VIEW" 글자가 든 큰 원 (커질 땐 빠르게, 작아질 땐 천천히)
 // - 큰 링크(숫자 줄 · 카드 등) 위: 점이 커짐 / 누르는 순간: 작아짐 / 창 밖으로 나가면 사라짐
 // - 마우스 기기에서만 (터치 화면 · 동작 줄이기 설정이면 없음 → 기본 커서 그대로)
 import { useEffect, useRef } from "react";
+import { UI_TEXT } from "@/data/site";
 import styles from "./CursorBadge.module.scss";
 
+const LENS_OUT = 600; // 큰 원이 작아지는 시간(ms) — CSS $lens-out과 같게
 const INTERACTIVE = "a, button, [role='button'], label, summary, input, textarea, select";
 const MAGNET_MAX_W = 320; // 이보다 작은 버튼 · 링크만 자석 (큰 줄 · 카드는 제외)
 const MAGNET_MAX_H = 100;
@@ -69,6 +71,24 @@ const CursorBadge = () => {
       run();
     };
 
+    // 큰 원 켜기 / 끄기 — 끌 때는 원이 천천히 작아지는 동안(LENS_OUT) 색 뒤집기를 미뤄서 원 색이 갑자기 바뀌지 않게
+    let lensTimer = 0;
+    const setLens = (on) => {
+      if (on === root.classList.contains(styles.lensOn)) return;
+      clearTimeout(lensTimer);
+      root.classList.toggle(styles.lensOn, on);
+      if (on) {
+        root.classList.add(styles.lensKeep);
+        return;
+      }
+      // 끌 때: 큰 원이 점 크기까지 줄어든 뒤 → 그 자리에서 점으로 바로 바뀜(점은 커지는 연출 없이)
+      lensTimer = setTimeout(() => {
+        root.classList.add(styles.lensSwap);
+        root.classList.remove(styles.lensKeep);
+        requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove(styles.lensSwap)));
+      }, LENS_OUT);
+    };
+
     const onMove = (e) => {
       root.classList.add(styles.shown);
       const el = e.target.closest?.(INTERACTIVE) ?? null;
@@ -102,8 +122,8 @@ const CursorBadge = () => {
       } else {
         mover.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
         root.classList.toggle(styles.hover, Boolean(el));
-        // 작품 사진 위(data-cursor-lens) — 커서가 큰 원이 되고, 원 안에 보이는 부분만 흑백
-        root.classList.toggle(styles.lensOn, Boolean(e.target.closest?.("[data-cursor-lens]")));
+        // 작품 사진 위(data-cursor-lens) — 커서가 "VIEW" 글자가 든 큰 원이 됨
+        setLens(Boolean(e.target.closest?.("[data-cursor-lens]")));
       }
     };
     const onLeave = (e) => {
@@ -134,7 +154,7 @@ const CursorBadge = () => {
     <div ref={rootRef} className={styles.cursor} aria-hidden="true">
       <div ref={moverRef} className={styles.mover}>
         <span className={styles.dot} />
-        <span className={styles.lens} />
+        <span className={styles.lens}>{UI_TEXT.cursorView}</span>
       </div>
     </div>
   );

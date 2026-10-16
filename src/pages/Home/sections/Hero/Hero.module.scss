@@ -74,17 +74,18 @@
 // 타이핑되는 큰 문구 + 깜빡이는 커서 (헤더 로고와 같은 깜빡임)
 .typed {
   min-height: 1.1em;
-  font-size: clamp(40px, 6vw, 112px);
-  font-weight: $font-weight-bold;
-  letter-spacing: -0.03em;
+  font-size: clamp(36px, 5.2vw, 96px);
+  font-weight: $font-weight-medium; // 타이핑 느낌 — 너무 두껍지 않게, 글자 사이도 살짝 띄움 (같은 Pretendard)
+  letter-spacing: -0.01em;
+  font-feature-settings: "ss06"; // Pretendard 대체 글리프(조금 더 반듯한 모양)
   line-height: 1.1;
   white-space: pre-line;
 }
 
 .caret {
   display: inline-block;
-  width: 0.07em;
-  height: 0.85em;
+  width: 0.05em;
+  height: 0.9em;
   margin-left: 0.06em;
   vertical-align: -0.08em;
   background-color: currentColor;

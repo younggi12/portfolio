@@ -116,7 +116,7 @@ JAJAK은 평소 취향과 그날의 상황을 함께 반영해 AI가 전통주�
 | 기간 | 2026.06 |
 | 한 줄 소개 | Canvas API와 requestAnimationFrame으로 만든 우주 테마 벽돌깨기 게임 |
 | 담당 | 기획·디자인·개발 전체 |
-| 기술 | HTML5 Canvas, JavaScript, CSS |
+| 기술 | HTML5, Canvas API, JavaScript, CSS |
 | 링크 | 플레이 https://younggi12.github.io/breaker/js061201.html / 코드 https://github.com/younggi12/breaker/blob/main/js061201.html |
 | 썸네일 | `breaker-thumb.webp` |
 | 이미지 | `breaker-start.webp`, `breaker-play.webp`, `breaker-clear.webp`, `breaker-fail.webp` |
@@ -154,7 +154,7 @@ JAJAK은 평소 취향과 그날의 상황을 함께 반영해 AI가 전통주�
 | 기간 | 2026.06 |
 | 한 줄 소개 | 펜 색·굵기·배경색을 바꿔 그리고 PNG로 저장할 수 있는 드로잉 앱 |
 | 담당 | 기획·디자인·개발 전체 |
-| 기술 | HTML5 Canvas, JavaScript, Pointer Events |
+| 기술 | HTML5, Canvas API, JavaScript, Pointer Events |
 | 링크 | 사용해보기 https://younggi12.github.io/draw-app/js060901.html / 코드 https://github.com/younggi12/draw-app |
 | 썸네일 | `draw-thumb.webp` |
 | 이미지 | `draw-main.webp` |

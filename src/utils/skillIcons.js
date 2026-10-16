@@ -5,12 +5,12 @@
 import {
   siHtml5, siCss, siSass, siJavascript, siJquery,
   siReact, siReactrouter, siFirebase, siNodedotjs, siMysql,
-  siGit, siGithub, siVite, siVercel, siFigma,
+  siGit, siGithub, siVite, siVercel, siFigma, siGsap,
 } from "simple-icons";
 import {
   Brush, MonitorSmartphone, Blocks, Webhook, Box,
   Database, ArrowRightLeft, FileText,
-  Braces, HardDrive, ScanEye, MousePointerClick,
+  Braces, HardDrive, ScanEye, MousePointerClick, Bot, Sparkles,
 } from "lucide-react";
 
 export const SKILL_ICONS = {
@@ -30,6 +30,7 @@ export const SKILL_ICONS = {
   vite: siVite,
   vercel: siVercel,
   figma: siFigma,
+  gsap: siGsap,
   // 개념
   canvas: Brush,
   responsive: MonitorSmartphone,
@@ -43,6 +44,8 @@ export const SKILL_ICONS = {
   storage: HardDrive,
   observer: ScanEye,
   pointer: MousePointerClick,
+  ai: Bot,           // OpenAI API (브랜드 아이콘은 simple-icons에 없음)
+  aiImage: Sparkles, // AI로 만든 이미지 · 캐릭터
 };
 
 // 상세 페이지 "기술" 칸 — projects.js의 stack 글자 → 아이콘 키 (없는 기술은 글자만)
@@ -62,8 +65,10 @@ const STACK_ICON_KEYS = {
   JSON: "json",
   localStorage: "storage",
   IntersectionObserver: "observer",
-  "HTML5 Canvas": "canvas",
+  "Canvas API": "canvas",
   "Pointer Events": "pointer",
+  "OpenAI API": "ai",
+  "AI 캐릭터 생성": "aiImage",
 };
 
 export const getStackIcon = (label) => STACK_ICON_KEYS[label] ?? null;

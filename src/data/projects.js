@@ -15,7 +15,7 @@ export const PROJECTS = [
     role: "회원 인증, 고객센터(공지사항·FAQ·1:1 문의), 위시리스트, 통합 단계 AI 큐레이션 UI·모바일 반응형 보완",
     roleShort: "회원 인증 · 고객센터 · 위시리스트", // 작품 카드에 보이는 짧은 담당
     summary: "취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰", // "한 상"은 줄바꿈 안 되는 공백(\u00a0)
-    stack: ["React 19", "Vite", "Firebase Auth", "Firestore", "SCSS Modules"],
+    stack: ["React 19", "Vite", "Firebase Auth", "Firestore", "OpenAI API", "SCSS Modules"],
     thumbnail: "jajak-thumb.webp",
     coverZoom: 1.11, // 상세 표지 배경 사진 확대 (기본 1.04 — 맨 위 한지 메뉴 띠가 안 보이게 조금 더)
     headerColor: "#f2ebe2", headerTone: "light", headerText: "#2c231b", // 헤더 배경은 한지 이미지(평균 색) · 글자 $color-text-primary
@@ -91,7 +91,7 @@ export const PROJECTS = [
     role: "기획·디자인·개발 전체 (초기 일부 Codex 활용, 이후 기능·디자인 직접 구현)",
     roleShort: "기획 · 디자인 · 개발 전체 (초기 일부 Codex 활용)",
     summary: "프레임워크 없이 상품 목록부터 상세 · 장바구니까지 5페이지를 직접 구현",
-    stack: ["HTML5", "CSS3", "JavaScript", "localStorage", "IntersectionObserver"],
+    stack: ["HTML5", "CSS3", "JavaScript", "localStorage", "IntersectionObserver", "AI 캐릭터 생성"],
     thumbnail: "blueline-thumb.webp",
     headerColor: "linear-gradient(135deg, #1d3a66, #2f6fed)", headerTone: "dark", headerText: "#ffffff", // style.css .top-bar (--navy → --blue) · .logo #fff
     links: [
@@ -158,7 +158,7 @@ export const PROJECTS = [
     role: "기획·디자인·개발 전체",
     roleShort: "기획 · 디자인 · 개발 전체",
     summary: "공 · 패들 · 벽돌의 움직임과 충돌을 Canvas로 직접 계산한 게임",
-    stack: ["HTML5 Canvas", "JavaScript", "CSS"],
+    stack: ["HTML5", "Canvas API", "JavaScript", "CSS"],
     thumbnail: "breaker-thumb.webp",
     headerColor: "#0c161f", headerTone: "dark", headerText: "#ffffff", headerGlow: "cyan", // 헤더 없음 → 배경 이미지 위쪽 평균 색 · 제목 #gameTitle: color white + text-shadow 0 0 15px cyan
     links: [
@@ -192,7 +192,7 @@ export const PROJECTS = [
     role: "기획·디자인·개발 전체",
     roleShort: "기획 · 디자인 · 개발 전체",
     summary: "Pointer Events로 마우스 · 터치 · 펜을 한 번에 처리하고, 되돌리기와 PNG 저장까지 지원",
-    stack: ["HTML5 Canvas", "JavaScript", "Pointer Events"],
+    stack: ["HTML5", "Canvas API", "JavaScript", "Pointer Events"],
     thumbnail: "draw-thumb.webp",
     headerColor: "#00008b", headerTone: "dark", headerText: "#ffffff", // #toolbar background-color: darkblue · 글자 white
     links: [

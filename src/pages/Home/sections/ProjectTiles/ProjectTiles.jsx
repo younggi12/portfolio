@@ -14,6 +14,8 @@ import { scrollToY } from "@/utils/scrollToY";
 import SkillIcon from "@/components/common/SkillIcon/SkillIcon";
 import styles from "./ProjectTiles.module.scss";
 
+const FILL_START = 0.5; // 큰 그룹 제목(TEAM · SOLO)이 처음부터 채워져 있는 정도
+
 // 팀 프로젝트 → 개인 프로젝트 순서 (카드 크기는 모두 같음)
 
 const GROUPS = [
@@ -170,8 +172,8 @@ const useProjectScroll = (sectionRef) => {
         //       (원래는 화면에 붙은 뒤에야 시작해서 빈 흰 화면이 길었고, 너무 일찍 나오면 앞 섹션과 겹쳐 짧게 느껴져서 중간으로)
         const hIn = clamp01((vh * HEAD_START - top) / (vh * (HEAD_START + HEAD_IN)));
         const hOut = smoothstep(clamp01((p - headEnd) / (change * 0.5)));
-        // 윤곽선으로 다 나타난 뒤, 스크롤하는 만큼 왼쪽부터 검정으로 채워짐
-        const fill = smoothstep(clamp01((p - vh * HEAD_IN) / (vh * HEAD_HOLD * 0.85)));
+        // 처음부터 왼쪽 절반은 검정, 스크롤하는 만큼 나머지가 채워짐
+        const fill = FILL_START + (1 - FILL_START) * smoothstep(clamp01((p - vh * HEAD_IN) / (vh * HEAD_HOLD * 0.85)));
         [...head.children].forEach((el) => {
           el.style.opacity = hIn.toFixed(3);
           el.style.transform = `translateY(${((1 - hIn) * 40).toFixed(1)}px)`;

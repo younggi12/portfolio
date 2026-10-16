@@ -49,7 +49,7 @@ docs/PROJECTS_CONTENT.md        # 작품 설명 원본
 2. **이름 장면 (About 시작)** — 검은 화면에서 시간으로 저절로: HELLO / I'M 타이핑 → 1초 멈춤 → YG → YOUNG GI. **풀네임이 다 나오기 전엔 스크롤해도 내려가지 않음**. 휠을 한 번 굴리면 검은 화면이 **커튼처럼 위로 걷히며** EDUCATION (위로 굴리면 다시 내려옴)
 3. **EDUCATION** — 교육 과정 한 줄 + 숫자 4줄(커튼이 다 걷힌 뒤 0부터 올라감)
 4. **PROFILE** — 사진(없으면 YG) · 이름 · 소개 · 일하는 방식 3줄
-5. **SKILLS** — 배운 기술 5분야
+5. **SKILLS** — 배운 기술 6분야
 6. **Projects** — TEAM / SOLO 그룹, 한 화면에 작품 하나(이 구간에서는 헤더 숨김)
 7. **Footer = Contact** — 이메일(복사) · GitHub
 

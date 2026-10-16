@@ -6,7 +6,7 @@
 ## 1. 프로젝트 개요
 - 취업용 개인 포트폴리오 — 대상: 채용 담당자, 현직 개발자
 - 핵심 문구: "디자인을 코드로, 화면을 경험으로."
-- 배포: Vercel https://portfolio-cpj8.vercel.app (`main` push 시 자동 배포, `vercel.json` rewrites로 새로고침 404 방지) — 주소가 바뀌면 `index.html`의 og:url · og:image · canonical도 같이
+- 배포: Vercel https://younggi-portfolio.vercel.app (`main` push 시 자동 배포, `vercel.json` rewrites로 새로고침 404 방지) — 주소가 바뀌면 `index.html`의 og:url · og:image · canonical도 같이
 - 개인 프로젝트 — 모든 영역 담당 이영기
 
 ## 2. 기술 스택

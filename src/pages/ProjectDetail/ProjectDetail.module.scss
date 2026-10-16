@@ -149,7 +149,8 @@ $aside-width: 340px;
   height: 100%;
   object-fit: cover;
   object-position: center 75%;
-  transform: scale(var(--cover-zoom, 1.15)); // 작품마다 다르게 (projects.js coverZoom)
+  scale: var(--cover-zoom, 1.04); // 살짝만 확대 — 작품마다 다르게 (projects.js coverZoom)
+  transform: translateY(calc(var(--cover-p, 0) * 30%)); // 내릴 때 사진은 천천히 따라옴 (뒤로 물러나는 느낌)
   transform-origin: center bottom;
   filter: brightness(0.45);
   mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
@@ -157,8 +158,8 @@ $aside-width: 340px;
 }
 
 @keyframes coverImageIn {
-  from { opacity: 0; transform: scale(calc(var(--cover-zoom, 1.15) + 0.07)); }
-  to { opacity: 1; transform: scale(var(--cover-zoom, 1.15)); }
+  from { opacity: 0; scale: calc(var(--cover-zoom, 1.04) + 0.06); }
+  to { opacity: 1; scale: var(--cover-zoom, 1.04); }
 }
 
 // ---- ② 흰 부분: 왼쪽 고정 칸 + 오른쪽 ----
@@ -698,4 +699,3 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
 
 // 지금 보는 작품 — 누를 수 없음, 옅게
 .othersOn { opacity: 0.4; }
-

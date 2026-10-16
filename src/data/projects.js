@@ -17,6 +17,7 @@ export const PROJECTS = [
     summary: "취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰", // "한 상"은 줄바꿈 안 되는 공백(\u00a0)
     stack: ["React 19", "Vite", "Firebase Auth", "Firestore", "SCSS Modules"],
     thumbnail: "jajak-thumb.webp",
+    coverZoom: 1.11, // 상세 표지 배경 사진 확대 (기본 1.04 — 맨 위 한지 메뉴 띠가 안 보이게 조금 더)
     headerColor: "#f2ebe2", headerTone: "light", headerText: "#2c231b", // 헤더 배경은 한지 이미지(평균 색) · 글자 $color-text-primary
     links: [
       { label: "사이트", href: "https://jajak-ten.vercel.app" },
@@ -55,7 +56,7 @@ export const PROJECTS = [
     summary: "HTML · CSS · JavaScript만으로 3명이 함께 만든\n첫 팀 프로젝트",
     stack: ["HTML", "CSS", "JavaScript", "JSON", "localStorage"],
     thumbnail: "mungnyang-thumb.webp",
-    coverZoom: 1.07, // 상세 표지 배경 사진 확대 (기본 1.15 — 글자가 큰 배너라 덜 확대, 맨 위 사이트 메뉴만 가려지게)
+    coverZoom: 1.07, // 상세 표지 배경 사진 확대 (기본 1.04 — 맨 위 사이트 메뉴가 헤더와 겹쳐 보이지 않게 조금 더)
     headerColor: "#587866", headerTone: "dark", headerText: "#ffffff", // header rgba(46, 90, 68, 0.8)가 화면에 겹쳐 실제로 보이는 색(배포 사이트 캡처 측정) · .gnb a #ffffff
     links: [
       { label: "사이트", href: "https://projectmangryung.github.io/teamproject/" },

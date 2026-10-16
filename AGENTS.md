@@ -6,7 +6,7 @@
 ## 1. 프로젝트 개요
 - 취업용 개인 포트폴리오 — 대상: 채용 담당자, 현직 개발자
 - 핵심 문구: "디자인을 코드로, 화면을 경험으로."
-- 배포: Vercel (`main` push 시 자동 배포, `vercel.json` rewrites로 새로고침 404 방지)
+- 배포: Vercel https://portfolio-cpj8.vercel.app (`main` push 시 자동 배포, `vercel.json` rewrites로 새로고침 404 방지) — 주소가 바뀌면 `index.html`의 og:url · og:image · canonical도 같이
 - 개인 프로젝트 — 모든 영역 담당 이영기
 
 ## 2. 기술 스택
@@ -113,7 +113,6 @@ docs/PROJECTS_CONTENT.md        # 작품 설명 원본
 - 완료 기준: 빌드 오류 없음 · 모바일 / 태블릿 / 데스크톱 확인 · 키보드 이동 가능 · 문구는 data에만 · 바뀐 규칙은 이 문서에 반영
 
 ## 10. 나중에 할 일
-- [ ] 배포 후 `index.html`의 `og:url` · `og:image`를 https:// 전체 주소로
 - [ ] About 사진 넣기 (`public/images/` + `profile.photo`)
 - [ ] Vite 최신 버전 업그레이드
 - [ ] BlueLine 제작 기간 확정

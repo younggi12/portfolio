@@ -185,7 +185,8 @@ const useProjectScroll = (sectionRef) => {
         // 작품: 들어옴(아래 → 제자리, 흐림 → 선명) → 머묾 → 나감(제자리 → 위, 선명 → 흐림, 다음 작품과 겹쳐서)
         tiles.forEach((tile, i) => {
           // 바뀌는 구간의 앞 절반에 앞 장면이 빠지고, 뒤 절반에 새 장면이 들어옴 (두 장면이 겹쳐 보이지 않게)
-          const enter = smoothstep(clamp01((p - starts[i] - change * 0.45) / (change * 0.55)));
+          // 사진 · 글이 한꺼번에 짧게 나타남 (아래에서 열리듯 나눠 나오지 않게)
+          const enter = smoothstep(clamp01((p - starts[i] - change * 0.5) / (change * 0.25)));
           const isLast = i === tiles.length - 1;
           const leave = isLast ? 0 : smoothstep(clamp01((p - starts[i] - change - hold) / (change * 0.5)));
           const opacity = Math.min(enter, 1 - leave);
@@ -194,9 +195,6 @@ const useProjectScroll = (sectionRef) => {
           tile.style.opacity = opacity.toFixed(3);
           tile.style.transform = `translateY(${y.toFixed(1)}px) scale(${scale.toFixed(4)})`;
           tile.style.visibility = opacity < 0.05 ? "hidden" : "visible"; // 안 보이는 작품은 클릭 · Tab 안 되게
-          // 사진은 아래에서 위로 열리듯 나타남 (나갈 땐 그대로 흐려짐)
-          const card = tile.querySelector(`.${styles.card}`);
-          if (card) card.style.clipPath = `inset(${((1 - enter) * 100).toFixed(1)}% 0 0 0)`;
         });
       });
       updateNav();

@@ -281,8 +281,9 @@ $fill-ms: 0.5s;           // 검은 배경이 차오르는 시간
       transition: transform 1s $easing-reveal;
     }
 
+    // 마우스를 올렸을 때 · 키보드로 들어왔을 때만 (마우스로 누른 뒤 남은 포커스로는 검게 남지 않게)
     &:hover::before,
-    &:focus-within::before { transform: scaleY(1); }
+    &:has(a:focus-visible)::before { transform: scaleY(1); }
 
     // 등장 순서 지연 — 선과 등장(투명도 · 위치)에만, 색 바뀜에는 없음
     &:nth-child(2)::after { transition-delay: 0.15s; }

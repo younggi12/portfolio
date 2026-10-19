@@ -72,6 +72,7 @@ const FactRows = () => {
 
   const handleClick = (e, target) => {
     e.preventDefault();
+    if (e.detail > 0) e.currentTarget.blur(); // 마우스로 누른 경우만 포커스 해제 → 돌아왔을 때 줄이 검게 · 테두리로 남지 않음 (키보드는 유지)
     scrollToElement(document.getElementById(target));
   };
 

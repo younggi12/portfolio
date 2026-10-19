@@ -68,7 +68,7 @@ const STACK_ICON_KEYS = {
   "Canvas API": "canvas",
   "Pointer Events": "pointer",
   "OpenAI API": "ai",
-  "AI 캐릭터 생성": "aiImage",
+  "AI 캐릭터 생성 (ChatGPT)": "aiImage",
 };
 
 export const getStackIcon = (label) => STACK_ICON_KEYS[label] ?? null;

@@ -91,7 +91,7 @@ export const PROJECTS = [
     role: "기획·디자인·개발 전체 (초기 일부 Codex 활용, 이후 기능·디자인 직접 구현)",
     roleShort: "기획 · 디자인 · 개발 전체 (초기 일부 Codex 활용)",
     summary: "프레임워크 없이 상품 목록부터 상세 · 장바구니까지 5페이지를 직접 구현",
-    stack: ["HTML5", "CSS3", "JavaScript", "localStorage", "IntersectionObserver", "AI 캐릭터 생성"],
+    stack: ["HTML5", "CSS3", "JavaScript", "localStorage", "IntersectionObserver", "AI 캐릭터 생성 (ChatGPT)"],
     thumbnail: "blueline-thumb.webp",
     headerColor: "linear-gradient(135deg, #1d3a66, #2f6fed)", headerTone: "dark", headerText: "#ffffff", // style.css .top-bar (--navy → --blue) · .logo #fff
     links: [

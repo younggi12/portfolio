@@ -1,37 +1,41 @@
 // 푸터 = 연락처 (헤더의 Contact 메뉴가 여기로 스크롤)
-// 위: 왼쪽 인사말 / 오른쪽 연락처(이메일 + 복사 버튼 · GitHub)
+// 위: 왼쪽 인사말 / 오른쪽 연락처(이메일 · 전화 + 복사 버튼 · GitHub)
+// 전화번호는 tel: 링크 — 휴대폰에서 누르면 바로 전화 앱 (PC에서는 글자 + 복사)
 // 메일 앱이 없는 PC가 많아 mailto 링크 · "이메일 보내기" 버튼은 쓰지 않음 — 주소는 글자 + 복사
 // 아래: 저작권 · 만든 도구 / 맨 위로
 import { useEffect, useState } from "react";
-import { SECTION_IDS } from "@/routes/paths";
+import { useLocation } from "react-router-dom";
+import { PATHS, SECTION_IDS } from "@/routes/paths";
 import { PROFILE } from "@/data/profile";
 import { FOOTER_TEXT } from "@/data/site";
 import styles from "./Footer.module.scss";
-import { scrollToY } from "@/utils/scrollToY";
+import { jumpToTop, scrollToY } from "@/utils/scrollToY";
 
 const COPIED_MS = 2000; // "복사됨" 표시 시간
 
 const githubLabel = PROFILE.github.replace(/^https?:\/\//, "");
 
 const Footer = () => {
-  const [isCopied, setIsCopied] = useState(false);
+  const [copied, setCopied] = useState(""); // 방금 복사한 항목 ("email" | "phone")
 
   useEffect(() => {
-    if (!isCopied) return undefined;
-    const timer = setTimeout(() => setIsCopied(false), COPIED_MS);
+    if (!copied) return undefined;
+    const timer = setTimeout(() => setCopied(""), COPIED_MS);
     return () => clearTimeout(timer);
-  }, [isCopied]);
+  }, [copied]);
 
-  const handleCopy = async () => {
+  const handleCopy = async (key, text) => {
     try {
-      await navigator.clipboard.writeText(PROFILE.email);
-      setIsCopied(true);
+      await navigator.clipboard.writeText(text);
+      setCopied(key);
     } catch {
-      // 복사가 막힌 환경 — 이메일 글자는 그대로 보이므로 무시
+      // 복사가 막힌 환경 — 글자는 그대로 보이므로 무시
     }
   };
 
-  const handleToTop = () => scrollToY(0);
+  // 맨 위로 — Home은 스크롤 없이 바로 Hero로(로고와 같음), 작품 상세는 그 페이지 맨 위로
+  const { pathname } = useLocation();
+  const handleToTop = () => (pathname === PATHS.home ? jumpToTop() : scrollToY(0));
 
   return (
     <footer id={SECTION_IDS.contact} className={styles.footer} data-header-theme="light">
@@ -49,12 +53,31 @@ const Footer = () => {
                 <dt>{FOOTER_TEXT.emailLabel}</dt>
                 <dd>
                   <span className={styles.value}>{PROFILE.email}</span>
-                  <button type="button" className={styles.copy} onClick={handleCopy}>
-                    {isCopied ? FOOTER_TEXT.copied : FOOTER_TEXT.copy}
+                  <button type="button" className={styles.copy} onClick={() => handleCopy("email", PROFILE.email)}>
+                    {copied === "email" ? FOOTER_TEXT.copied : FOOTER_TEXT.copy}
                   </button>
-                  <span className={styles.srOnly} aria-live="polite">{isCopied ? FOOTER_TEXT.copied : ""}</span>
                 </dd>
               </div>
+              {PROFILE.phone && (
+                <div className={styles.row}>
+                  <dt>{FOOTER_TEXT.phoneLabel}</dt>
+                  <dd>
+                    <a href={`tel:${PROFILE.phone.replace(/\D/g, "")}`} className={styles.value}>{PROFILE.phone}</a>
+                    <button type="button" className={styles.copy} onClick={() => handleCopy("phone", PROFILE.phone)}>
+                      {copied === "phone" ? FOOTER_TEXT.copied : FOOTER_TEXT.copy}
+                    </button>
+                  </dd>
+                </div>
+              )}
+
+              {PROFILE.resume && (
+                <div className={styles.row}>
+                  <dt>{FOOTER_TEXT.resumeLabel}</dt>
+                  <dd>
+                    <a href={`/docs/${PROFILE.resume}`} download className={styles.value}>{FOOTER_TEXT.resumeLink} ↓</a>
+                  </dd>
+                </div>
+              )}
               <div className={styles.row}>
                 <dt>{FOOTER_TEXT.githubLabel}</dt>
                 <dd>
@@ -62,6 +85,7 @@ const Footer = () => {
                 </dd>
               </div>
             </dl>
+            <span className={styles.srOnly} aria-live="polite">{copied ? FOOTER_TEXT.copied : ""}</span>
           </div>
         </div>
 

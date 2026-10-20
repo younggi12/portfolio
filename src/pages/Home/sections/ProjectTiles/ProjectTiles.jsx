@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SECTION_IDS, toProjectDetail } from "@/routes/paths";
 import { getProjectsByType } from "@/data/projects";
-import { PROJECT_GROUP_WORD, SECTION_TITLES, UI_TEXT } from "@/data/site";
+import { PROJECT_GROUP_WORD, SECTION_TITLES, UI_TEXT, DETAIL_TEXT } from "@/data/site";
 import { getProjectImage } from "@/utils/getProjectImage";
 import { getStackIcon } from "@/utils/skillIcons";
 import { scrollToY } from "@/utils/scrollToY";
@@ -287,7 +287,7 @@ const useProjectScroll = (sectionRef) => {
 };
 
 const Tile = ({ project }) => {
-  const { projectId, name, roleShort, summary, teamSize, type, stack, thumbnail, headerColor, headerTone, headerText, headerGlow, links, hasDetail } = project;
+  const { projectId, name, roleShort, summary, teamSize, type, stack, thumbnail, scrollShot, headerColor, headerTone, headerText, headerGlow, links, docs, hasDetail } = project;
   const { title, subtitle } = splitName(name);
   const no = ALL_PROJECTS.indexOf(project) + 1; // 전체 순서 (01 ~ 06)
   // 버튼 2개: 상세 페이지가 있으면 [자세히 보기, 첫 링크], 없으면 [첫 링크, 둘째 링크]
@@ -299,6 +299,20 @@ const Tile = ({ project }) => {
   const media = (
     <>
       <img src={getProjectImage(thumbnail)} alt={`${title} 화면`} className={styles.image} loading="lazy" />
+      {/* 사이트 전체 캡처 — 마우스를 올리면 나타나 위에서 아래로 천천히 스크롤 (길수록 오래) */}
+      {scrollShot && (
+        <img
+          src={getProjectImage(scrollShot)}
+          alt=""
+          className={styles.scrollShot}
+          loading="lazy"
+          onLoad={(e) => {
+            const img = e.currentTarget;
+            const seconds = Math.min(10, Math.max(4, img.naturalHeight / img.naturalWidth * 1.8));
+            img.style.setProperty("--scroll-time", `${seconds.toFixed(1)}s`);
+          }}
+        />
+      )}
       {/* 패널 색 = 그 작품 사이트의 헤더 색 (어두우면 흰 글자) */}
       <div
         className={[
@@ -364,6 +378,17 @@ const Tile = ({ project }) => {
           {primary?.href && <a href={primary.href} target="_blank" rel="noreferrer" className={styles.primary}>{primary.label} <b aria-hidden="true">↗</b></a>}
           {secondary && <a href={secondary.href} target="_blank" rel="noreferrer" className={styles.secondary}>{secondary.label} ↗</a>}
         </div>
+        {/* 팀 기획 문서 — 누르면 PDF 내려받기 (상세 페이지와 같은 파일) */}
+        {docs?.length > 0 && (
+          <div className={styles.docs}>
+            <span className={styles.docsTitle}>{DETAIL_TEXT.docs}</span>
+            {docs.map((doc) => (
+              <a key={doc.file} href={`/docs/${doc.file}`} download className={styles.docLink}>
+                {doc.label} <span aria-hidden="true">↓</span>
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </article>
   );

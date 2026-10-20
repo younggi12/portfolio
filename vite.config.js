@@ -1,9 +1,23 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath, URL } from "node:url";
 
+// 개발 서버(npm run dev)에서도 /api/chat이 동작하게 — 배포(Vercel)에서는 api/chat.js가 서버 함수로 바로 실행됨
+// 키는 .env.local의 OPENAI_API_KEY (VITE_ 접두사 금지 — 붙이면 브라우저 코드에 들어감)
+const devApi = () => ({
+  name: "dev-api",
+  configureServer(server) {
+    const env = loadEnv("development", process.cwd(), "");
+    if (env.OPENAI_API_KEY) process.env.OPENAI_API_KEY = env.OPENAI_API_KEY;
+    server.middlewares.use("/api/chat", async (req, res) => {
+      const { default: handler } = await server.ssrLoadModule("/api/chat.js");
+      handler(req, res);
+    });
+  },
+});
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), devApi()],
   base: "/",
   resolve: {
     // "@/styles/variables"처럼 src 기준 절대 경로로 import

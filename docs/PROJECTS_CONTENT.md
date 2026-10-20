@@ -17,7 +17,7 @@
 | 기간 | 2026.08 ~ 2026.09 |
 | 한 줄 소개 | 취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰 |
 | 담당 | 회원 인증, 고객센터(공지사항·FAQ·1:1 문의), 위시리스트, 통합 단계 AI 큐레이션 UI·모바일 반응형 보완 |
-| 기술 | React 19, Vite, Firebase Auth, Firestore, SCSS Modules |
+| 기술 | React 19, Vite, Firebase Auth, Firestore, OpenAI API, GSAP, SCSS Modules |
 | 링크 | 사이트 https://jajak-ten.vercel.app / GitHub https://github.com/jiwoo1012/TeamProject2 |
 | 썸네일 | `jajak-thumb.webp` |
 

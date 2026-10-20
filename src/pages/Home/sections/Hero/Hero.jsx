@@ -7,6 +7,8 @@
 // - 동작 줄이기: 화면 하나 높이, 다 채워진 3D + 두 줄 문구 / WebGL이 안 되면 글자만
 import { useEffect, useRef, useState } from "react";
 import { HERO_TEXT } from "@/data/site";
+import { SECTION_IDS } from "@/routes/paths";
+import { scrollToElement } from "@/utils/scrollToY";
 import styles from "./Hero.module.scss";
 
 const TYPE_SPEED = 90;   // 한 글자 나오는 간격(ms)
@@ -106,8 +108,15 @@ const Hero = () => {
     };
   }, []);
 
+  // 작품 바로 보기 — 헤더 Projects 메뉴와 같은 이동 (이름 장면은 막지 않고 지나감)
+  const handleSkip = (e) => {
+    e.preventDefault();
+    scrollToElement(document.getElementById(SECTION_IDS.projects));
+    window.history.replaceState(null, "", `#${SECTION_IDS.projects}`);
+  };
+
   return (
-    <section ref={sectionRef} className={styles.hero} data-header-theme="light" aria-labelledby="hero-title">
+    <section ref={sectionRef} className={styles.hero} data-header-theme="light" data-chat-hide aria-labelledby="hero-title">
       <div className={styles.stage}>
         {/* 3D — 화면 가운데 */}
         <canvas ref={canvasRef} className={`${styles.canvas} ${isReady ? styles.canvasReady : ""}`} aria-hidden="true" />
@@ -122,6 +131,11 @@ const Hero = () => {
           </p>
 
         </div>
+
+        {/* 연출을 건너뛰고 작품 소개로 — 바쁜 사람용 (스크롤하면 화살표와 같이 사라짐) */}
+        <a href={`#${SECTION_IDS.projects}`} className={styles.skip} onClick={handleSkip}>
+          {HERO_TEXT.skip} <span aria-hidden="true">→</span>
+        </a>
 
         {/* 아래로 내려가라는 화살표 — 계속 통통 튐 (스크롤해도 계속 보임) */}
         <span className={styles.scrollCue} aria-hidden="true">

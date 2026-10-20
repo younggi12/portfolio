@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { PROFILE } from "@/data/profile";
 import { ABOUT_TEXT } from "@/data/site";
-import { scrollToY } from "@/utils/scrollToY";
+import { scrollToY, SCROLL_EVENT, SCROLL_DONE_EVENT } from "@/utils/scrollToY";
 import { coverState, FACTS_COVER_EVENT } from "./aboutShared";
 import styles from "./About.module.scss";
 
@@ -98,6 +98,14 @@ const NameIntro = () => {
         }
       };
       t.stop = () => cancelAnimationFrame(t.frame);
+      // 연출 없이 바로 그 상태로 (메뉴로 장면을 건너뛸 때)
+      t.jump = (v) => {
+        cancelAnimationFrame(t.frame);
+        t.frame = 0;
+        t.now = v;
+        t.target = v;
+        apply(v);
+      };
       return t;
     };
     // YG가 튀어 오르고, 인사 글자가 작아지며 위로 (--show)
@@ -178,6 +186,26 @@ const NameIntro = () => {
     });
     let settleUntil = 0; // 커튼이 다 걷히거나 내려온 직후 — 이어서 들어오는 휠(터치패드 관성)에 바로 움직이지 않게
     let closing = false;
+    // 메뉴(Projects · Contact 등)로 이동하는 중 — 장면을 막지 않고 그대로 지나감 (이동이 끝나면 풀림)
+    let passing = false;
+    let passTimer = 0;
+    const PASS_MAX = 8000; // 끝났다는 알림이 안 와도 이만큼 지나면 풀림 (ms)
+    const endPass = () => {
+      if (!passing) return;
+      passing = false;
+      clearTimeout(passTimer);
+      // 장면 맨 위(About)에 도착하면 커튼을 내려 처음부터
+      if (window.scrollY <= top + 2 && curtain.now !== 0) curtain.jump(0);
+      onScroll();
+    };
+    const onNavigate = (e) => {
+      if (reduced || !e.detail.smooth) return; // 장면이 스스로 하는 즉시 이동은 제외
+      passing = true;
+      clearTimeout(passTimer);
+      passTimer = setTimeout(endPass, PASS_MAX);
+      // 장면 맨 위보다 아래로 가면(About → EDUCATION, Projects …) 커튼을 미리 걷어 둠 — 검은 화면에 걸리지 않고 그대로 지나감
+      if (e.detail.top > top + 2) { closing = false; curtain.jump(1); }
+    };
     // 아래로: 풀네임이 다 나왔고 장면 맨 위에 있으면 → EDUCATION 자리로 순간 이동(커튼에 가려 안 보임) + 커튼 걷기
     const settling = () => performance.now() < settleUntil && Math.abs(window.scrollY - (curtain.now === 1 ? end : top)) <= 2;
     const goDown = () => {
@@ -209,18 +237,20 @@ const NameIntro = () => {
       top = rect.top + window.scrollY;
       end = top + range; // EDUCATION 맨 위 (장면 마지막 한 화면과 겹쳐 있어서 커튼 바로 뒤에 있음)
 
+      const navigating = passing;
+
       hiTween.set(pinned ? 1 : 0);
       // 앞 단계가 다 끝나면 저절로 다음 단계 (장면 위로 되돌아가면 바로 접힘)
       showTween.set(pinned && hiTween.now === 1 && hiHeld() ? 1 : 0);
       openTween.set(pinned && showTween.now === 1 ? 1 : 0);
-      if (!pinned && curtain.target === 1) curtain.set(0); // 장면 위로 벗어나면 커튼은 내려 둠
+      if (!navigating && !pinned && curtain.target === 1) curtain.set(0); // 장면 위로 벗어나면 커튼은 내려 둠
       tellCover();
       // 풀네임이 다 펼쳐지기 전에는 장면 맨 위에서 더 내려가지 않게 (관성으로 미끄러져도 되돌림)
-      locked = !reduced && pinned && openTween.now < 1 && p < 0.5;
+      locked = !reduced && !navigating && pinned && openTween.now < 1 && p < 0.5;
       if (locked && window.scrollY > top + 2) scrollToY(top, { smooth: false });
       // 커튼이 닫힌 채 장면 안이면 맨 위 / 열린 채 장면 안으로 미끄러져 올라오면 EDUCATION 맨 위로 (어중간한 곳에 멈추지 않게)
       const y = window.scrollY;
-      if (!reduced && pinned && !curtain.frame && y > top + 2 && y < end - 2) {
+      if (!reduced && !navigating && pinned && !curtain.frame && y > top + 2 && y < end - 2) {
         scrollToY(curtain.now === 1 ? end : top, { smooth: false });
       }
       paint(hiTween.now); // 막이 걷히는 정도(light)는 스크롤로 바뀌므로 매번 다시 칠함
@@ -229,7 +259,8 @@ const NameIntro = () => {
     const onResize = () => { measure(); applyOpen(openTween.now); update(); };
     // 휠 · 키 · 터치 — 커튼 열기/닫기 또는 잠긴 동안 막기 (그 외에는 보통 스크롤)
     const handle = (dir, e) => {
-      if (reduced) return;
+      if (reduced || passing) return;
+      if (e.target.closest?.("[data-chat]")) return; // 챗봇 창 안의 휠 · 터치 · 키는 장면과 상관없음
       // 커튼이 움직이는 중 · 막 멈춘 뒤에 이어서 들어오는 휠은 한 번의 손짓으로 봄 → 손짓이 멈출 때까지(SETTLE_GAP) 계속 그대로
       if (curtain.frame || settling()) settleUntil = Math.max(settleUntil, performance.now() + SETTLE_GAP);
       if (dir > 0 ? goDown() : goUp()) e.preventDefault();
@@ -250,6 +281,8 @@ const NameIntro = () => {
     onResize();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
+    window.addEventListener(SCROLL_EVENT, onNavigate);
+    window.addEventListener(SCROLL_DONE_EVENT, endPass);
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -262,6 +295,9 @@ const NameIntro = () => {
       showTween.stop();
       openTween.stop();
       curtain.stop();
+      clearTimeout(passTimer);
+      window.removeEventListener(SCROLL_EVENT, onNavigate);
+      window.removeEventListener(SCROLL_DONE_EVENT, endPass);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("wheel", onWheel);

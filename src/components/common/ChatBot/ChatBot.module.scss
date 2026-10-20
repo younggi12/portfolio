@@ -1,0 +1,224 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// 챗봇 — 오른쪽 아래 고정 (헤더 10 · 크게 보기 100보다 아래 / 커서 1000보다 아래)
+.chat {
+  position: fixed;
+  right: $space-6;
+  bottom: $space-6;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $space-3;
+  transition: opacity $duration-base $easing-base, transform $duration-base $easing-reveal, visibility $duration-base;
+
+  @include mobile {
+    right: $space-4;
+    bottom: $space-4;
+  }
+}
+
+.chatHidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+}
+
+// YG 동그라미 버튼
+.toggle {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: $color-text;
+  color: $color-on-panel;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-black;
+  letter-spacing: -0.04em;
+  box-shadow: 0 8px 24px rgba($color-black, 0.2), 0 0 0 1px rgba($color-on-panel, 0.25); // 검은 화면 위에서도 테두리로 보이게
+  transition: transform $duration-base $easing-reveal, background-color $duration-fast $easing-base;
+
+  &:hover { transform: translateY(-2px); }
+}
+
+.toggleOpen {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-medium;
+}
+
+// 채팅 창
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  height: min(540px, calc(100svh - 120px));
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background-color: $color-bg;
+  color: $color-text;
+  box-shadow: 0 16px 48px rgba($color-black, 0.18), 0 0 0 1px $color-border;
+  animation: panelIn $duration-base $easing-reveal;
+
+  @include mobile {
+    width: calc(100vw - #{$space-4} * 2);
+    height: min(560px, calc(100svh - 100px));
+  }
+
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  padding: $space-4;
+  border-bottom: 1px solid $color-border;
+}
+
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: $color-text;
+  color: $color-on-panel;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-black;
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.note {
+  margin-top: 2px;
+  font-size: $font-size-xs;
+  line-height: 1.5;
+  opacity: 0.6;
+}
+
+.close {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: $font-size-lg;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity $duration-fast $easing-base, background-color $duration-fast $easing-base;
+
+  &:hover { opacity: 1; background-color: rgba($color-black, 0.06); }
+}
+
+// 대화 — 이 칸만 스크롤 (페이지는 그대로)
+.list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-4;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.bubble {
+  max-width: 85%;
+  padding: $space-2 $space-3;
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.bot {
+  align-self: flex-start;
+  border-bottom-left-radius: $radius-sm;
+  background-color: $color-band-solid;
+}
+
+.me {
+  align-self: flex-end;
+  border-bottom-right-radius: $radius-sm;
+  background-color: $color-text;
+  color: $color-on-panel;
+}
+
+.error { opacity: 0.7; }
+
+.thinking {
+  opacity: 0.5;
+  animation: blink 1.2s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+
+// 추천 질문 — 처음에만
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-top: $space-1;
+
+  button {
+    padding: 6px $space-3;
+    border-radius: $radius-pill;
+    border: 1px solid $color-border;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    transition: background-color $duration-fast $easing-base;
+
+    &:hover { background-color: $color-band-solid; }
+  }
+}
+
+.form {
+  display: flex;
+  gap: $space-2;
+  padding: $space-3;
+  border-top: 1px solid $color-border;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-pill;
+    font: inherit;
+    font-size: $font-size-sm;
+
+    &:focus { outline: none; border-color: $color-text; }
+  }
+
+  button {
+    flex: none;
+    padding: 0 $space-4;
+    border-radius: $radius-pill;
+    background-color: $color-text;
+    color: $color-on-panel;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    transition: opacity $duration-fast $easing-base;
+
+    &:disabled { opacity: 0.3; cursor: default; }
+  }
+}

@@ -15,13 +15,20 @@ export const PROJECTS = [
     role: "회원 인증, 고객센터(공지사항·FAQ·1:1 문의), 위시리스트, 통합 단계 AI 큐레이션 UI·모바일 반응형 보완",
     roleShort: "회원 인증 · 고객센터 · 위시리스트", // 작품 카드에 보이는 짧은 담당
     summary: "취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰", // "한 상"은 줄바꿈 안 되는 공백(\u00a0)
-    stack: ["React 19", "Vite", "Firebase Auth", "Firestore", "OpenAI API", "SCSS Modules"],
+    stack: ["React 19", "Vite", "Firebase Auth", "Firestore", "OpenAI API", "GSAP", "SCSS Modules"],
     thumbnail: "jajak-thumb.webp",
+    scrollShot: "jajak-scroll.webp", // 사이트 전체 캡처 — 썸네일에 마우스를 올리면 위에서 아래로 스크롤
     coverZoom: 1.11, // 상세 표지 배경 사진 확대 (기본 1.04 — 맨 위 한지 메뉴 띠가 안 보이게 조금 더)
     headerColor: "#f2ebe2", headerTone: "light", headerText: "#2c231b", // 헤더 배경은 한지 이미지(평균 색) · 글자 $color-text-primary
     links: [
       { label: "사이트", href: "https://jajak-ten.vercel.app" },
       { label: "GitHub", href: "https://github.com/jiwoo1012/TeamProject2" },
+    ],
+    // 팀 기획 문서 — public/docs/ 의 PDF, 상세 왼쪽 칸에서 내려받기
+    docs: [
+      { label: "기획서", file: "jajak-plan.pdf" },
+      { label: "화면설계서", file: "jajak-screen-design.pdf" },
+      { label: "캐릭터 설정서", file: "jajak-character.pdf" },
     ],
     hasDetail: true,
     detail: {
@@ -56,6 +63,7 @@ export const PROJECTS = [
     summary: "HTML · CSS · JavaScript만으로 3명이 함께 만든\n첫 팀 프로젝트",
     stack: ["HTML", "CSS", "JavaScript", "JSON", "localStorage"],
     thumbnail: "mungnyang-thumb.webp",
+    scrollShot: "mungnyang-scroll.webp", // 사이트 전체 캡처 — 썸네일에 마우스를 올리면 위에서 아래로 스크롤
     coverZoom: 1.07, // 상세 표지 배경 사진 확대 (기본 1.04 — 맨 위 사이트 메뉴가 헤더와 겹쳐 보이지 않게 조금 더)
     headerColor: "#587866", headerTone: "dark", headerText: "#ffffff", // header rgba(46, 90, 68, 0.8)가 화면에 겹쳐 실제로 보이는 색(배포 사이트 캡처 측정) · .gnb a #ffffff
     links: [
@@ -93,6 +101,7 @@ export const PROJECTS = [
     summary: "프레임워크 없이 상품 목록부터 상세 · 장바구니까지 5페이지를 직접 구현",
     stack: ["HTML5", "CSS3", "JavaScript", "localStorage", "IntersectionObserver", "AI 캐릭터 생성 (ChatGPT)"],
     thumbnail: "blueline-thumb.webp",
+    scrollShot: "blueline-scroll.webp", // 사이트 전체 캡처 — 썸네일에 마우스를 올리면 위에서 아래로 스크롤
     headerColor: "linear-gradient(135deg, #1d3a66, #2f6fed)", headerTone: "dark", headerText: "#ffffff", // style.css .top-bar (--navy → --blue) · .logo #fff
     links: [
       { label: "사이트", href: "https://younggi12.github.io/-4/index.html" },

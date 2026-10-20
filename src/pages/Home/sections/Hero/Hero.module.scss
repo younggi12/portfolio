@@ -115,6 +115,28 @@
   @media (prefers-reduced-motion: reduce) { svg { animation: none; } }
 }
 
+// 작품 바로 보기 — 오른쪽 아래 작은 글자 버튼 (스크롤해 들어가면 화살표와 같이 사라짐)
+.skip {
+  position: absolute;
+  right: $side-padding-desktop;
+  bottom: $space-10;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  opacity: clamp(0, 1 - var(--dive, 0) * 4, 1);
+  @include hover-underline;
+
+  span {
+    display: inline-block;
+    transition: transform $duration-base $easing-base;
+  }
+
+  &:hover span,
+  &:focus-visible span { transform: translateX(4px); }
+
+  @include tablet { right: $side-padding-tablet; }
+  @include mobile { right: $side-padding-mobile; bottom: $space-6; }
+}
+
 @keyframes cueBounce {
   0%, 100% { transform: translateY(0); opacity: 1; }
   50% { transform: translateY(12px); opacity: 0.45; }

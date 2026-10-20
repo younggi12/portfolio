@@ -77,7 +77,10 @@ export const FOOTER_TEXT = {
   message: "함께 일할 기회를 기다리고 있어요.",
   subMessage: "채용 · 협업 제안, 작품에 대한 질문 모두 편하게 연락 주세요.",
   emailLabel: "이메일",
+  phoneLabel: "전화",
   githubLabel: "GitHub",
+  resumeLabel: "이력서",
+  resumeLink: "PDF 내려받기",
   copy: "복사",
   copied: "복사됨",
   toTop: "맨 위로",
@@ -89,6 +92,7 @@ export const FOOTER_TEXT = {
 export const HERO_TEXT = {
   eyebrow: "FRONTEND DEVELOPER · LEE YOUNGGI",
   lines: ["디자인을 코드로", "화면을 경험으로"],
+  skip: "작품 바로 보기", // 오른쪽 아래 — 연출을 건너뛰고 작품 소개로
 };
 
 // 프로젝트 상세 페이지 소제목
@@ -96,6 +100,8 @@ export const DETAIL_TEXT = {
   back: "작품 목록으로",
   role: "담당",
   stack: "기술",
+  docs: "기획 문서",
+  docsNote: "PDF 내려받기",
   features: "내가 만든 기능",
   problem: "문제 해결",
   symptom: "증상",
@@ -118,4 +124,19 @@ export const LIGHTBOX_TEXT = {
   close: "닫기",
   prev: "이전 사진",
   next: "다음 사진",
+};
+
+// 챗봇 — 오른쪽 아래 YG 버튼 (답은 AI가 포트폴리오 내용만 보고 이영기 말투로)
+export const CHAT_TEXT = {
+  open: "이영기에게 물어보기",
+  close: "닫기",
+  title: "이영기에게 물어보세요",
+  note: "AI가 이 포트폴리오 내용으로 저 대신 답해요. 정확한 이야기는 이메일로 주세요.",
+  greeting: "안녕하세요, 프론트엔드 개발자 이영기예요. 작품이나 기술, 제가 맡은 일에 대해 편하게 물어보세요.",
+  suggestions: ["어떤 프로젝트를 했나요?", "JAJAK에서 맡은 역할은?", "React는 어디까지 써 봤나요?"],
+  placeholder: "궁금한 점을 적어 주세요",
+  send: "보내기",
+  thinking: "생각 중…",
+  error: "지금은 답을 가져오지 못했어요. 잠시 후 다시 시도하거나 이메일로 물어봐 주세요.",
+  tooMany: "질문이 많아 잠깐 쉬어 갈게요. 몇 분 뒤에 다시 물어봐 주세요.",
 };

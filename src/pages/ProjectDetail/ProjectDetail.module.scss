@@ -271,6 +271,44 @@ $aside-width: 340px;
   &:hover { opacity: 1; }
 }
 
+// 기획 문서 — 링크와 같은 글자 버튼, ↓는 누를 때 살짝 내려감
+.docs {
+  margin-top: $space-6;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2 $space-5;
+    margin-top: $space-2;
+  }
+}
+
+.docsTitle {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+
+  span {
+    margin-left: $space-1;
+    font-weight: $font-weight-medium;
+    opacity: 0.5;
+  }
+}
+
+.docLink {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  @include hover-underline;
+
+  span {
+    display: inline-block;
+    transition: transform $duration-fast $easing-base;
+  }
+
+  &:hover span { transform: translateY(2px); }
+}
+
 // 목차 — 지금 보는 부분만 진하게 + 앞에 짧은 선 (작품 소개 오른쪽 번호 목록과 같은 모양)
 .toc {
   margin-top: $space-10;

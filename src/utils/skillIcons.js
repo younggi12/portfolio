@@ -68,6 +68,7 @@ const STACK_ICON_KEYS = {
   "Canvas API": "canvas",
   "Pointer Events": "pointer",
   "OpenAI API": "ai",
+  GSAP: "gsap",
   "AI 캐릭터 생성 (ChatGPT)": "aiImage",
 };
 

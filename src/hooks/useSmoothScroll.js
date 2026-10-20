@@ -5,7 +5,7 @@
 // - 인트로 · 크게 보기처럼 스크롤을 잠근 동안, 안쪽에 스크롤 칸(코드 카드 등)이 있으면 건드리지 않음
 // - "동작 줄이기" 사용자는 사용하지 않음
 import { useEffect } from "react";
-import { SCROLL_EVENT } from "@/utils/scrollToY";
+import { SCROLL_EVENT, SCROLL_DONE_EVENT } from "@/utils/scrollToY";
 
 const SPEED = 0.75;  // 휠 한 칸에 움직이는 거리 배수 (1 = 브라우저 기본, 작을수록 느림)
 const FOLLOW = 0.09; // 목표를 따라가는 정도 (작을수록 더 미끄러지듯)
@@ -31,14 +31,37 @@ const useSmoothScroll = () => {
     let current = window.scrollY;
     let frame = 0;
     let navAt = 0; // 마지막 메뉴 이동 시각
+    let navEl = null; // 메뉴로 가는 목표 요소 — 가는 동안 위치가 바뀌어도 따라감
+    let navActive = false; // 메뉴 이동 중 (휠 · 누름 · 도착하면 끝)
+    const endNav = () => {
+      navEl = null;
+      if (!navActive) return;
+      navActive = false;
+      window.dispatchEvent(new Event(SCROLL_DONE_EVENT));
+    };
+    // 화면에 붙는(sticky · fixed) 요소는 위치가 스크롤 따라 같이 움직여서 따라가면 멈춰 버림 → 처음 위치로만
+    const isStuck = (el) => {
+      for (let node = el; node && node !== document.body; node = node.parentElement) {
+        const { position } = getComputedStyle(node);
+        if (position === "sticky" || position === "fixed") return true;
+      }
+      return false;
+    };
 
     const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
 
+    const navTop = () => {
+      const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      return Math.max(0, Math.min(maxScroll(), navEl.getBoundingClientRect().top + window.scrollY - pad));
+    };
+
     const step = () => {
+      if (navEl?.isConnected) target = navTop();
       current += (target - current) * FOLLOW;
       if (Math.abs(target - current) < 0.5) current = target;
       window.scrollTo({ top: current, behavior: "instant" });
       frame = current === target ? 0 : requestAnimationFrame(step);
+      if (!frame) endNav();
     };
 
     const onWheel = (e) => {
@@ -46,8 +69,10 @@ const useSmoothScroll = () => {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // 가로 휠
       if (document.body.style.overflow === "hidden") return; // 인트로 · 크게 보기
       if (canScrollInside(e.target, e.deltaY)) return;
+      if (e.target.closest?.("[data-chat]")) return; // 챗봇 창 위에서는 브라우저 기본 스크롤
       e.preventDefault();
       if (performance.now() - navAt < NAV_GUARD) return; // 메뉴 이동 직후 관성 휠
+      endNav(); // 그 뒤에 굴리면 메뉴 이동을 그만두고 휠을 따름
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1; // 줄 · 페이지 단위 휠
       if (!frame) { target = window.scrollY; current = window.scrollY; } // 멈춰 있었으면 지금 위치에서 시작
       target = Math.max(0, Math.min(maxScroll(), target + e.deltaY * unit * SPEED));
@@ -57,8 +82,12 @@ const useSmoothScroll = () => {
     // 휠이 아닌 방법으로 움직이면(키보드 · 스크롤바 · 메뉴 이동) 따라가던 것을 멈추고 그 위치로 맞춤
     const onScroll = () => {
       if (frame && Math.abs(window.scrollY - current) > 2) {
-        cancelAnimationFrame(frame);
-        frame = 0;
+        // 메뉴 이동 중 위쪽 높이가 바뀌어 브라우저가 위치를 옮긴 것 → 멈추지 않고 그 자리에서 이어감
+        if (navActive) current = window.scrollY;
+        else {
+          cancelAnimationFrame(frame);
+          frame = 0;
+        }
       }
       if (!frame) { target = window.scrollY; current = window.scrollY; }
     };
@@ -66,6 +95,7 @@ const useSmoothScroll = () => {
     // 휠로 따라가는 중에 누르거나(로고 · 메뉴 · 점 · 맨 위로) 키를 누르면 즉시 멈춤
     // — 멈추지 않으면 다음 프레임의 scrollTo가 메뉴 이동(부드러운 스크롤)을 덮어써서 제자리에 남음
     const stop = () => {
+      endNav();
       if (!frame) return;
       cancelAnimationFrame(frame);
       frame = 0;
@@ -75,11 +105,14 @@ const useSmoothScroll = () => {
 
     // 로고 · 메뉴 · 점 · 맨 위로 (utils/scrollToY) — 같은 엔진으로 목표 위치까지 미끄러지듯
     const onNavigate = (e) => {
-      const { top, smooth } = e.detail;
+      const { top, smooth, el } = e.detail;
+      navActive = false; // 이어지는 새 이동 — 끝났다는 알림 없이 바로 바꿈
       stop();
       if (!smooth) return; // 즉시 이동은 브라우저에 맡김 (preventDefault 안 함)
       e.preventDefault();
       navAt = performance.now();
+      navEl = el && !isStuck(el) ? el : null;
+      navActive = true;
       target = Math.max(0, Math.min(maxScroll(), top));
       frame = requestAnimationFrame(step);
     };

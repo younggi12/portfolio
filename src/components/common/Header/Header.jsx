@@ -7,12 +7,11 @@ import { NAV_ITEMS } from "@/data/site";
 import useHeaderTheme from "@/hooks/useHeaderTheme";
 import useActiveSection from "@/hooks/useActiveSection";
 import useHideOnScroll from "@/hooks/useHideOnScroll";
-import { scrollToElement, scrollToY } from "@/utils/scrollToY";
+import { jumpToTop, scrollToElement } from "@/utils/scrollToY";
+import Logo from "./Logo";
 import styles from "./Header.module.scss";
 
 const HEADER_HEIGHT = 72; // _variables.scss의 $header-height와 같은 값
-const VEIL_IN = 250;  // 로고 이동 — 흰 막이 덮이는 시간(ms)
-const VEIL_OUT = 450; //   걷히는 시간(ms)
 const SECTION_ORDER = NAV_ITEMS.map((item) => item.sectionId); // About → Projects → Contact(푸터)
 
 // 이동할 곳 — About은 이름 장면에서 인사가 다 나온 지점(data-about-start), 나머지는 섹션 맨 위
@@ -44,25 +43,12 @@ const Header = () => {
     window.history.replaceState(null, "", `#${sectionId}`);
   };
 
-  // 로고 → 맨 위(Hero) — Home에선 흰 막이 살짝 덮였다 걷히는 사이에 한 번에 이동
-  // (긴 페이지를 거슬러 올라가는 스크롤도, 뚝 끊기는 순간 이동도 어색해서), 다른 페이지에선 Home으로
+  // 로고 → 맨 위(Hero) — Home에선 흰 막 사이에 한 번에 이동(utils/scrollToY), 다른 페이지에선 Home으로
   const handleLogo = (e) => {
     if (pathname !== PATHS.home) return;
     e.preventDefault();
     window.history.replaceState(null, "", PATHS.home);
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      scrollToY(0, { smooth: false });
-      return;
-    }
-    const veil = document.createElement("div");
-    veil.className = styles.veil;
-    document.body.appendChild(veil);
-    const cover = veil.animate([{ opacity: 0 }, { opacity: 1 }], { duration: VEIL_IN, easing: "ease-in", fill: "forwards" });
-    cover.onfinish = () => {
-      scrollToY(0, { smooth: false });
-      const reveal = veil.animate([{ opacity: 1 }, { opacity: 0 }], { duration: VEIL_OUT, easing: "ease-out", fill: "forwards" });
-      reveal.onfinish = () => veil.remove();
-    };
+    jumpToTop();
   };
 
   return (
@@ -75,8 +61,7 @@ const Header = () => {
           aria-label={`${PROFILE.name} 처음으로`}
           onClick={handleLogo}
         >
-          {PROFILE.logo}
-          <span className={styles.cursor} aria-hidden="true" />
+          <Logo />
         </Link>
         <nav aria-label="주요 메뉴">
           <ul className={styles.nav}>

@@ -44,7 +44,7 @@
   height: 100%;
 }
 
-// 로고: YG + 깜빡이는 커서 (탭 아이콘은 public/favicon.svg)
+// 로고: YG ↔ YOUNG GI (탭 아이콘은 public/favicon.svg)
 .logo {
   display: inline-flex;
   align-items: center;
@@ -53,19 +53,19 @@
   letter-spacing: -0.04em;
 }
 
-.cursor {
-  width: 3px;
-  height: 0.9em;
-  margin-left: 3px;
-  border-radius: 1px;
-  background-color: currentColor;
-  animation: blink 1.1s steps(1, end) infinite;
+// 로고 — YG ↔ YOUNG GI (Logo.jsx) · 숨은 칸은 폭 0에서 시작, 글자는 칸 안에서 튀어 오름
+.logoName {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: pre;
 
-  @media (prefers-reduced-motion: reduce) { animation: none; }
+  span { display: inline-block; }
 }
 
-@keyframes blink {
-  50% { opacity: 0; }
+.logoBox {
+  overflow: hidden;
+  max-width: 0;
+  vertical-align: bottom;
 }
 
 .nav {
@@ -89,13 +89,4 @@
   opacity: 1;
   font-weight: $font-weight-semibold;
   text-decoration-color: currentColor;
-}
-
-// 로고로 맨 위 이동할 때 잠깐 화면을 덮는 흰 막 (JS가 만들고 지움) — 헤더 · 커서보다 아래, 페이지보다 위
-.veil {
-  position: fixed;
-  inset: 0;
-  z-index: 9;
-  background-color: $color-bg;
-  pointer-events: none;
 }

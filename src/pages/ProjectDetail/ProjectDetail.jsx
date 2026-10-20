@@ -53,7 +53,7 @@ const ProjectDetail = () => {
   // 없는 프로젝트이거나 상세 페이지가 없는 프로젝트는 404 (AGENTS.md 5장)
   if (!project || !project.hasDetail || !project.detail) return <NotFound />;
 
-  const { name, category, type, teamSize, role, summary, stack, thumbnail, coverZoom, links, detail } = project;
+  const { name, category, type, teamSize, role, summary, stack, thumbnail, coverZoom, links, docs, detail } = project;
   const [title, subtitle] = name.split(" — ");
   const no = detailList.indexOf(project) + 1;
   const metaLine = [
@@ -144,6 +144,21 @@ const ProjectDetail = () => {
             </div>
           </dl>
           {linkList}
+          {/* 팀 기획 문서 — 누르면 PDF 내려받기 */}
+          {docs?.length > 0 && (
+            <div className={styles.docs}>
+              <p className={styles.docsTitle}>{DETAIL_TEXT.docs} <span>{DETAIL_TEXT.docsNote}</span></p>
+              <ul>
+                {docs.map((doc) => (
+                  <li key={doc.file}>
+                    <a href={`/docs/${doc.file}`} download className={styles.docLink}>
+                      {doc.label} <span aria-hidden="true">↓</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {/* 목차 — 지금 보는 부분만 진하게 + 앞에 선, 누르면 그 부분으로 */}
           <nav className={styles.toc} aria-label={DETAIL_TEXT.toc}>
             <ol>

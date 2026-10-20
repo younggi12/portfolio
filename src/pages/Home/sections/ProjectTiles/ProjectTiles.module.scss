@@ -264,6 +264,33 @@ $bleed-left: max(#{$side-padding-desktop}, (100vw - #{$content-wide-max-width}) 
   object-fit: cover;          // 카드와 사진 비율이 같아 꽉 차고 잘리지 않음
 }
 
+// 사이트 전체 캡처 — 마우스를 올리면 썸네일 위로 나타나 끝까지 스크롤, 떼면 빠르게 맨 위로
+// top 0 → 100% 와 translateY 0 → -100%를 같이 움직이면 (카드 높이 - 캡처 높이)만큼 올라감 = 캡처 맨 아래가 카드 맨 아래에 닿음
+.scrollShot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transition:
+    opacity $duration-base $easing-base,
+    top 0.6s $easing-base,
+    transform 0.6s $easing-base;
+
+  .media:hover & {
+    top: 100%;
+    opacity: 1;
+    transform: translateY(-100%);
+    transition:
+      opacity $duration-base $easing-base,
+      top var(--scroll-time, 7s) cubic-bezier(0.45, 0, 0.55, 1) 0.3s, // 잠깐 멈춘 뒤 출발
+      transform var(--scroll-time, 7s) cubic-bezier(0.45, 0, 0.55, 1) 0.3s;
+  }
+
+  @media (hover: none), (prefers-reduced-motion: reduce) { display: none; }
+}
+
 // 사진 옆 글
 .text {
   flex: 1;
@@ -387,6 +414,37 @@ $bleed-left: max(#{$side-padding-desktop}, (100vw - #{$content-wide-max-width}) 
   @include hover-underline;
 
   &:hover { opacity: 1; }
+}
+
+// 기획 문서 — 버튼 아래 작은 줄 (구분선 + 작은 제목 + ↓ 글자 링크)
+.docs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: $space-2 $space-5;
+  margin-top: $space-5;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
+}
+
+.docsTitle {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  opacity: 0.6;
+}
+
+.docLink {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  @include hover-underline;
+
+  span {
+    display: inline-block;
+    transition: transform $duration-fast $easing-base;
+  }
+
+  &:hover span,
+  &:focus-visible span { transform: translateY(2px); }
 }
 
 // 글 뒤 큰 윤곽 번호 — PC 멈춘 화면에서만 (아주 연한 테두리 글자)
@@ -562,7 +620,7 @@ $bleed-left: max(#{$side-padding-desktop}, (100vw - #{$content-wide-max-width}) 
   display: inline-flex;
   gap: 0.25em;
   padding-left: 0.25em;
-  animation: marquee 24s linear infinite;
+  animation: marquee 14s linear infinite; // 한 바퀴 시간 (작을수록 빨리 흐름)
 
   @media (prefers-reduced-motion: reduce) { animation: none; }
 }

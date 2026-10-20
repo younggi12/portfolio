@@ -4,7 +4,8 @@ export const PROFILE = {
   logo: "YG",           // 헤더 로고 (이니셜)
   role: "Frontend Developer", // About 이름 위 작은 글씨
   // About 사진 — public/images/에 파일을 넣고 이름만 적으면 표시됨 (예: "profile.webp"). 비어 있으면 진한 칸에 이니셜 YG
-  photo: "",
+  photo: "profile.webp",
+  hoverPhotos: ["profile-2.webp", "profile-3.webp", "profile-4.webp"], // 사진에 마우스를 올릴 때마다 뒤집히며 차례로
   // About 한 줄 소개 — [글, 진하게?] 조각으로 나눔 (진한 조각 = 핵심 단어, 나머지는 옅게), \n에서 줄바꿈
   lead: [
     ["사용자가 "],
@@ -23,7 +24,7 @@ export const PROFILE = {
   education: {
     school: "이젠컴퓨터아카데미",
     course: "웹/프론트엔드 개발자 과정",
-    period: "2026.04.16 - 2026.10.26",
+    period: "2026.04.14 - 2026.10.26",
     months: 6,          // About 숫자 줄에 표시
   },
   // 과정에서 배운 것 (실제로 프로젝트에 써 본 것 위주)
@@ -90,5 +91,7 @@ export const PROFILE = {
     },
   ],
   email: "oosc76@naver.com",
+  phone: "010-7732-1589", // 푸터 — 휴대폰에서 누르면 바로 전화(tel:), PC는 글자 + 복사
   github: "https://github.com/younggi12",
+  resume: "leeyounggi-resume.pdf", // 이력서 PDF (public/docs/) — 비우면 푸터에서 숨김. 주소는 시까지, 생년월일 뺌
 };

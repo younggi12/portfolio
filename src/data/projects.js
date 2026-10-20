@@ -1,5 +1,6 @@
 // =============================================================
 // 프로젝트 데이터 — 원본은 docs/PROJECTS_CONTENT.md (AGENTS.md 7장 데이터 계약)
+// 기술(stack) 나열 순서: 마크업 · 언어 → 프레임워크 · 라이브러리 → 빌드 · 스타일 → 인터랙션 → 데이터 · 서버 → AI
 // 배열 순서 = 화면 표시 순서 (팀 → 개인 / 개인: BlueLine → F1 → 벽돌깨기 → 드로잉 앱)
 // 상세 페이지 내용은 detail 필드 (모든 작품). problem · improvements는 없으면 생략 가능
 // =============================================================
@@ -15,7 +16,7 @@ export const PROJECTS = [
     role: "회원 인증, 고객센터(공지사항·FAQ·1:1 문의), 위시리스트, 통합 단계 AI 큐레이션 UI·모바일 반응형 보완",
     roleShort: "회원 인증 · 고객센터 · 위시리스트", // 작품 카드에 보이는 짧은 담당
     summary: "취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰", // "한 상"은 줄바꿈 안 되는 공백(\u00a0)
-    stack: ["React 19", "Vite", "Firebase Auth", "Firestore", "OpenAI API", "GSAP", "SCSS Modules"],
+    stack: ["React 19", "React Router", "Vite", "SCSS Modules", "GSAP", "Firebase Auth", "Firebase Firestore", "Firebase Functions", "OpenAI API"],
     thumbnail: "jajak-thumb.webp",
     scrollShot: "jajak-scroll.webp", // 사이트 전체 캡처 — 썸네일에 마우스를 올리면 위에서 아래로 스크롤
     coverZoom: 1.11, // 상세 표지 배경 사진 확대 (기본 1.04 — 맨 위 한지 메뉴 띠가 안 보이게 조금 더)
@@ -27,7 +28,8 @@ export const PROJECTS = [
     // 팀 기획 문서 — public/docs/ 의 PDF, 상세 왼쪽 칸에서 내려받기
     docs: [
       { label: "기획서", file: "jajak-plan.pdf" },
-      { label: "화면설계서", file: "jajak-screen-design.pdf" },
+      { label: "유스케이스", file: "jajak-usecase.pdf" },
+      { label: "화면설계서", file: "jajak-screen-design.pdf" }, // Figma에서 내보낸 화면 116장 (용량 줄여 약 11MB)
       { label: "캐릭터 설정서", file: "jajak-character.pdf" },
     ],
     hasDetail: true,
@@ -61,7 +63,7 @@ export const PROJECTS = [
     role: "상품·장바구니 페이지, 브랜드·고객센터 페이지, 로그인 상태 헤더, 메인 슬라이드·리뷰, 모바일 반응형",
     roleShort: "상품 · 장바구니 · 브랜드 페이지",
     summary: "HTML · CSS · JavaScript만으로 3명이 함께 만든\n첫 팀 프로젝트",
-    stack: ["HTML", "CSS", "JavaScript", "JSON", "localStorage"],
+    stack: ["HTML5", "CSS3", "JavaScript", "jQuery", "JSON", "localStorage", "sessionStorage", "Kakao Map API", "random.dog API"],
     thumbnail: "mungnyang-thumb.webp",
     scrollShot: "mungnyang-scroll.webp", // 사이트 전체 캡처 — 썸네일에 마우스를 올리면 위에서 아래로 스크롤
     coverZoom: 1.07, // 상세 표지 배경 사진 확대 (기본 1.04 — 맨 위 사이트 메뉴가 헤더와 겹쳐 보이지 않게 조금 더)
@@ -99,7 +101,7 @@ export const PROJECTS = [
     role: "기획·디자인·개발 전체 (초기 일부 Codex 활용, 이후 기능·디자인 직접 구현)",
     roleShort: "기획 · 디자인 · 개발 전체 (초기 일부 Codex 활용)",
     summary: "프레임워크 없이 상품 목록부터 상세 · 장바구니까지 5페이지를 직접 구현",
-    stack: ["HTML5", "CSS3", "JavaScript", "localStorage", "IntersectionObserver", "AI 캐릭터 생성 (ChatGPT)"],
+    stack: ["HTML5", "CSS3", "JavaScript", "IntersectionObserver", "JSON", "localStorage", "sessionStorage", "AI 캐릭터 생성 (ChatGPT)"],
     thumbnail: "blueline-thumb.webp",
     scrollShot: "blueline-scroll.webp", // 사이트 전체 캡처 — 썸네일에 마우스를 올리면 위에서 아래로 스크롤
     headerColor: "linear-gradient(135deg, #1d3a66, #2f6fed)", headerTone: "dark", headerText: "#ffffff", // style.css .top-bar (--navy → --blue) · .logo #fff
@@ -129,8 +131,9 @@ export const PROJECTS = [
     role: "기획·디자인·개발 전체",
     roleShort: "기획 · 디자인 · 개발 전체",
     summary: "학습용 게시판(CRUD)에 디자인과 로그인 · 실시간 기능을 더해 완성한 React 방명록",
-    stack: ["React 19", "React Router", "Zustand", "Firebase Auth", "Firestore", "SCSS Modules"],
+    stack: ["React 19", "React Router", "Vite", "SCSS Modules", "Zustand", "Firebase Auth", "Firebase Firestore"],
     thumbnail: "f1-thumb.webp",
+    previewVideo: "f1-preview.mp4", // public/videos/ — 썸네일에 마우스를 올리면 재생 (F1 사이트 첫 화면 영상 3개가 넘어가는 연출)
     headerColor: "#000000", headerTone: "dark", headerText: "#ff0000", // Header.module.scss background-color: black · 메뉴 글자 color: red
     links: [
       { label: "사이트", href: "https://guestbook01-phi.vercel.app" },
@@ -167,8 +170,9 @@ export const PROJECTS = [
     role: "기획·디자인·개발 전체",
     roleShort: "기획 · 디자인 · 개발 전체",
     summary: "공 · 패들 · 벽돌의 움직임과 충돌을 Canvas로 직접 계산한 게임",
-    stack: ["HTML5", "Canvas API", "JavaScript", "CSS"],
+    stack: ["HTML5", "CSS3", "JavaScript", "Canvas API"],
     thumbnail: "breaker-thumb.webp",
+    previewVideo: "breaker-preview.mp4", // public/videos/ — 썸네일에 마우스를 올리면 재생 (실제 게임 플레이 녹화)
     headerColor: "#0c161f", headerTone: "dark", headerText: "#ffffff", headerGlow: "cyan", // 헤더 없음 → 배경 이미지 위쪽 평균 색 · 제목 #gameTitle: color white + text-shadow 0 0 15px cyan
     links: [
       { label: "플레이", href: "https://younggi12.github.io/breaker/js061201.html" },
@@ -201,12 +205,13 @@ export const PROJECTS = [
     role: "기획·디자인·개발 전체",
     roleShort: "기획 · 디자인 · 개발 전체",
     summary: "Pointer Events로 마우스 · 터치 · 펜을 한 번에 처리하고, 되돌리기와 PNG 저장까지 지원",
-    stack: ["HTML5", "Canvas API", "JavaScript", "Pointer Events"],
+    stack: ["HTML5", "CSS3", "JavaScript", "Canvas API", "Pointer Events"],
     thumbnail: "draw-thumb.webp",
+    previewVideo: "draw-preview.mp4", // public/videos/ — 썸네일에 마우스를 올리면 재생 (그리기 → 되돌리기(Ctrl+Z) → 다시 그리기 녹화)
     headerColor: "#00008b", headerTone: "dark", headerText: "#ffffff", // #toolbar background-color: darkblue · 글자 white
     links: [
-      { label: "사용해보기", href: "https://younggi12.github.io/draw-app/js060901.html" },
-      { label: "GitHub", href: "https://github.com/younggi12/draw-app" },
+      { label: "사용해보기", href: "https://younggi12.github.io/breaker/js060901.html" }, // 터치 · 되돌리기를 넣은 최신본은 breaker 저장소에 있음 (draw-app 저장소는 6월 첫 버전)
+      { label: "GitHub", href: "https://github.com/younggi12/breaker/blob/main/js060901.html" },
     ],
     hasDetail: true,
     detail: {

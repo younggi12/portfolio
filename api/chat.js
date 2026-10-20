@@ -1,6 +1,6 @@
 // POST /api/chat — 포트폴리오 챗봇 (Vercel 서버 함수)
 // 브라우저 → 여기 → OpenAI. API 키(OPENAI_API_KEY)는 서버 환경 변수에만 (코드 · GitHub · 브라우저에 절대 없음)
-// 답변은 글자가 생기는 대로 그대로 흘려보냄(스트리밍, text/plain)
+// 키워드 RAG: 질문 → guide.txt에서 맞는 단원 검색(_rag.js) → 규칙 + 단원 + 질문을 OpenAI에 → 답을 글자가 생기는 대로 그대로 흘려보냄(스트리밍)
 import { buildSystemPrompt } from "./_prompt.js";
 
 const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
@@ -56,6 +56,17 @@ export default async function handler(req, res) {
     .map((m) => ({ role: m.role, content: m.content.slice(0, m.role === "user" ? MAX_QUESTION : 2000) }));
   if (history.at(-1)?.role !== "user") return fail(res, 400, "no question");
 
+  // 검색어 = 최근 사용자 질문 2개 ("그거 더 자세히" 같은 이어지는 질문도 앞 질문 단어로 찾게)
+  const query = history.filter((m) => m.role === "user").slice(-2).map((m) => m.content).join(" ");
+  let system;
+  try {
+    system = buildSystemPrompt(query);
+  } catch (err) {
+    console.error(`[chat] 참고서(guide.txt)를 읽지 못함: ${err.message}`);
+    return fail(res, 500, "guide missing");
+  }
+  if (process.env.NODE_ENV !== "production") console.log(`[chat] 찾은 단원: ${system.titles.join(", ") || "없음(자기소개만)"}`);
+
   let upstream;
   try {
     upstream = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -66,7 +77,7 @@ export default async function handler(req, res) {
         stream: true,
         temperature: 0.4,
         max_tokens: MAX_ANSWER_TOKENS,
-        messages: [{ role: "system", content: buildSystemPrompt() }, ...history],
+        messages: [{ role: "system", content: system.prompt }, ...history],
       }),
     });
   } catch (err) {
@@ -83,6 +94,7 @@ export default async function handler(req, res) {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Chat-Sections", encodeURIComponent(system.titles.join(", "))); // 개발자 도구 Network에서 고른 단원 확인
 
   // OpenAI 스트림(SSE: "data: {...}" 줄)에서 글자만 골라 그대로 보냄
   const reader = upstream.body.getReader();

@@ -37,13 +37,13 @@ export const PROFILE = {
         { label: "CSS3", icon: "css" },
         { label: "SCSS", icon: "sass" },
         { label: "반응형 레이아웃", icon: "responsive" },
-        { label: "jQuery", icon: "jquery" },
       ],
     },
     {
       title: "JavaScript",
       items: [
         { label: "JavaScript (ES6+)", icon: "javascript" },
+        { label: "jQuery", icon: "jquery" }, // JavaScript 라이브러리라 여기로
         { label: "Canvas API", icon: "canvas" },
         { label: "Pointer Events", icon: "pointer" },
         { label: "fetch", icon: "api" },
@@ -64,11 +64,11 @@ export const PROFILE = {
       title: "데이터 · 서버",
       items: [
         { label: "Firebase Auth", icon: "firebase" },
-        { label: "Firestore · 보안 규칙", icon: "database" },
-        { label: "localStorage", icon: "storage" },
-        { label: "sessionStorage", icon: "storage" },
+        { label: "Firebase Firestore · 보안 규칙", icon: "database" },
+        { label: "localStorage · sessionStorage", icon: "storage" }, // 브라우저 저장소
         { label: "Node.js · Express 기초", icon: "node" },
         { label: "MySQL 기초", icon: "mysql" },
+        { label: "OpenAI API · RAG", icon: "ai" }, // JAJAK · 포트폴리오 챗봇
       ],
     },
     {
@@ -79,7 +79,7 @@ export const PROFILE = {
         { label: "Vite", icon: "vite" },
         { label: "Vercel", icon: "vercel" },
         { label: "Figma 기초", icon: "figma" },
-        { label: "AI 협업 규칙 문서", icon: "document" },
+        { label: "AGENTS.md 문서화", icon: "document" }, // 사람 · AI가 같은 기준으로 작업하는 규칙 문서
       ],
     },
     {

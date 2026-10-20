@@ -15,7 +15,9 @@
 // ---- 위: 인사말 | 연락처 ----
 .top {
   display: grid;
-  grid-template-columns: 1fr minmax(280px, 400px);
+  grid-template-columns: 1fr minmax(520px, 680px); // 연락처 2칸 × 2줄이 들어가는 폭
+
+  @include tablet { grid-template-columns: 1fr; }
   gap: $space-10;
   align-items: start;
 
@@ -57,9 +59,15 @@
   gap: $space-5;
 }
 
+// 연락처 — 2칸 × 2줄 (이메일 | 전화 / 이력서 | GitHub), 휴대폰은 1칸
 .list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: $space-8;
   width: 100%;
   border-top: 1px solid $color-border;
+
+  @include mobile { grid-template-columns: 1fr; }
 }
 
 .row {
@@ -111,6 +119,7 @@ a.value { @include hover-underline; }
   margin-top: $space-12;
   padding-top: $space-5;
   border-top: 1px solid $color-border;
+  padding-right: calc(56px + #{$space-6}); // 오른쪽 아래 챗봇 버튼(YG)에 "맨 위로"가 가리지 않게
   font-size: $font-size-xs;
 
   @include mobile { margin-top: $space-10; }

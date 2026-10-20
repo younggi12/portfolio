@@ -17,7 +17,7 @@
 | 기간 | 2026.08 ~ 2026.09 |
 | 한 줄 소개 | 취향 설문을 바탕으로 AI가 전통주와 어울리는 안주·술잔을 한 상으로 추천해 주는 쇼핑몰 |
 | 담당 | 회원 인증, 고객센터(공지사항·FAQ·1:1 문의), 위시리스트, 통합 단계 AI 큐레이션 UI·모바일 반응형 보완 |
-| 기술 | React 19, Vite, Firebase Auth, Firestore, OpenAI API, GSAP, SCSS Modules |
+| 기술 | React 19, React Router, Vite, SCSS Modules, GSAP, Firebase Auth, Firebase Firestore, Firebase Functions, OpenAI API |
 | 링크 | 사이트 https://jajak-ten.vercel.app / GitHub https://github.com/jiwoo1012/TeamProject2 |
 | 썸네일 | `jajak-thumb.webp` |
 
@@ -92,7 +92,7 @@ JAJAK은 평소 취향과 그날의 상황을 함께 반영해 AI가 전통주�
 | 기간 | 2026.07 |
 | 한 줄 소개 | 응원할 F1 드라이버를 골라 메시지를 남기는 방명록 사이트 |
 | 담당 | 기획·디자인·개발 전체 |
-| 기술 | React 19, Vite, React Router, Zustand, Firebase Auth, Firestore, SCSS Modules |
+| 기술 | React 19, React Router, Zustand, Vite, SCSS Modules, Firebase Auth, Firebase Firestore |
 | 링크 | 방명록 https://guestbook01-phi.vercel.app (GitHub younggi12/guestbook01) / 게시글(학습 버전) https://re008-tzii.vercel.app (GitHub younggi12/re008) |
 | 이미지 | guestbook01 저장소 `docs/images/` — main.png, guestbook-form.png, guestbook-list.png |
 
@@ -116,7 +116,7 @@ JAJAK은 평소 취향과 그날의 상황을 함께 반영해 AI가 전통주�
 | 기간 | 2026.06 |
 | 한 줄 소개 | Canvas API와 requestAnimationFrame으로 만든 우주 테마 벽돌깨기 게임 |
 | 담당 | 기획·디자인·개발 전체 |
-| 기술 | HTML5, Canvas API, JavaScript, CSS |
+| 기술 | HTML5, CSS3, JavaScript, Canvas API |
 | 링크 | 플레이 https://younggi12.github.io/breaker/js061201.html / 코드 https://github.com/younggi12/breaker/blob/main/js061201.html |
 | 썸네일 | `breaker-thumb.webp` |
 | 이미지 | `breaker-start.webp`, `breaker-play.webp`, `breaker-clear.webp`, `breaker-fail.webp` |
@@ -154,8 +154,8 @@ JAJAK은 평소 취향과 그날의 상황을 함께 반영해 AI가 전통주�
 | 기간 | 2026.06 |
 | 한 줄 소개 | 펜 색·굵기·배경색을 바꿔 그리고 PNG로 저장할 수 있는 드로잉 앱 |
 | 담당 | 기획·디자인·개발 전체 |
-| 기술 | HTML5, Canvas API, JavaScript, Pointer Events |
-| 링크 | 사용해보기 https://younggi12.github.io/draw-app/js060901.html / 코드 https://github.com/younggi12/draw-app |
+| 기술 | HTML5, CSS3, JavaScript, Canvas API, Pointer Events |
+| 링크 | 사용해보기 https://younggi12.github.io/breaker/js060901.html / 코드 https://github.com/younggi12/breaker/blob/main/js060901.html |
 | 썸네일 | `draw-thumb.webp` |
 | 이미지 | `draw-main.webp` |
 
@@ -183,7 +183,7 @@ JAJAK은 평소 취향과 그날의 상황을 함께 반영해 AI가 전통주�
 | 기간 | 2026.09 `[확인 필요]` |
 | 한 줄 소개 | 프레임워크 없이 바닐라 HTML/CSS/JS로 만든 5페이지 야구용품 쇼핑몰 |
 | 담당 | 기획·디자인·개발 전체 (초기 일부 Codex 활용, 이후 기능·디자인 직접 구현) |
-| 기술 | HTML5, CSS3(Grid·Flexbox·CSS 변수), JavaScript(ES6+), localStorage, IntersectionObserver |
+| 기술 | HTML5, CSS3(Grid·Flexbox·CSS 변수), JavaScript(ES6+), JSON(fetch), localStorage · sessionStorage, IntersectionObserver, AI 캐릭터 생성(ChatGPT) |
 | 링크 | 사이트 https://younggi12.github.io/-4/index.html / GitHub https://github.com/younggi12/-4 |
 | 썸네일 | `blueline-thumb.webp` |
 | 이미지 | `blueline-main.webp` |
@@ -213,7 +213,7 @@ JAJAK은 평소 취향과 그날의 상황을 함께 반영해 AI가 전통주�
 | 기간 | 2026.06 ~ 2026.07 |
 | 한 줄 소개 | 반려동물 용품을 둘러보고 장바구니에 담을 수 있는 쇼핑몰 팀 프로젝트 |
 | 담당 | 브랜드·고객센터·장바구니 페이지, 상품 목록(카테고리 필터·옵션 가격·장바구니 모달), 로그인 상태 헤더, 메인 슬라이드·리뷰, 모바일 반응형 |
-| 기술 | HTML, CSS, JavaScript, JSON, localStorage/sessionStorage, 외부 API(random.dog) |
+| 기술 | HTML5, CSS3, JavaScript, jQuery, JSON, localStorage/sessionStorage, Kakao Map API, 외부 API(random.dog) |
 | 링크 | 사이트 https://projectmangryung.github.io/teamproject/ / GitHub https://github.com/projectMangRyung/teamproject |
 | 썸네일 | `mungnyang-thumb.webp` |
 | 이미지 | `mungnyang-brand.webp`, `mungnyang-brand-story.webp`, `mungnyang-review.webp`, `mungnyang-product.webp`, `mungnyang-option.webp`, `mungnyang-cart-modal.webp` |

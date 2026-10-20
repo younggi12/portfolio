@@ -287,7 +287,7 @@ const useProjectScroll = (sectionRef) => {
 };
 
 const Tile = ({ project }) => {
-  const { projectId, name, roleShort, summary, teamSize, type, stack, thumbnail, scrollShot, headerColor, headerTone, headerText, headerGlow, links, docs, hasDetail } = project;
+  const { projectId, name, roleShort, summary, teamSize, type, stack, thumbnail, scrollShot, previewVideo, headerColor, headerTone, headerText, headerGlow, links, docs, hasDetail } = project;
   const { title, subtitle } = splitName(name);
   const no = ALL_PROJECTS.indexOf(project) + 1; // 전체 순서 (01 ~ 06)
   // 버튼 2개: 상세 페이지가 있으면 [자세히 보기, 첫 링크], 없으면 [첫 링크, 둘째 링크]
@@ -295,10 +295,33 @@ const Tile = ({ project }) => {
   const primary = hasDetail ? { label: UI_TEXT.viewDetail, to: toProjectDetail(projectId) } : first;
   const secondary = hasDetail ? first : second;
 
+  // 시연 영상 — 올리면 처음부터 재생, 떼면 멈춤 (동작 줄이기 · 마우스 없는 기기는 CSS로 숨김)
+  const videoHandlers = previewVideo ? {
+    onPointerEnter: (e) => {
+      const video = e.currentTarget.querySelector("video");
+      if (!video || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      video.currentTime = 0;
+      video.play().catch(() => {}); // 자동 재생이 막혀도 사진은 그대로
+    },
+    onPointerLeave: (e) => e.currentTarget.querySelector("video")?.pause(),
+  } : {};
+
   // 사진: 마우스를 올리면 아래에서 기술 태그 패널이 올라옴 · 커서 원 안이 흑백(data-cursor-lens) · 누르면 상세 페이지
   const media = (
     <>
       <img src={getProjectImage(thumbnail)} alt={`${title} 화면`} className={styles.image} loading="lazy" />
+      {/* 한 화면짜리 작품 — 마우스를 올리면 짧은 시연 영상 재생, 떼면 멈추고 처음으로 (소리 없음) */}
+      {previewVideo && (
+        <video
+          className={styles.previewVideo}
+          src={`${import.meta.env.BASE_URL}videos/${previewVideo}`}
+          muted
+          loop
+          playsInline
+          preload="none"
+          aria-hidden="true"
+        />
+      )}
       {/* 사이트 전체 캡처 — 마우스를 올리면 나타나 위에서 아래로 천천히 스크롤 (길수록 오래) */}
       {scrollShot && (
         <img
@@ -341,11 +364,11 @@ const Tile = ({ project }) => {
       <div className={styles.card} data-reveal>
         {hasDetail ? (
           // 사진 링크는 마우스용 — 키보드(Tab) · 화면 읽기에서는 건너뜀 ("자세히 보기" 버튼과 같은 곳이라 두 번 거치지 않게)
-          <Link to={toProjectDetail(projectId)} className={styles.media} tabIndex={-1} aria-hidden="true" data-cursor-lens>
+          <Link to={toProjectDetail(projectId)} className={styles.media} tabIndex={-1} aria-hidden="true" data-cursor-lens {...videoHandlers}>
             {media}
           </Link>
         ) : (
-          <div className={styles.media} data-cursor-lens>{media}</div>
+          <div className={styles.media} data-cursor-lens {...videoHandlers}>{media}</div>
         )}
       </div>
       {/* 글: 번호 · 구분 → 큰 이름 → 부제 → 한 줄 소개 → 선 목록(담당 · 스택) → 글자 버튼 */}

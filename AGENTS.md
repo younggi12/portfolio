@@ -13,9 +13,9 @@
 - React 18 · Vite 5 · React Router 7 · SCSS Modules (`@use`) · npm
 - 경로 별칭 `@` = `src` (JS · SCSS 모두 `@/...`)
 - `three`: 첫 화면 3D YG (`pages/Home/sections/hero/heroScene.js`, 따로 불러옴)
-- `gsap`: 헤더 로고 — YG ↔ YOUNG GI 저절로 펼쳤다 접기 3번 (`Header/Logo.jsx`)
+- `gsap`: 헤더 로고 — YG ↔ YOUNG GI 저절로 펼쳤다 접기 무한 반복 (`Header/Logo.jsx`)
 - `simple-icons` · `lucide-react`: 기술 아이콘 (`utils/skillIcons.js`에서 쓰는 것만 import)
-- 챗봇: `api/chat.js`(Vercel 서버 함수) → OpenAI(`gpt-4o-mini`, 스트리밍). 키는 환경 변수 `OPENAI_API_KEY`만 (Vercel 설정 · 로컬 `.env.local`, `VITE_` 접두사 금지). 답의 근거 = `api/_prompt.js`가 `src/data`에서 만든 프롬프트. 개발 서버에서는 `vite.config.js`의 devApi가 같은 함수를 실행
+- 챗봇: `api/chat.js`(Vercel 서버 함수) → OpenAI(`gpt-4o-mini`, 스트리밍). 키는 환경 변수 `OPENAI_API_KEY`만 (Vercel 설정 · 로컬 `.env.local`, `VITE_` 접두사 금지). **키워드 RAG** — 수업 방식 그대로 — 근거 자료 `api/guide.txt`를 `[00. 단원]` 단위로 나누고(`대표 명칭` · `관련 표현` · `내용`), `api/_rag.js`가 질문과 관련 표현을 소문자 · 띄어쓰기 없이 비교해 겹친 길이로 점수 → 상위 3개 + `[00] 공통 원칙`을 `api/_prompt.js`의 말투 지시와 함께 보냄(못 찾으면 자기소개 · 작품 목록). **사이트 데이터(src/data)를 고치면 guide.txt도 같이**. 개발 서버에서는 `vite.config.js`의 devApi가 같은 함수를 실행
 - 새 패키지는 이 문서에 이유를 적은 뒤 설치
 
 ## 3. 폴더 구조
@@ -41,7 +41,7 @@ src/
 └── styles/                     # _variables, _mixins, _reset, global
 public/  favicon.svg · og-image.png · images/(About 사진) · docs/(팀 기획 문서 PDF)
 docs/PROJECTS_CONTENT.md        # 작품 설명 원본
-api/  chat.js(챗봇 서버 함수) · _prompt.js(사이트 데이터 → 프롬프트)
+api/  chat.js(챗봇 서버 함수) · _rag.js(단원 검색) · _prompt.js(규칙 + 단원) · guide.txt(챗봇 참고서)
 ```
 - 컴포넌트 · 섹션은 폴더 단위: `Header/Header.jsx` + `Header.module.scss` — 한 파일이 길어지면 같은 폴더 안에서 부품별 파일로 나눔
 - 쓰지 않는 파일 · 이미지는 남기지 않음
@@ -53,7 +53,7 @@ api/  chat.js(챗봇 서버 함수) · _prompt.js(사이트 데이터 → 프롬
 3. **EDUCATION** — 교육 과정 한 줄 + 숫자 4줄(커튼이 다 걷힌 뒤 0부터 올라감)
 4. **PROFILE** — 사진(마우스 올릴 때마다 뒤집히며 `hoverPhotos` 차례로, 없으면 YG) · 이름 · 소개 · 일하는 방식 3줄
 5. **SKILLS** — 배운 기술 6분야
-6. **Projects** — TEAM / SOLO 그룹, 한 화면에 작품 하나(이 구간에서는 헤더 숨김), 썸네일에 마우스를 올리면 사이트 전체 캡처가 스크롤(`scrollShot`)
+6. **Projects** — TEAM / SOLO 그룹, 한 화면에 작품 하나(이 구간에서는 헤더 숨김), 썸네일에 마우스를 올리면 사이트 전체 캡처가 스크롤(`scrollShot`), 한 화면짜리 작품(F1 · 벽돌깨기 · 드로잉)은 짧은 시연 영상 재생(`previewVideo`, `public/videos/`, mp4 · 무음 · 1200×600)
 7. **Footer = Contact** — 이메일 · 전화(복사) · 이력서 PDF(`profile.resume`, `public/docs/`) · GitHub
 
 ### ProjectDetail (`/projects/:projectId`)
@@ -62,7 +62,7 @@ api/  chat.js(챗봇 서버 함수) · _prompt.js(사이트 데이터 → 프롬
 - 없는 작품 id는 404
 
 ### 공통
-- 헤더: 로고(YG ↔ YOUNG GI 저절로 3번 하고 멈춤, 누르면 흰 막 사이로 맨 위) + About / Projects / Contact(섹션으로 이동). 모든 섹션 최상위에 `data-header-theme="light" | "dark"` 필수 — 헤더 글자색이 이걸 보고 바뀜
+- 헤더: 로고(YG ↔ YOUNG GI 저절로 무한 반복, 누르면 흰 막 사이로 맨 위) + About / Projects / Contact(섹션으로 이동). 모든 섹션 최상위에 `data-header-theme="light" | "dark"` 필수 — 헤더 글자색이 이걸 보고 바뀜
 - 스크롤: `useSmoothScroll`(휠을 부드럽게) — 페이지 안 이동은 반드시 `utils/scrollToY`의 `scrollToY` / `scrollToElement`로 (직접 `window.scrollTo` 금지)
 - 챗봇: 오른쪽 아래 YG 버튼(첫 화면 Hero에서는 숨김, `data-chat-hide`) → 이영기 본인 말투(1인칭 "저", 존댓말)로 포트폴리오 내용만 답함. 창 안 휠은 페이지 연출과 분리(`data-chat`)
 - 커서: `CursorBadge` — 점 커서, 버튼 자석, 작품 사진 위 VIEW 원 (마우스 기기만)
@@ -84,6 +84,7 @@ api/  chat.js(챗봇 서버 함수) · _prompt.js(사이트 데이터 → 프롬
   type: "team" | "solo", category: "React", teamSize: 5, period: "2026.08 ~ 2026.09",
   role: "상세 담당", roleShort: "카드용 짧은 담당", summary: "한 줄 소개(\n = 상세 표지 줄바꿈)",
   stack: ["React 19"], thumbnail: "jajak-thumb.webp",  // 1200×600
+  previewVideo: "f1-preview.mp4",    // 선택 — public/videos/ 시연 영상(호버 시 재생)
   scrollShot: "jajak-scroll.webp",   // 선택 — 사이트 전체 캡처(가로 1200), 썸네일에 마우스를 올리면 위→아래 스크롤
   headerColor, headerTone, headerText,  // 그 사이트 헤더 색 → 작품 카드 기술 패널
   coverZoom: 1.07,                      // 선택 — 상세 표지 사진 확대

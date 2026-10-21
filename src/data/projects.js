@@ -73,6 +73,10 @@ export const PROJECTS = [
       { label: "사이트", href: "https://projectmangryung.github.io/teamproject/" },
       { label: "GitHub", href: "https://github.com/projectMangRyung/teamproject" },
     ],
+    docs: [ // 팀 문서 — public/docs/ (기획안 3개 버전 · 업무일지 4개를 하나씩으로 합침)
+      { label: "기획서", file: "mungnyang-plan.pdf" },
+      { label: "업무일지", file: "mungnyang-worklog.pdf" },
+    ],
     hasDetail: true,
     detail: {
       features: [

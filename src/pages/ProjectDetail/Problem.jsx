@@ -1,6 +1,7 @@
 // 문제 해결 — 증상 · 시도 · 원인 · 해결 번호 줄 → 결과(숫자) · 배운 점도 같은 줄 모양으로 이어서
 import { DETAIL_TEXT } from "@/data/site";
 import { pad, Rich } from "./detailText";
+import CountUp from "./CountUp";
 import styles from "./ProjectDetail.module.scss";
 
 const Problem = ({ problem }) => {
@@ -30,7 +31,7 @@ const Problem = ({ problem }) => {
             <dt><span>{pad(++no)}</span>{DETAIL_TEXT.result}</dt>
             <dd>
               <span className={styles.resultLabel}>{problem.result.label}</span>
-              {/* 숫자 아래에 "고치기 전 / 고친 후" — %가 무엇의 전후인지 바로 보이게 */}
+              {/* 숫자 아래에 "해결 전 / 해결 후" — %가 무엇의 전후인지 바로 보이게 */}
               <span className={styles.resultValue}>
                 <span className={styles.resultNum}>
                   <s>{problem.result.from}</s>
@@ -38,7 +39,7 @@ const Problem = ({ problem }) => {
                 </span>
                 <span className={styles.resultArrow} aria-hidden="true">→</span>
                 <span className={styles.resultNum}>
-                  <strong>{problem.result.to}</strong>
+                  <CountUp from={problem.result.from} to={problem.result.to} />
                   <small>{DETAIL_TEXT.after}</small>
                 </span>
               </span>

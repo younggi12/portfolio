@@ -3,12 +3,13 @@
 // ② 흰 부분: 왼쪽 고정 칸(작은 이름 · 기간 · 담당 · 기술 · 링크 · 목차) + 오른쪽(기능 → 문제 해결 → 개선할 점)
 // ③ 다른 작품 — 번호 줄 목록 (마우스를 올리면 검은 배경이 차오름)
 // 내용은 data/projects.js의 detail 필드 (hasDetail: true인 작품만)
-import { useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useMemo, useRef } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { PATHS, SECTION_IDS, toProjectDetail } from "@/routes/paths";
 import { getDetailProjects, getProjectById } from "@/data/projects";
 import { DETAIL_TEXT, UI_TEXT } from "@/data/site";
 import { getProjectImage } from "@/utils/getProjectImage";
+import { consumeProjectTransition, openProject } from "@/utils/openProject";
 import NotFound from "@/pages/NotFound/NotFound";
 import SkillIcon from "@/components/common/SkillIcon/SkillIcon";
 import { getStackIcon } from "@/utils/skillIcons";
@@ -49,6 +50,9 @@ const ProjectDetail = () => {
   const active = useActiveToc(toc.map((t) => t.id));
   const coverRef = useRef(null);
   useCoverSnap(coverRef, projectId);
+  const navigate = useNavigate(); // 다른 작품 보기 — 검은 커튼이 덮었다 걷히며 그 작품 표지로
+  // 커튼 전환으로 들어왔으면 표지 사진은 등장 연출 없이 바로 (커튼이 걷힐 때 이미 떠 있게)
+  const fromTile = useMemo(() => consumeProjectTransition(), [projectId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 없는 프로젝트이거나 상세 페이지가 없는 프로젝트는 404 (AGENTS.md 5장)
   if (!project || !project.hasDetail || !project.detail) return <NotFound />;
@@ -86,7 +90,11 @@ const ProjectDetail = () => {
       <header ref={coverRef} className={styles.cover} data-header-theme="dark">
         <div className={styles.coverInner}>
           <div className={styles.coverTop}>
-            <Link to={{ pathname: PATHS.home, hash: `#${SECTION_IDS.projects}` }} className={styles.back}>
+            <Link
+              to={{ pathname: PATHS.home, hash: `#${SECTION_IDS.projects}` }}
+              className={styles.back}
+              onClick={(e) => openProject(e, { to: { pathname: PATHS.home, hash: `#${SECTION_IDS.projects}` }, navigate, toDetail: false })}
+            >
               ← {DETAIL_TEXT.back}
             </Link>
             <p className={styles.coverMeta}>{metaLine}</p>
@@ -116,7 +124,7 @@ const ProjectDetail = () => {
         <img
           src={getProjectImage(thumbnail)}
           alt={`${title} 메인 화면`}
-          className={styles.coverImage}
+          className={`${styles.coverImage} ${fromTile ? styles.coverImageStill : ""}`}
           style={coverZoom ? { "--cover-zoom": coverZoom } : undefined}
         />
       </header>
@@ -231,7 +239,13 @@ const ProjectDetail = () => {
                 {isCurrent ? (
                   <span className={`${styles.othersItem} ${styles.othersOn}`} aria-current="page">{inner}</span>
                 ) : (
-                  <Link to={toProjectDetail(item.projectId)} className={styles.othersItem}>{inner}</Link>
+                  <Link
+                    to={toProjectDetail(item.projectId)}
+                    className={styles.othersItem}
+                    onClick={(e) => openProject(e, { to: toProjectDetail(item.projectId), navigate })}
+                  >
+                    {inner}
+                  </Link>
                 )}
               </li>
             );

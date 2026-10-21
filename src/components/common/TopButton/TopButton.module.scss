@@ -1,0 +1,51 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// 맨 위로 — 챗봇 버튼(56px) 바로 위, 같은 오른쪽 줄 (챗봇 창이 열리면 창이 위를 덮음: z-index 49 < 50)
+// 동그라미 없이 화살표만 — 위아래로 살짝 떠다니고, 마우스를 올리면 위로 쭉 올라감
+.top {
+  position: fixed;
+  right: calc(#{$space-6} + 6px); // 챗봇 버튼(56px) 가운데에 맞춤 (44px 버튼)
+  bottom: calc(#{$space-6} + 56px + #{$space-3});
+  z-index: 49;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: $color-text; // 밝은 배경 → 검은 화살표
+  transition: opacity $duration-base $easing-base, transform $duration-base $easing-reveal,
+    visibility $duration-base, color $duration-base $easing-base;
+
+  svg {
+    animation: top-float 1.6s ease-in-out infinite; // 위아래로 살짝 — "누르면 위로"를 알려 줌
+    transition: translate 0.3s $easing-reveal;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover svg { animation-play-state: paused; translate: 0 -6px; } // 마우스를 올리면 위로 더 올라가 멈춤
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    svg { animation: none; }
+  }
+
+  @include mobile {
+    right: calc(#{$space-4} + 6px);
+    bottom: calc(#{$space-4} + 56px + #{$space-3});
+  }
+}
+
+// 어두운 배경 → 흰 화살표
+.onDark { color: $color-on-panel; }
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+@keyframes top-float {
+  0%, 100% { transform: translateY(2px); }
+  50% { transform: translateY(-4px); }
+}

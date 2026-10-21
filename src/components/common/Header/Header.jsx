@@ -35,6 +35,14 @@ const Header = () => {
   // (주소가 이미 #about이면 Link만으로는 아무 일도 안 일어나서 — 로고를 두 번 눌러도 이동하게)
   // 다른 페이지에서는 Link 그대로 Home으로 가서 해당 섹션으로
   const handleNav = (e, sectionId) => {
+    // 상세 페이지 등에서 Contact → 홈으로 나가지 않고 이 페이지 아래 푸터(연락처)로
+    if (pathname !== PATHS.home && sectionId === SECTION_IDS.contact) {
+      const footer = document.getElementById(SECTION_IDS.contact);
+      if (!footer) return;
+      e.preventDefault();
+      jumpToElement(footer);
+      return;
+    }
     if (pathname !== PATHS.home) return;
     const { el, pad } = getTarget(sectionId);
     if (!el) return;

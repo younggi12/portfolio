@@ -53,7 +53,7 @@ export const createHeroScene = (canvas, { reduced = false } = {}) => {
   // 글자 모양 → 두께 있는 덩어리 (모서리 깎기 = 빛이 맺히는 테두리)
   const shapes = new SVGLoader()
     .parse(`<svg xmlns="http://www.w3.org/2000/svg"><path d="${YG_PATH}"/></svg>`)
-    .paths.flatMap((path) => SVGLoader.createShapes(path));
+    .paths.flatMap((path) => path.toShapes(true)); // createShapes()는 three 새 버전에서 사용 중단 → toShapes()
   const geometry = new ExtrudeGeometry(shapes, {
     depth: 26,
     bevelEnabled: true,

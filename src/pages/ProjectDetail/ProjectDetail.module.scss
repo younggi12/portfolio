@@ -157,6 +157,9 @@ $aside-width: 340px;
   animation: coverImageIn 1.4s ease-out both;
 }
 
+// 커튼 전환으로 들어왔을 때 — 등장 연출 없이 바로 (utils/openProject 커튼이 걷힐 때 이미 떠 있게)
+.coverImageStill { animation: none; }
+
 @keyframes coverImageIn {
   from { opacity: 0; scale: calc(var(--cover-zoom, 1.04) + 0.06); }
   to { opacity: 1; scale: var(--cover-zoom, 1.04); }
@@ -640,7 +643,7 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
   white-space: nowrap;
 }
 
-// 숫자 + 아래 작은 "고치기 전 / 고친 후"
+// 숫자 + 아래 작은 "해결 전 / 해결 후"
 .resultNum {
   display: flex;
   flex-direction: column;
@@ -652,11 +655,12 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
     font-weight: $font-weight-bold;
     letter-spacing: -0.03em;
     line-height: 1.1;
+    font-variant-numeric: tabular-nums; // 숫자가 굴러가는 동안 폭이 흔들리지 않게
 
     @include mobile { font-size: $font-size-2xl; }
   }
 
-  s { font-size: $font-size-xl; opacity: 0.35; } // 고치기 전은 작고 옅게
+  s { font-size: $font-size-xl; opacity: 0.35; } // 해결 전은 작고 옅게
 
   small {
     font-size: $font-size-xs;
@@ -716,12 +720,12 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
 // ---- ③ 다른 작품 — 번호 줄 목록 (선 · 검은 배경은 화면 끝까지) ----
 .others {
   margin-top: $space-20;
-  padding: $space-16 $edge $space-20;
+  padding: $space-16 $edge 0; // 마지막 작품 줄 바로 아래로 푸터가 이어지게 (아래 빈 공간 없앰)
   border-top: 1px solid $color-border;
   overflow-x: clip;
 
   @include tablet { padding-inline: $side-padding-tablet; }
-  @include mobile { margin-top: $space-16; padding: $space-12 $side-padding-mobile $space-16; }
+  @include mobile { margin-top: $space-16; padding: $space-12 $side-padding-mobile 0; }
 }
 
 .othersList {
@@ -729,16 +733,17 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
   border-top: 1px solid $color-text;
 
   li { position: relative; }
+  li:last-child .othersItem { border-bottom: none; } // 바로 아래 푸터 선과 겹치지 않게
 }
 
 .othersItem {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) minmax(0, 1.4fr) 120px;
+  grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1.2fr) 200px; // 작품 줄 — 썸네일 · 글씨를 키워 한 줄이 시원하게
   align-items: center;
-  gap: $space-6;
-  padding-block: $space-4;
+  gap: $space-8;
+  padding-block: $space-6;
   border-bottom: 1px solid $color-border;
   transition: color $duration-base $easing-reveal;
 
@@ -759,25 +764,28 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
     &:hover::before { transform: scaleY(1); }
   }
 
-  @include mobile { grid-template-columns: 32px minmax(0, 1fr) 88px; gap: $space-3; }
+  @include tablet { grid-template-columns: 48px minmax(0, 1fr) minmax(0, 1fr) 160px; gap: $space-6; }
+  @include mobile { grid-template-columns: 32px minmax(0, 1fr) 112px; gap: $space-3; padding-block: $space-4; }
 }
 
 .othersNo {
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   font-variant-numeric: tabular-nums;
 }
 
 .othersName {
-  font-size: clamp(22px, 2.2vw, 34px);
+  font-size: clamp(24px, 2.8vw, 44px);
+
+  @include mobile { font-size: 21px; } // 휴대폰은 SPACE BREAKER도 한 줄로
   font-weight: $font-weight-bold;
   letter-spacing: -0.03em;
   word-break: keep-all;
 }
 
 .othersSub {
-  font-size: $font-size-sm;
-  opacity: 0.6;
+  font-size: $font-size-md;
+  opacity: 0.65;
   word-break: keep-all;
 
   @include mobile { display: none; }
@@ -787,7 +795,7 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
   display: block;
   aspect-ratio: 2 / 1;
   overflow: hidden;
-  border-radius: $radius-sm;
+  border-radius: $radius-md;
 
   img {
     display: block;
@@ -800,3 +808,14 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
 
 // 지금 보는 작품 — 누를 수 없음, 옅게
 .othersOn { opacity: 0.4; }
+// 화면에는 안 보이고 화면 읽기에만 읽히는 글자 (결과 숫자의 최종 값)
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+

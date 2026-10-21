@@ -5,9 +5,9 @@
 .footer {
   background-color: $color-bg; // 사이트 전체 흰 바탕 — 위 구분선으로만 나눔
   border-top: 1px solid $color-border;
-  padding-block: $space-16 $space-8;
+  padding-block: $space-8 $space-5; // 위아래 여백을 줄여 내용이 꽉 차 보이게
 
-  @include mobile { padding-block: $space-12 $space-6; }
+  @include mobile { padding-block: $space-8 $space-5; }
 }
 
 .inner { @include container; }
@@ -15,11 +15,11 @@
 // ---- 위: 인사말 | 연락처 ----
 .top {
   display: grid;
-  grid-template-columns: 1fr minmax(520px, 680px); // 연락처 2칸 × 2줄이 들어가는 폭
+  grid-template-columns: 1fr minmax(380px, 520px); // 연락처 한 줄씩 3줄이 들어가는 폭
 
   @include tablet { grid-template-columns: 1fr; }
   gap: $space-10;
-  align-items: start;
+  align-items: center; // 인사말을 오른쪽 연락처 3줄의 세로 가운데에 맞춤
 
   @include mobile {
     grid-template-columns: 1fr;
@@ -36,7 +36,7 @@
 }
 
 .message {
-  font-size: $font-size-xl;
+  font-size: $font-size-2xl; // 인사말을 키워 왼쪽 칸이 비어 보이지 않게
   font-weight: $font-weight-bold;
   letter-spacing: $letter-spacing-heading;
   line-height: $line-height-tight;
@@ -59,15 +59,10 @@
   gap: $space-5;
 }
 
-// 연락처 — 2칸 (이메일 | 전화 / GitHub), 휴대폰은 1칸
+// 연락처 — 이메일 · 전화 · GitHub 한 줄씩 차례로 (3개라 2칸으로 나누면 하나가 비어 보여서)
 .list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: $space-8;
   width: 100%;
   border-top: 1px solid $color-border;
-
-  @include mobile { grid-template-columns: 1fr; }
 }
 
 .row {
@@ -116,13 +111,13 @@ a.value { @include hover-underline; }
   align-items: center;
   justify-content: space-between;
   gap: $space-3;
-  margin-top: $space-12;
-  padding-top: $space-5;
+  margin-top: $space-6;
+  padding-top: $space-4;
   border-top: 1px solid $color-border;
   padding-right: calc(56px + #{$space-6}); // 오른쪽 아래 챗봇 버튼(YG)에 "맨 위로"가 가리지 않게
   font-size: $font-size-xs;
 
-  @include mobile { margin-top: $space-10; }
+  @include mobile { margin-top: $space-8; }
 }
 
 .toTop {

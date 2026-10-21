@@ -2,6 +2,7 @@
 // 질문 → /api/chat(서버 함수) → OpenAI, 답은 글자가 생기는 대로 바로 보임(스트리밍)
 // 대화는 이 창이 열려 있는 동안(새로고침 전까지)만 기억
 import { useEffect, useRef, useState } from "react";
+import { isDarkBehind } from "@/utils/isDarkBehind";
 import { PROFILE } from "@/data/profile";
 import { CHAT_TEXT } from "@/data/site";
 import styles from "./ChatBot.module.scss";
@@ -20,10 +21,14 @@ const ChatBot = () => {
   const abortRef = useRef(null);
   // 첫 화면(Hero, data-chat-hide)이 화면을 차지하는 동안은 숨김 — 3D · "작품 바로 보기"와 겹치지 않게 (휴대폰은 푸터에서도)
   const [isHiddenZone, setIsHiddenZone] = useState(false);
+  // 버튼 뒤가 어두우면 동그라미 없이 흰 "YG" 글자만, 밝으면 검은 동그라미 + 흰 YG
+  const [isOnDark, setIsOnDark] = useState(false);
   useEffect(() => {
     const onScroll = () => {
-      const zone = document.querySelector("[data-chat-hide]");
-      const inHero = Boolean(zone) && zone.getBoundingClientRect().bottom > window.innerHeight * 0.4;
+      if (toggleRef.current) setIsOnDark(isDarkBehind(toggleRef.current));
+      // 화면 가운데에 실제로 보이는 것이 첫 화면(Hero)일 때만 — 이름 장면(HELLO)이 Hero 마지막 부분을 덮고 있을 때는 보이게
+      const center = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+      const inHero = Boolean(center?.closest("[data-chat-hide]"));
       // 휴대폰: 푸터(연락처)가 보이면 숨김 — 버튼이 "복사" 버튼을 가리지 않게
       const footer = document.querySelector("footer");
       const isMobile = window.matchMedia("(max-width: 767px)").matches;
@@ -33,7 +38,7 @@ const ChatBot = () => {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    const timer = setInterval(onScroll, 1000); // 페이지가 바뀌어 Hero가 생기거나 사라질 때
+    const timer = setInterval(onScroll, 500); // 페이지가 바뀌거나 커튼 · 작품 장면처럼 스크롤 없이 배경이 바뀔 때
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
@@ -161,7 +166,7 @@ const ChatBot = () => {
       <button
         ref={toggleRef}
         type="button"
-        className={`${styles.toggle} ${isOpen ? styles.toggleOpen : ""}`}
+        className={`${styles.toggle} ${isOpen ? styles.toggleOpen : ""} ${isOnDark && !isOpen ? styles.toggleOnDark : ""}`}
         onClick={toggle}
         aria-expanded={isOpen}
         aria-label={isOpen ? CHAT_TEXT.close : CHAT_TEXT.open}

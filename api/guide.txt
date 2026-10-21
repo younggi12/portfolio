@@ -86,7 +86,7 @@ React: React, React Router, 컴포넌트 설계, 커스텀 훅, Zustand
 프로젝트 기술: HTML5, CSS3, JavaScript, jQuery, JSON, localStorage, sessionStorage, Kakao Map API, random.dog API.
 문제 해결: 모바일에서 로그인 · 장바구니 메뉴를 열어도 보이지 않았습니다. 헤더 애니메이션이 끝난 뒤에도 transform이 남아 있어서, 그 안의 position: fixed 메뉴가 화면이 아니라 헤더를 기준으로 그려졌기 때문입니다. 애니메이션이 끝나면 transform을 지우도록 바꿔 해결했습니다. 배운 점: transform이 있는 요소 안에서는 position: fixed의 기준이 바뀐다. 결과: 모바일 로그인 · 장바구니 메뉴 표시 0% → 100%.
 개선할 점: 첫 팀 프로젝트라 병합 충돌이 잦았고, 이후 JAJAK에서는 브랜치 규칙 문서(AGENTS.md)로 협업 방식을 정리했습니다. 코드 면에서는 상품 가격을 "28,900원" 같은 글자 대신 숫자로 저장하고, 상품 JSON을 불러오지 못했을 때 안내 문구를 보여 주고, 82MB인 이미지 폴더를 압축 · WebP로 줄여야 합니다.
-링크: 사이트 https://projectmangryung.github.io/teamproject/ / GitHub https://github.com/projectMangRyung/teamproject
+링크: 사이트 https://projectmangryung.github.io/teamproject/ / GitHub https://github.com/projectMangRyung/teamproject / 포트폴리오 상세 페이지에서 기획서 · 업무일지를 내려받을 수 있습니다.
 
 ==================================================
 [06. BlueLine — 야구용품 쇼핑몰]
@@ -173,7 +173,7 @@ AI 도구(Codex 등)는 초안이나 반복 작업에 쓰고, 기능과 디자�
 - 이름 장면: HELLO I'M → YG → YOUNG GI가 시간에 따라 이어지고, 휠 한 번에 검은 화면이 커튼처럼 걷힙니다.
 - 헤더 로고: GSAP 타임라인으로 YG ↔ YOUNG GI가 펼쳐졌다 접힙니다.
 - 작품 소개: 썸네일에 마우스를 올리면 사이트 전체 캡처가 스크롤되거나(한 화면짜리 작품은 짧은 시연 영상), 그 사이트 헤더 색의 기술 패널이 올라옵니다.
-- 작품 상세: 내가 만든 기능(사진 · 실제 코드), 문제 해결(고치기 전 → 고친 후 숫자), 개선할 점, 팀 기획 문서 내려받기.
+- 작품 상세: 내가 만든 기능(사진 · 실제 코드), 문제 해결(해결 전 → 해결 후 숫자), 개선할 점, 팀 기획 문서 내려받기.
 - 이 챗봇: 키워드 RAG 방식입니다. 서버(Vercel 서버 함수)가 안내 문서를 단원별로 나누고, 질문과 키워드가 맞는 단원을 골라 공통 규칙 · 질문과 함께 OpenAI API에 보내 답을 받습니다. API 키는 서버 환경 변수에만 있습니다.
 링크: GitHub https://github.com/younggi12/portfolio
 

@@ -4,6 +4,7 @@ import Footer from "@/components/common/Footer/Footer";
 import ScrollToTop from "@/components/common/ScrollToTop/ScrollToTop";
 import CursorBadge from "@/components/common/CursorBadge/CursorBadge";
 import ChatBot from "@/components/common/ChatBot/ChatBot";
+import TopButton from "@/components/common/TopButton/TopButton";
 import useScrollReveal from "@/hooks/useScrollReveal";
 import useSmoothScroll from "@/hooks/useSmoothScroll";
 import styles from "./SiteLayout.module.scss";
@@ -20,6 +21,7 @@ const SiteLayout = () => {
       <Outlet />
     </main>
     <Footer />
+    <TopButton />
     <ChatBot />
     <CursorBadge />
   </div>

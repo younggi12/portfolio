@@ -4,13 +4,14 @@
 // isMore: true인 작품은 처음엔 숨기고 "더보기"로 펼침 (대표 작품이 먼저 보이게 앞으로 정렬)
 // PC · 태블릿: 큰 썸네일 아래에 설명(왼쪽 이름 · 부제 / 오른쪽 담당 · 버튼) / 휴대폰: 썸네일 + 설명 목록
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SECTION_IDS, toProjectDetail } from "@/routes/paths";
 import { getProjectsByType } from "@/data/projects";
 import { PROJECT_GROUP_WORD, SECTION_TITLES, UI_TEXT, DETAIL_TEXT } from "@/data/site";
 import { getProjectImage } from "@/utils/getProjectImage";
 import { getStackIcon } from "@/utils/skillIcons";
 import { scrollToY } from "@/utils/scrollToY";
+import { openProject } from "@/utils/openProject";
 import SkillIcon from "@/components/common/SkillIcon/SkillIcon";
 import styles from "./ProjectTiles.module.scss";
 
@@ -293,6 +294,9 @@ const Tile = ({ project }) => {
   // 버튼 2개: 상세 페이지가 있으면 [자세히 보기, 첫 링크], 없으면 [첫 링크, 둘째 링크]
   const [first, second] = links;
   const primary = hasDetail ? { label: UI_TEXT.viewDetail, to: toProjectDetail(projectId) } : first;
+  // 상세로 갈 때 — 검은 커튼이 덮었다 걷히며 상세 표지로 (utils/openProject)
+  const navigate = useNavigate();
+  const handleOpen = (e) => openProject(e, { to: toProjectDetail(projectId), navigate });
   const secondary = hasDetail ? first : second;
 
   // 시연 영상 — 올리면 처음부터 재생, 떼면 멈춤 (동작 줄이기 · 마우스 없는 기기는 CSS로 숨김)
@@ -364,7 +368,7 @@ const Tile = ({ project }) => {
       <div className={styles.card} data-reveal>
         {hasDetail ? (
           // 사진 링크는 마우스용 — 키보드(Tab) · 화면 읽기에서는 건너뜀 ("자세히 보기" 버튼과 같은 곳이라 두 번 거치지 않게)
-          <Link to={toProjectDetail(projectId)} className={styles.media} tabIndex={-1} aria-hidden="true" data-cursor-lens {...videoHandlers}>
+          <Link to={toProjectDetail(projectId)} className={styles.media} tabIndex={-1} aria-hidden="true" data-cursor-lens onClick={handleOpen} {...videoHandlers}>
             {media}
           </Link>
         ) : (
@@ -397,7 +401,7 @@ const Tile = ({ project }) => {
           </div>
         </dl>
         <div className={styles.actions}>
-          {primary?.to && <Link to={primary.to} className={styles.primary}>{primary.label} <b aria-hidden="true">→</b></Link>}
+          {primary?.to && <Link to={primary.to} className={styles.primary} onClick={handleOpen}>{primary.label} <b aria-hidden="true">→</b></Link>}
           {primary?.href && <a href={primary.href} target="_blank" rel="noreferrer" className={styles.primary}>{primary.label} <b aria-hidden="true">↗</b></a>}
           {secondary && <a href={secondary.href} target="_blank" rel="noreferrer" className={styles.secondary}>{secondary.label} ↗</a>}
         </div>

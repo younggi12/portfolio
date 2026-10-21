@@ -38,9 +38,17 @@
   font-weight: $font-weight-black;
   letter-spacing: -0.04em;
   box-shadow: 0 8px 24px rgba($color-black, 0.2), 0 0 0 1px rgba($color-on-panel, 0.25); // 검은 화면 위에서도 테두리로 보이게
-  transition: transform $duration-base $easing-reveal, background-color $duration-fast $easing-base;
+  transition: transform $duration-base $easing-reveal, background-color $duration-base $easing-base,
+    box-shadow $duration-base $easing-base, font-size $duration-base $easing-base;
 
   &:hover { transform: translateY(-2px); }
+}
+
+// 어두운 배경 위 — 동그라미 없이 흰 "YG" 글자만 (열려 있을 땐 × 동그라미 그대로)
+.toggleOnDark {
+  background-color: transparent;
+  box-shadow: none;
+  font-size: $font-size-xl;
 }
 
 .toggleOpen {

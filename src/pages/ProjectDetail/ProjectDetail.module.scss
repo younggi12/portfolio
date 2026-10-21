@@ -366,12 +366,12 @@ $aside-width: 340px;
   scroll-margin-top: calc(#{$header-height} + #{$space-6});
 
   & + & {
-    margin-top: $space-20;
-    padding-top: $space-12;
+    margin-top: $space-12; // 섹션 사이 빈 공간을 줄임 (배운 점 · 사진 아래가 비어 보이지 않게)
+    padding-top: $space-10;
     border-top: 1px solid $color-border;
   }
 
-  @include mobile { & + & { margin-top: $space-12; } }
+  @include mobile { & + & { margin-top: $space-10; padding-top: $space-8; } }
 }
 
 .sectionEyebrow {
@@ -719,7 +719,7 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
 
 // ---- ③ 다른 작품 — 번호 줄 목록 (선 · 검은 배경은 화면 끝까지) ----
 .others {
-  margin-top: $space-20;
+  margin-top: $space-12;
   padding: $space-16 $edge 0; // 마지막 작품 줄 바로 아래로 푸터가 이어지게 (아래 빈 공간 없앰)
   border-top: 1px solid $color-border;
   overflow-x: clip;

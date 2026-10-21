@@ -430,7 +430,7 @@ const ProjectGroup = ({ type, title }) => {
   const visible = isOpen ? [...main, ...more] : main;
 
   return (
-    <div className={styles.group}>
+    <div className={styles.group} data-group-type={type}>
       {/* stage = 멈춰 있는 화면 (PC · 태블릿) */}
       <div className={styles.stage}>
         <div className={styles.groupHead}>

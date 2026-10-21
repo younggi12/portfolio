@@ -61,8 +61,8 @@ export const PROJECTS = [
     category: "Vanilla JS",
     teamSize: 3,
     period: "2026.06 ~ 2026.07",
-    role: "상품·장바구니 페이지, 브랜드·고객센터 페이지, 로그인 상태 헤더, 메인 슬라이드·리뷰, 모바일 반응형",
-    roleShort: "상품 · 장바구니 · 브랜드 페이지",
+    role: "상품 페이지 기능(카테고리 필터·장바구니 모달·옵션 가격), 장바구니 페이지, 브랜드·고객센터 페이지, 로그인 상태 헤더, 메인 슬라이드·리뷰, 모바일 반응형", // 상품 페이지 기본 화면은 팀원(업무일지 06-24), 기능은 본인 커밋으로 확인
+    roleShort: "상품 기능 · 장바구니 · 브랜드 페이지",
     summary: "HTML · CSS · JavaScript만으로 3명이 함께 만든\n첫 팀 프로젝트",
     stack: ["HTML5", "CSS3", "JavaScript", "jQuery", "JSON", "localStorage", "sessionStorage", "Kakao Map API", "random.dog API"],
     thumbnail: "mungnyang-thumb.webp",

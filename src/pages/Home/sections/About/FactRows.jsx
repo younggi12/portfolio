@@ -4,7 +4,7 @@ import { SECTION_IDS } from "@/routes/paths";
 import { PROFILE } from "@/data/profile";
 import { PROJECTS } from "@/data/projects";
 import { ABOUT_TEXT } from "@/data/site";
-import { scrollToElement } from "@/utils/scrollToY";
+import { jumpToElement } from "@/utils/scrollToY";
 import { coverState, FACTS_COVER_EVENT, PROFILE_ID, SKILLS_ID } from "./aboutShared";
 import styles from "./About.module.scss";
 
@@ -15,9 +15,9 @@ const TEAM = PROJECTS.filter((p) => p.type === "team");
 const SOLO = PROJECTS.filter((p) => p.type === "solo");
 const ROWS = [
   { no: "01", label: ABOUT_TEXT.stats.team, value: TEAM.length, unit: ABOUT_TEXT.unit.count, cta: ABOUT_TEXT.cta.team,
-    target: SECTION_IDS.projects },
+    target: SECTION_IDS.projects, group: "team" },
   { no: "02", label: ABOUT_TEXT.stats.solo, value: SOLO.length, unit: ABOUT_TEXT.unit.count, cta: ABOUT_TEXT.cta.solo,
-    target: SECTION_IDS.projects },
+    target: SECTION_IDS.projects, group: "solo" },
   { no: "03", label: ABOUT_TEXT.stats.skills, value: PROFILE.learned.length, unit: ABOUT_TEXT.unit.count, cta: ABOUT_TEXT.cta.skills,
     target: SKILLS_ID },
   { no: "04", label: ABOUT_TEXT.stats.months, value: PROFILE.education.months, unit: ABOUT_TEXT.unit.months, cta: ABOUT_TEXT.cta.profile,
@@ -70,10 +70,13 @@ const FactRows = () => {
     else if (covered) setShown(false);
   }, [isIn, covered]);
 
-  const handleClick = (e, target) => {
+  // 팀 · 개인 작품 → 그 그룹(TEAM · SOLO) 시작 위치로, 나머지는 해당 칸으로 — 헤더 메뉴처럼 흰 막 사이에 한 번에
+  const handleClick = (e, row) => {
     e.preventDefault();
     if (e.detail > 0) e.currentTarget.blur(); // 마우스로 누른 경우만 포커스 해제 → 돌아왔을 때 줄이 검게 · 테두리로 남지 않음 (키보드는 유지)
-    scrollToElement(document.getElementById(target));
+    const group = row.group && document.querySelector(`#${SECTION_IDS.projects} [data-group-type="${row.group}"]`);
+    if (group) jumpToElement(group, { pad: 0 });
+    else jumpToElement(document.getElementById(row.target));
   };
 
   return (
@@ -86,7 +89,7 @@ const FactRows = () => {
       <ul ref={listRef} className={`${styles.stats} ${shown ? styles.statsIn : ""}`}>
         {ROWS.map((r) => (
           <li key={r.no}>
-            <a href={`#${r.target}`} onClick={(e) => handleClick(e, r.target)}>
+            <a href={`#${r.target}`} onClick={(e) => handleClick(e, r)}>
               <span className={styles.statNo}>{r.no}</span>
               <span className={styles.statLabel}>{r.label}</span>
               <strong className={styles.statValue}><CountUp value={r.value} play={shown} />{r.unit}</strong>

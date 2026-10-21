@@ -182,7 +182,7 @@ JAJAK은 평소 취향과 그날의 상황을 함께 반영해 AI가 전통주�
 | 구분 | 개인 · Vanilla JS · 상세 페이지 X |
 | 기간 | 2026.09 `[확인 필요]` |
 | 한 줄 소개 | 프레임워크 없이 바닐라 HTML/CSS/JS로 만든 5페이지 야구용품 쇼핑몰 |
-| 담당 | 기획·디자인·개발 전체 (초기 일부 Codex 활용, 이후 기능·디자인 직접 구현) |
+| 담당 | 기획·디자인·개발 전체 (Codex로 페이지·기능 초안을 만든 뒤 직접 검토·수정, 배너 애니메이션·이미지 최적화는 직접 구현) |
 | 기술 | HTML5, CSS3(Grid·Flexbox·CSS 변수), JavaScript(ES6+), JSON(fetch), localStorage · sessionStorage, IntersectionObserver, AI 캐릭터 생성(ChatGPT) |
 | 링크 | 사이트 https://younggi12.github.io/-4/index.html / GitHub https://github.com/younggi12/-4 |
 | 썸네일 | `blueline-thumb.webp` |

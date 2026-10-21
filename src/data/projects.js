@@ -107,8 +107,8 @@ export const PROJECTS = [
     category: "Vanilla JS",
     teamSize: 1,
     period: "2026.09",
-    role: "기획·디자인·개발 전체 (초기 일부 Codex 활용, 이후 기능·디자인 직접 구현)",
-    roleShort: "기획 · 디자인 · 개발 전체 (초기 일부 Codex 활용)",
+    role: "기획·디자인·개발 전체 (Codex로 페이지·기능 초안을 만든 뒤 직접 검토·수정, 배너 애니메이션·이미지 최적화는 직접 구현)", // GitHub 기록과 맞춤: 9/23 초안 한 번에 → 이후 직접 수정
+    roleShort: "기획 · 디자인 · 개발 전체 (Codex 초안 → 직접 검토 · 수정)",
     summary: "프레임워크 없이 상품 목록부터 상세 · 장바구니까지 5페이지를 직접 구현",
     stack: ["HTML5", "CSS3", "JavaScript", "IntersectionObserver", "JSON", "localStorage", "sessionStorage", "AI 캐릭터 생성 (ChatGPT)"],
     thumbnail: "blueline-thumb.webp",

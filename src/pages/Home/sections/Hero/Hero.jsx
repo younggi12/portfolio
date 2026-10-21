@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import { HERO_TEXT } from "@/data/site";
 import { SECTION_IDS } from "@/routes/paths";
-import { scrollToElement } from "@/utils/scrollToY";
+import { jumpToElement } from "@/utils/scrollToY";
 import styles from "./Hero.module.scss";
 
 const TYPE_SPEED = 90;   // 한 글자 나오는 간격(ms)
@@ -111,7 +111,7 @@ const Hero = () => {
   // 작품 바로 보기 — 헤더 Projects 메뉴와 같은 이동 (이름 장면은 막지 않고 지나감)
   const handleSkip = (e) => {
     e.preventDefault();
-    scrollToElement(document.getElementById(SECTION_IDS.projects));
+    jumpToElement(document.getElementById(SECTION_IDS.projects)); // 로고처럼 흰 막 사이에 한 번에
     window.history.replaceState(null, "", `#${SECTION_IDS.projects}`);
   };
 

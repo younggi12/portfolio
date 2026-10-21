@@ -12,11 +12,16 @@ const useCoverSnap = (coverRef, key) => {
     let frame = 0;
     const stop = () => { cancelAnimationFrame(frame); frame = 0; };
     // 사이트 휠 엔진(처음에 확 움직이는 방식) 대신 여기서 직접 부드럽게 이동
+    // 페이지가 막 열려 사진 · 글 등장 연출로 화면이 버벅일 때도 천천히 — 프레임 사이 시간을 최대 32ms만 쳐서
+    // (늦게 온 프레임만큼 한꺼번에 건너뛰면 "미끄러지듯"이 아니라 뚝 떨어져 보임)
     const glide = (to) => {
       const from = window.scrollY;
-      const start = performance.now();
+      let elapsed = 0;
+      let last = 0;
       const tick = (now) => {
-        const t = Math.min(1, (now - start) / SNAP_TIME);
+        elapsed += last ? Math.min(32, now - last) : 0;
+        last = now;
+        const t = Math.min(1, elapsed / SNAP_TIME);
         window.scrollTo({ top: from + (to - from) * easeInOut(t), behavior: "instant" });
         frame = t < 1 ? requestAnimationFrame(tick) : 0;
       };
@@ -44,14 +49,15 @@ const useCoverSnap = (coverRef, key) => {
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("wheel", onWheel, { passive: false });
+    // capture: 사이트 휠 엔진(SiteLayout)보다 항상 먼저 받음 — 홈에서 넘어오면 그쪽이 먼저 등록돼 있어 둘이 엉켜 미끄러짐이 끊김
+    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
     window.addEventListener("pointerdown", stop, true);
     window.addEventListener("keydown", stop, true);
     return () => {
       stop();
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("pointerdown", stop, true);
       window.removeEventListener("keydown", stop, true);
     };

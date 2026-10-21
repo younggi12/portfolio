@@ -206,7 +206,7 @@ $aside-width: 340px;
   margin-top: $space-2;
   font-size: $font-size-md;
   font-weight: $font-weight-semibold;
-  color: rgba($color-text, 0.45);
+  color: rgba($color-text, 0.62); // 흰 바탕 위 글자 대비 4.5:1 이상 (Lighthouse 접근성)
   word-break: keep-all;
 }
 
@@ -265,7 +265,7 @@ $aside-width: 340px;
 
 .secondary {
   font-weight: $font-weight-medium;
-  opacity: 0.6;
+  opacity: 0.65;
   transition: opacity $duration-fast $easing-base;
 
   &:hover { opacity: 1; }
@@ -292,7 +292,7 @@ $aside-width: 340px;
   span {
     margin-left: $space-1;
     font-weight: $font-weight-medium;
-    opacity: 0.5;
+    opacity: 0.62;
   }
 }
 
@@ -325,7 +325,7 @@ $aside-width: 340px;
     gap: $space-2;
     padding-block: 3px;
     font-size: $font-size-sm;
-    opacity: 0.4;
+    opacity: 0.62; // 지금 보는 부분은 1 + 굵게 + 앞 선으로 구분 (0.4는 대비 부족)
     transition: opacity $duration-fast $easing-base;
 
     &::before {
@@ -557,7 +557,7 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
   font-size: $font-size-xs;
 }
 
-// ---- 문제 해결 — 번호 · 선 목록, 마지막 "해결" 줄만 검은 배경 ----
+// ---- 문제 해결 — 번호 · 선 목록 (증상 · 원인 · 해결 · 결과 · 배운 점), "해결" 줄만 검은 배경 ----
 .problem { min-width: 0; }
 
 .problemTitle {
@@ -599,20 +599,83 @@ $feature-zoom: 1.8; // 마우스를 올렸을 때 확대 배율
 }
 
 .stepKey {
+  margin-inline: (-$space-5); // 배경 안쪽 여백만큼 바깥으로 — 번호 · 이름 · 내용 칸이 다른 줄과 같은 위치
   padding-inline: $space-5;
   border-bottom: none;
   border-radius: $radius-md;
   background-color: $color-text;
   color: $color-on-panel;
 
+  dd { font-weight: $font-weight-semibold; }
   code { background-color: rgba($color-on-panel, 0.15) !important; }
+
+  @include mobile { border-radius: 0; } // 휴대폰은 화면 끝까지 닿는 띠
 }
 
-.lesson {
-  margin-top: $space-6;
+// 결과 — 같은 줄 모양, 오른쪽에 큰 숫자 (전은 옅게 줄 긋기 → 후는 진하게)
+.resultRow {
+  align-items: center;
+
+  dd {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-2 $space-6;
+  }
+}
+
+.resultLabel {
+  flex: 1 1 220px;
   font-size: $font-size-md;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-semibold;
+  line-height: 1.6;
   word-break: keep-all;
+}
+
+.resultValue {
+  display: flex;
+  align-items: flex-end; // 아래 작은 글자 줄을 맞춤
+  gap: $space-4;
+  white-space: nowrap;
+}
+
+// 숫자 + 아래 작은 "고치기 전 / 고친 후"
+.resultNum {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-1;
+
+  s, strong {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+
+    @include mobile { font-size: $font-size-2xl; }
+  }
+
+  s { font-size: $font-size-xl; opacity: 0.35; } // 고치기 전은 작고 옅게
+
+  small {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    opacity: 0.65;
+  }
+}
+
+.resultArrow {
+  padding-bottom: 24px; // 아래 작은 글자 줄 위 — 숫자 높이에 맞춤
+  font-size: $font-size-lg;
+  opacity: 0.5;
+}
+
+// 배운 점 — 같은 줄 모양, 내용만 굵게
+.lessonRow {
+  border-bottom: none;
+
+  dd { font-size: $font-size-md; font-weight: $font-weight-bold; }
 }
 
 // ---- 개선할 점 — 번호 · 선 목록 ----

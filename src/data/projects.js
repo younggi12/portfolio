@@ -35,7 +35,7 @@ export const PROJECTS = [
     hasDetail: true,
     detail: {
       features: [
-        { title: "회원 인증", text: "로그인 · 회원가입 · 로그아웃, 로그인 상태 유지, 정지 계정 차단", images: ["jajak-signup.webp", "jajak-signup-modal.webp", "jajak-login.webp"] },
+        { title: "회원 인증", text: "로그인 · 회원가입 · 로그아웃, 로그인 상태 유지, 정지 계정 차단", images: ["jajak-signup.webp", "jajak-signup-modal.webp", "jajak-login.webp"], code: { file: "src/firebase/auth.js", snippet: "// 로그인 상태 유지 선택 → 로그인 → 정지 계정이면 바로 로그아웃\nexport const login = async (email, password, rememberMe = true) => {\n  // 체크하면 브라우저를 닫아도 유지, 아니면 이번 창에서만\n  await setPersistence(\n    auth,\n    rememberMe ? browserLocalPersistence : browserSessionPersistence\n  );\n\n  const { user } = await signInWithEmailAndPassword(auth, email, password);\n  const userData = await getDocument(\"users\", user.uid);\n\n  if (userData?.status === \"suspended\") {\n    await signOut(auth);\n    throw new AccountSuspendedError(); // code: 'auth/account-suspended'\n  }\n\n  await updateDocument(\"users\", user.uid, { lastLoginAt: serverTimestamp() });\n  return { user, userData };\n};" } },
         { title: "고객센터", text: "공지사항 · FAQ, 회원/비회원을 구분한 1:1 문의와 내 문의 내역", images: ["jajak-notices.webp", "jajak-faq.webp", "jajak-inquiry-choice.webp", "jajak-inquiry-form.webp", "jajak-mypage-inquiries.webp"] },
         { title: "위시리스트", text: "찜 목록 조회 · 필터 · 정렬 · 페이지네이션, 장바구니 담기", images: ["jajak-wishlist.webp", "jajak-cart.webp"] },
       ],
@@ -46,6 +46,7 @@ export const PROJECTS = [
         cause: "`console.error`로 실제 에러를 보니 `permission-denied` — 회원 정보 저장이 Firestore 보안 규칙에 막혀 있었습니다.",
         solution: "보안 규칙은 팀장 담당이라 직접 고치지 않고, 원인과 필요한 권한을 정리해 요청해 해결했습니다.",
         lesson: "증상만 보고 추측하지 말고, 실제 에러 로그부터 확인하기",
+        result: { label: "회원가입할 때 회원 정보 저장이 실패한 비율", from: "100%", to: "0%" },
       },
       improvements: [
         "문의 내역을 전부 불러온 뒤 화면에서 걸러냄 → `where('userId', '==', uid)` 쿼리와 보안 규칙으로 본인 문의만 읽도록 개선 필요",
@@ -85,9 +86,13 @@ export const PROJECTS = [
         cause: "헤더 애니메이션이 끝난 뒤에도 `transform`이 남아 있어, 그 안의 `position: fixed` 메뉴가 화면이 아니라 헤더를 기준으로 그려지고 있었습니다.",
         solution: "애니메이션이 끝나면 `transform`을 지우도록 바꿔 메뉴가 다시 화면 기준으로 보이게 했습니다.",
         lesson: "transform이 있는 요소 안에서는 position: fixed의 기준이 바뀐다",
+        result: { label: "휴대폰 화면에서 로그인 · 장바구니 메뉴가 보이는 비율", from: "0%", to: "100%" },
       },
       improvements: [
         "첫 팀 프로젝트라 병합 충돌이 잦았음 → 이후 JAJAK에서 브랜치 규칙 문서(AGENTS.md)로 협업 방식을 정리",
+        "상품 가격이 \"28,900원\" 같은 글자로 저장돼 계산할 때마다 숫자만 골라냄 → JSON에 숫자로 저장하고 화면에 보일 때만 `toLocaleString()`으로 표시",
+        "상품 JSON을 불러오다 실패하면 목록이 빈 채로 남음 → `try/catch`로 안내 문구 보여 주기",
+        "이미지 폴더가 82MB(배너 한 장 최대 5.4MB) → 화면 크기에 맞춰 압축하고 WebP로 바꾸기",
       ],
     },
   },
@@ -116,8 +121,19 @@ export const PROJECTS = [
         { title: "장바구니", text: "새로고침해도 남는 장바구니(localStorage), 2만 원 이상 무료배송 자동 계산, 담기 피드백과 커스텀 모달", images: ["blueline-cart.webp", "blueline-cart-empty.webp"] },
         { title: "화면 연출", text: "스크롤 등장(IntersectionObserver), 무한 루프 캐러셀, 한 번만 나오는 인트로(sessionStorage)", code: { file: "app.js", snippet: "// 인트로는 탭을 닫기 전까지 1회만\nif (sessionStorage.getItem(\"blueline_intro_shown\")) {\n  intro.classList.add(\"is-hidden\");\n  return;\n}\nsessionStorage.setItem(\"blueline_intro_shown\", \"1\");\n\n// 섹션이 화면에 들어오면 카드 등장\nconst observer = new IntersectionObserver((entries) => {\n  entries.forEach((entry) => {\n    if (entry.isIntersecting) {\n      items.forEach((el) => el.classList.add(\"is-visible\"));\n      observer.unobserve(entry.target);\n    }\n  });\n}, { threshold: 0.25 });" } },
       ],
+      problem: {
+        title: "메인 페이지 이미지가 무거워 늦게 뜨던 문제",
+        symptom: "메인 페이지를 열면 배너 · 매장 사진이 늦게 떠서 한동안 빈 칸이 보였습니다.",
+        cause: "카메라 원본 사진(최대 6000×4000px, 한 장 6.3MB)과 큰 PNG 캐릭터를 그대로 써서, 화면에는 작게 보이는데도 메인 페이지에서만 이미지 13.8MB를 내려받고 있었습니다.",
+        solution: "화면에 보이는 크기에 맞춰 사진은 가로 1600px · JPG 품질 80으로, PNG는 800px · 256색으로 줄였습니다. 파일 이름은 그대로 두어 코드는 바꾸지 않았습니다.",
+        lesson: "이미지는 화면에 보이는 크기에 맞춰 줄여서 넣어야 한다",
+        result: { label: "메인 페이지에서 내려받는 이미지 용량 (85% 감소)", from: "13.8MB", to: "2.0MB" },
+      },
       improvements: [
         "인트로 이미지 문구를 \"Good Gear Better Days\"로 다시 제작",
+        "이미지에 지연 로딩이 없어 아래쪽 매장 갤러리까지 처음에 한꺼번에 받음 → `loading=\"lazy\"`로 화면에 가까워질 때 불러오기",
+        "상품 JSON을 불러오다 실패하면 목록이 빈 채로 남음 → `try/catch`로 \"상품을 불러오지 못했어요\" 안내와 다시 시도 버튼",
+        "이미지가 JPG · PNG라 용량을 더 줄일 여지가 있음 → WebP로 바꿔 한 번 더 줄이기",
       ],
     },
   },
@@ -154,9 +170,12 @@ export const PROJECTS = [
         cause: "`useEffect`가 실행될 때는 아직 섹션이 화면에 없어서 `ref`가 비어 있었고, IntersectionObserver가 연결되지 않았습니다.",
         solution: "callback ref로 바꿔 요소가 실제로 생기는 순간 IntersectionObserver를 연결하는 `useReveal` 훅을 만들었습니다.",
         lesson: "요소가 나중에 생기는 경우엔 useRef + useEffect보다 callback ref가 정확하다",
+        result: { label: "인트로 뒤 섹션에서 스크롤 등장 애니메이션이 동작한 비율", from: "0%", to: "100%" },
       },
       improvements: [
         "글 전체를 한 번에 구독하고 화면에서 나눠 보여줌 → 글이 많아지면 `limit` · `startAfter`로 페이지 단위로 불러오기 필요",
+        "글 목록 실시간 구독(`onSnapshot`)에 실패 처리가 없어 불러오기에 실패하면 \"불러오는 중\"에서 멈춤 → 에러 콜백으로 안내 문구와 다시 시도",
+        "삭제 확인 · 안내를 브라우저 기본 창(`confirm` · `alert`)으로 띄움 → 사이트 디자인에 맞춘 모달로 바꾸기",
       ],
     },
   },
@@ -191,8 +210,13 @@ export const PROJECTS = [
         cause: "캔버스의 실제 크기와 CSS로 보이는 크기가 달라, 마우스 좌표를 그대로 쓰면 비율만큼 어긋났습니다.",
         solution: "`(e.clientX - rect.left) * (canvas.width / rect.width)`로 화면 좌표를 캔버스 좌표로 바꿔 맞췄습니다.",
         lesson: "캔버스는 화면에 보이는 크기와 그리는 크기가 다를 수 있다",
+        result: { label: "패들이 마우스 위치에서 어긋난 정도 (캔버스 폭 대비 — 800px 캔버스를 1000px로 늘려 보여 줄 때)", from: "최대 25%", to: "0%" },
       },
-      improvements: ["레벨이 오를수록 공 속도 증가", "모바일 터치 조작"],
+      improvements: [
+        "공 이동과 서브 대기를 프레임 수로 계산(60fps 기준) → 120Hz 모니터에서는 공이 두 배 빨라짐 → 지난 프레임과의 시간 차이로 이동 거리 계산",
+        "패들을 `mousemove`로만 움직여 휴대폰에서는 플레이할 수 없음 → `pointermove`로 바꿔 터치도 지원",
+        "벽돌 한 판을 깨면 바로 끝남 → 판마다 공 속도를 올리는 레벨 추가",
+      ],
     },
   },
   {
@@ -226,7 +250,13 @@ export const PROJECTS = [
         cause: "화면의 흰 배경은 CSS로만 칠해져 있어, 저장 파일에는 투명 배경과 기본 검정 배경값만 남았습니다.",
         solution: "저장할 때 임시 캔버스에 배경을 먼저 칠하고 그림을 합쳐 내보내고, 기본 배경을 흰색으로 통일했습니다.",
         lesson: "화면에 보이는 것과 캔버스에 실제로 그려진 것은 다를 수 있다",
+        result: { label: "기본 펜으로 그린 그림이 저장한 PNG에서 사라진 비율", from: "100%", to: "0%" },
       },
+      improvements: [
+        "창 크기를 바꾸면 캔버스를 다시 만들면서 되돌리기 기록이 모두 지워짐 → 기록도 새 크기에 맞춰 옮겨 두기",
+        "되돌리기만 있고 다시 실행이 없음 → 되돌린 화면을 따로 쌓아 두고 Ctrl+Shift+Z로 다시 실행",
+        "고해상도(레티나) 화면에서 선이 흐릿하게 보임 → `devicePixelRatio`만큼 캔버스를 크게 만들어 선명하게",
+      ],
     },
   },
 ];

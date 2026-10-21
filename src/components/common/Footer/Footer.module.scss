@@ -59,7 +59,7 @@
   gap: $space-5;
 }
 
-// 연락처 — 2칸 × 2줄 (이메일 | 전화 / 이력서 | GitHub), 휴대폰은 1칸
+// 연락처 — 2칸 (이메일 | 전화 / GitHub), 휴대폰은 1칸
 .list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

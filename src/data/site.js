@@ -109,6 +109,9 @@ export const DETAIL_TEXT = {
   cause: "원인",
   solution: "해결",
   lesson: "배운 점",
+  result: "결과",
+  before: "고치기 전", // 결과 숫자 아래 작은 글자
+  after: "고친 후",
   improvements: "개선할 점",
   others: "다른 작품 보기",
   current: "지금 보는 작품",

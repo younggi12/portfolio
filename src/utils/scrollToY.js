@@ -5,25 +5,30 @@ export const SCROLL_EVENT = "site:scrollto";
 export const SCROLL_DONE_EVENT = "site:scrolldone"; // 메뉴 이동이 끝남(도착 · 휠 · 누름으로 멈춤)
 
 // el: 목표 요소 — 이동하는 동안 위쪽 내용 높이가 바뀌어도(사진 로드 등) 그 요소를 끝까지 따라감
-export const scrollToY = (top, { smooth = true, el = null } = {}) => {
-  const event = new CustomEvent(SCROLL_EVENT, { detail: { top, smooth, el }, cancelable: true });
+// pad: 요소 위에 둘 여백 (기본: 헤더 높이 — scroll-padding-top)
+// jump: 흰 막 사이 순간 이동(jumpTo) — 이름 장면이 막지 않고 커튼을 걷어 둔 채 지나가게
+export const scrollToY = (top, { smooth = true, el = null, pad = null, jump = false } = {}) => {
+  const event = new CustomEvent(SCROLL_EVENT, { detail: { top, smooth, el, pad, jump }, cancelable: true });
   const handled = !window.dispatchEvent(event); // 훅이 preventDefault()하면 처리된 것
   if (!handled) window.scrollTo({ top, behavior: smooth ? "smooth" : "instant" });
+  // 한 번에 이동은 다음 화면이 그려진 뒤 "이동 끝" 알림 — 이름 장면이 지나가기 모드를 풂
+  if (jump && !smooth) requestAnimationFrame(() => requestAnimationFrame(() => window.dispatchEvent(new Event(SCROLL_DONE_EVENT))));
 };
 
 // 요소 위치(헤더 높이만큼 위 여백 — global.scss scroll-padding-top과 같게)
-export const scrollToElement = (el, options) => {
+export const scrollToElement = (el, options = {}) => {
   if (!el) return;
-  const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-  scrollToY(Math.max(0, el.getBoundingClientRect().top + window.scrollY - pad), { ...options, el });
+  const pad = options.pad ?? (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0);
+  scrollToY(Math.max(0, el.getBoundingClientRect().top + window.scrollY - pad), { ...options, el, pad });
 };
-// 맨 위(Hero)로 한 번에 — 흰 막이 살짝 덮였다 걷히는 사이에 순간 이동
-// (긴 페이지를 거슬러 올라가는 스크롤도, 뚝 끊기는 순간 이동도 어색해서) — 로고 · 맨 위로 버튼
+// 한 번에 이동 — 흰 막이 살짝 덮였다 걷히는 사이에 순간 이동
+// (긴 페이지를 스크롤로 지나가는 것도, 뚝 끊기는 순간 이동도 어색해서) — 로고 · 헤더 메뉴 · 작품 바로 보기 · 맨 위로
 const VEIL_IN = 250;  // 흰 막이 덮이는 시간(ms)
 const VEIL_OUT = 450; // 걷히는 시간(ms)
-export const jumpToTop = () => {
+const jumpNow = (getTop) => scrollToY(getTop(), { smooth: false, jump: true });
+const jumpTo = (getTop) => {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    scrollToY(0, { smooth: false });
+    jumpNow(getTop);
     return;
   }
   const veil = document.createElement("div");
@@ -37,8 +42,18 @@ export const jumpToTop = () => {
   document.body.appendChild(veil);
   const cover = veil.animate([{ opacity: 0 }, { opacity: 1 }], { duration: VEIL_IN, easing: "ease-in", fill: "forwards" });
   cover.onfinish = () => {
-    scrollToY(0, { smooth: false });
+    jumpNow(getTop); // 막이 다 덮인 뒤에 위치를 재야 정확 (그 사이 사진 로드 등)
     const reveal = veil.animate([{ opacity: 1 }, { opacity: 0 }], { duration: VEIL_OUT, easing: "ease-out", fill: "forwards" });
     reveal.onfinish = () => veil.remove();
   };
+};
+
+export const jumpToTop = () => jumpTo(() => 0);
+// 요소 위치로 한 번에 (pad: 요소 위 여백, 기본은 헤더 높이)
+export const jumpToElement = (el, { pad } = {}) => {
+  if (!el) return;
+  jumpTo(() => {
+    const p = pad ?? (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0);
+    return Math.max(0, el.getBoundingClientRect().top + window.scrollY - p);
+  });
 };

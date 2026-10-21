@@ -7,18 +7,18 @@ import { NAV_ITEMS } from "@/data/site";
 import useHeaderTheme from "@/hooks/useHeaderTheme";
 import useActiveSection from "@/hooks/useActiveSection";
 import useHideOnScroll from "@/hooks/useHideOnScroll";
-import { jumpToTop, scrollToElement } from "@/utils/scrollToY";
+import { jumpToTop, jumpToElement } from "@/utils/scrollToY";
 import Logo from "./Logo";
 import styles from "./Header.module.scss";
 
 const HEADER_HEIGHT = 72; // _variables.scss의 $header-height와 같은 값
 const SECTION_ORDER = NAV_ITEMS.map((item) => item.sectionId); // About → Projects → Contact(푸터)
 
-// 이동할 곳 — About은 이름 장면에서 인사가 다 나온 지점(data-about-start), 나머지는 섹션 맨 위
-const getTarget = (sectionId) => (
-  (sectionId === SECTION_IDS.about && document.querySelector("[data-about-start]"))
-  || document.getElementById(sectionId)
-);
+// 이동할 곳 — About은 교육 과정 줄(이름 장면 다음, data-about-facts)을 화면 맨 위에 딱 맞춰, 나머지는 섹션 맨 위
+const getTarget = (sectionId) => {
+  const facts = sectionId === SECTION_IDS.about && document.querySelector("[data-about-facts]");
+  return facts ? { el: facts, pad: 0 } : { el: document.getElementById(sectionId) };
+};
 
 const Header = () => {
   const theme = useHeaderTheme(HEADER_HEIGHT);
@@ -31,15 +31,15 @@ const Header = () => {
   // 작품 소개 섹션이 화면을 덮는 동안 숨김
   const isHidden = useHideOnScroll(SECTION_IDS.projects, HEADER_HEIGHT);
 
-  // Home에 있을 때는 페이지를 바꾸지 않고 바로 그 위치로 미끄러지듯 이동
+  // Home에 있을 때는 페이지를 바꾸지 않고 그 위치로 한 번에 이동 (로고와 같은 흰 막 전환)
   // (주소가 이미 #about이면 Link만으로는 아무 일도 안 일어나서 — 로고를 두 번 눌러도 이동하게)
   // 다른 페이지에서는 Link 그대로 Home으로 가서 해당 섹션으로
   const handleNav = (e, sectionId) => {
     if (pathname !== PATHS.home) return;
-    const el = getTarget(sectionId);
+    const { el, pad } = getTarget(sectionId);
     if (!el) return;
     e.preventDefault();
-    scrollToElement(el);
+    jumpToElement(el, { pad }); // 로고처럼 흰 막 사이에 한 번에
     window.history.replaceState(null, "", `#${sectionId}`);
   };
 

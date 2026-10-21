@@ -93,5 +93,5 @@ export const PROFILE = {
   email: "oosc76@naver.com",
   phone: "010-7732-1589", // 푸터 — 휴대폰에서 누르면 바로 전화(tel:), PC는 글자 + 복사
   github: "https://github.com/younggi12",
-  resume: "leeyounggi-resume.pdf", // 이력서 PDF (public/docs/) — 비우면 푸터에서 숨김. 주소는 시까지, 생년월일 뺌
+  resume: "", // 이력서 PDF (public/docs/) — 비우면 푸터에서 숨김 (지금은 숨김)
 };

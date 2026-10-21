@@ -369,7 +369,7 @@ $bleed-left: max(#{$side-padding-desktop}, (100vw - #{$content-wide-max-width}) 
 
   > div {
     display: grid;
-    grid-template-columns: 56px 1fr;
+    grid-template-columns: 56px minmax(0, 1fr); // minmax(0, …): 긴 기술 이름이 칸 밖으로 밀어내지 않게 (휴대폰에서 잘리던 문제)
     gap: $space-4;
     padding-block: $space-3;
     border-bottom: 1px solid $color-border;
@@ -395,6 +395,8 @@ $bleed-left: max(#{$side-padding-desktop}, (100vw - #{$content-wide-max-width}) 
     align-items: center;
     gap: 6px;
     white-space: nowrap;
+
+    @include mobile { white-space: normal; overflow-wrap: anywhere; } // 좁은 화면에서는 긴 이름(IntersectionObserver 등)도 줄바꿈
   }
 }
 

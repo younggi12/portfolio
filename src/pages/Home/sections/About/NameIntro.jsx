@@ -199,7 +199,7 @@ const NameIntro = () => {
       onScroll();
     };
     const onNavigate = (e) => {
-      if (reduced || !e.detail.smooth) return; // 장면이 스스로 하는 즉시 이동은 제외
+      if (reduced || (!e.detail.smooth && !e.detail.jump)) return; // 장면이 스스로 하는 즉시 이동은 제외 (메뉴의 한 번에 이동은 포함)
       passing = true;
       clearTimeout(passTimer);
       passTimer = setTimeout(endPass, PASS_MAX);
@@ -322,14 +322,17 @@ const NameIntro = () => {
           </svg>
         </span>
         {/* 인사 — 두 줄(HELLO / I'M), 한 글자씩 타이핑 (data-type-ch) */}
-        <p className={styles.hi} data-hello aria-label={`${ABOUT_TEXT.introHello.strong} ${ABOUT_TEXT.introHello.light}`}>
+        {/* 화면 읽기용 글자는 따로(srOnly) — p에는 aria-label을 쓸 수 없어서 (Lighthouse 접근성) */}
+        <p className={styles.hi} data-hello>
+          <span className={styles.srOnly}>{`${ABOUT_TEXT.introHello.strong} ${ABOUT_TEXT.introHello.light}`}</span>
           {[["strong", ABOUT_TEXT.introHello.strong], ["light", ABOUT_TEXT.introHello.light]].map(([kind, line]) => (
             <span key={kind} className={kind === "strong" ? styles.hiStrong : styles.hiLight} aria-hidden="true">
               {[...line].map((ch, i) => <span key={i} data-type-ch className={styles.ch}>{ch}</span>)}
             </span>
           ))}
         </p>
-        <p className={styles.bigName} aria-label={PROFILE.nameEn} data-name>
+        <p className={styles.bigName} data-name>
+          <span className={styles.srOnly}>{PROFILE.nameEn}</span>
           {NAME_PARTS.map((part, i) => (part.hidden ? (
             <span key={i} data-name-box className={styles.nameHidden} aria-hidden="true">
               {[...part.text].map((ch, j) => (

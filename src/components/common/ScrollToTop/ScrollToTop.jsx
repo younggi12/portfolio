@@ -18,7 +18,10 @@ const ScrollToTop = () => {
     if (hash) {
       // 페이지가 그려진 다음 프레임에 찾아야 섹션이 존재한다
       requestAnimationFrame(() => {
-        scrollToElement(document.getElementById(hash.slice(1)), { smooth: behavior === "smooth" });
+        // About은 교육 과정 줄로 (헤더 메뉴와 같은 곳)
+        const facts = hash === "#about" && document.querySelector("[data-about-facts]");
+        if (facts) scrollToElement(facts, { smooth: behavior === "smooth", pad: 0, jump: true });
+        else scrollToElement(document.getElementById(hash.slice(1)), { smooth: behavior === "smooth" });
       });
       return;
     }

@@ -18,12 +18,17 @@ const ChatBot = () => {
   const inputRef = useRef(null);
   const toggleRef = useRef(null);
   const abortRef = useRef(null);
-  // 첫 화면(Hero, data-chat-hide)이 화면을 차지하는 동안은 숨김 — 3D · "작품 바로 보기"와 겹치지 않게
+  // 첫 화면(Hero, data-chat-hide)이 화면을 차지하는 동안은 숨김 — 3D · "작품 바로 보기"와 겹치지 않게 (휴대폰은 푸터에서도)
   const [isHiddenZone, setIsHiddenZone] = useState(false);
   useEffect(() => {
     const onScroll = () => {
       const zone = document.querySelector("[data-chat-hide]");
-      setIsHiddenZone(Boolean(zone) && zone.getBoundingClientRect().bottom > window.innerHeight * 0.4);
+      const inHero = Boolean(zone) && zone.getBoundingClientRect().bottom > window.innerHeight * 0.4;
+      // 휴대폰: 푸터(연락처)가 보이면 숨김 — 버튼이 "복사" 버튼을 가리지 않게
+      const footer = document.querySelector("footer");
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      const inFooter = isMobile && Boolean(footer) && footer.getBoundingClientRect().top < window.innerHeight - 80;
+      setIsHiddenZone(inHero || inFooter);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });

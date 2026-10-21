@@ -702,3 +702,14 @@ $fill-ms: 0.5s;           // 검은 배경이 차오르는 시간
     &:nth-child(#{$i}) { transition-delay: #{($i - 1) * 0.04}s; }
   }
 }
+
+// 화면에는 안 보이고 화면 읽기에만 읽히는 글자
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

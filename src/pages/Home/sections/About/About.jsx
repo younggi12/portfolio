@@ -18,7 +18,7 @@ const About = () => (
     <NameIntro />
     <div className={styles.inner}>
       {/* ① 교육 과정 한 줄 + 숫자 */}
-      <div className={`${styles.part} ${styles.facts}`}>
+      <div className={`${styles.part} ${styles.facts}`} data-about-facts>
         <FactRows />
       </div>
 

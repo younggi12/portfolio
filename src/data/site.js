@@ -88,6 +88,24 @@ export const FOOTER_TEXT = {
 };
 
 
+// 메일 보내기 창 (푸터 이메일을 누르면)
+export const MAIL_TEXT = {
+  title: "메일 보내기",
+  to: "받는 사람",
+  name: "이름",
+  email: "답장 받을 이메일",
+  emailHint: "example@email.com",
+  message: "내용",
+  send: "보내기",
+  sending: "보내는 중…",
+  close: "닫기",
+  sentTitle: "메일을 보냈어요.",
+  sentText: "확인하고 적어 주신 이메일로 답장드릴게요. 감사합니다!",
+  error: "지금은 메일을 보내지 못했어요. 잠시 후 다시 시도하거나, 이메일 주소를 복사해 직접 보내 주세요.",
+  notReady: "메일 보내기를 준비 중이에요. 이메일 주소를 복사해 보내 주세요.",
+  openLabel: "메일 보내기 창 열기",
+};
+
 // 첫 화면(Hero) — 스크롤하는 동안 lines[0] → lines[1]로 다시 타이핑됨
 export const HERO_TEXT = {
   eyebrow: "FRONTEND DEVELOPER · LEE YOUNGGI",

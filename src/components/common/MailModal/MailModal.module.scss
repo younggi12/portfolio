@@ -1,0 +1,131 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// 메일 보내기 창 — 어두운 배경 + 가운데 흰 카드 (챗봇 창과 같은 톤)
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70; // 헤더(10) · 챗봇(50) · 전환 커튼(60) 위, 커서(1000) 아래
+  display: grid;
+  place-items: center;
+  padding: $space-4;
+  background-color: rgba($color-black, 0.55);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.panel {
+  width: min(480px, 100%);
+  max-height: calc(100svh - #{$space-8});
+  overflow-y: auto;
+  padding: $space-8;
+  border-radius: $radius-lg;
+  background-color: $color-bg;
+  color: $color-text;
+  box-shadow: 0 24px 64px rgba($color-black, 0.25);
+  animation: panelUp 0.3s $easing-reveal;
+
+  @include mobile { padding: $space-6 $space-5; }
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  letter-spacing: -0.02em;
+}
+
+.close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+  transition: background-color $duration-fast $easing-base;
+
+  &:hover { background-color: $color-band-solid; }
+}
+
+.to {
+  margin-top: $space-1;
+  font-size: $font-size-sm;
+  opacity: 0.75;
+}
+
+.form {
+  display: grid;
+  gap: $space-4;
+  margin-top: $space-6;
+
+  label {
+    display: grid;
+    gap: $space-1;
+  }
+
+  span {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background-color: $color-bg;
+    color: inherit;
+    font: inherit;
+    font-size: $font-size-sm;
+    transition: border-color $duration-fast $easing-base;
+
+    &:focus { border-color: $color-text; outline: none; }
+
+    @include mobile { font-size: 16px; } // 아이폰은 16px보다 작으면 입력할 때 화면이 확대돼서
+  }
+
+  textarea { resize: vertical; min-height: 120px; }
+}
+
+.submit {
+  justify-self: start;
+  padding: $space-3 $space-6;
+  border-radius: $radius-pill;
+  background-color: $color-text;
+  color: $color-on-panel;
+  font-weight: $font-weight-semibold;
+  transition: opacity $duration-fast $easing-base;
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.note,
+.error {
+  font-size: $font-size-xs;
+  line-height: 1.6;
+}
+
+.error { color: #c0392b; } // 실패 안내 — 빨강 (흰 배경 대비 5.4:1)
+
+.done {
+  display: grid;
+  gap: $space-3;
+  margin-top: $space-6;
+  line-height: $line-height-base;
+}
+
+.doneTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+}
+
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes panelUp { from { opacity: 0; transform: translateY(16px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .panel { animation: none; }
+}

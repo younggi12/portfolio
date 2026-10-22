@@ -1,13 +1,14 @@
 // 푸터 = 연락처 (헤더의 Contact 메뉴가 여기로 스크롤)
 // 위: 왼쪽 인사말 / 오른쪽 연락처(이메일 · 전화 + 복사 버튼 · GitHub)
 // 전화번호는 tel: 링크 — 휴대폰에서 누르면 바로 전화 앱 (PC에서는 글자 + 복사)
-// 메일 앱이 없는 PC가 많아 mailto 링크 · "이메일 보내기" 버튼은 쓰지 않음 — 주소는 글자 + 복사
+// 이메일 주소를 누르면 메일 보내기 창(EmailJS — 메일 앱 없이 바로 전송), 옆에 복사 버튼
 // 아래: 저작권 · 만든 도구 / 맨 위로
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { PATHS, SECTION_IDS } from "@/routes/paths";
 import { PROFILE } from "@/data/profile";
-import { FOOTER_TEXT } from "@/data/site";
+import { FOOTER_TEXT, MAIL_TEXT } from "@/data/site";
+import MailModal from "@/components/common/MailModal/MailModal";
 import styles from "./Footer.module.scss";
 import { jumpToTop, scrollToY } from "@/utils/scrollToY";
 
@@ -17,6 +18,7 @@ const githubLabel = PROFILE.github.replace(/^https?:\/\//, "");
 
 const Footer = () => {
   const [copied, setCopied] = useState(""); // 방금 복사한 항목 ("email" | "phone")
+  const [isMailOpen, setIsMailOpen] = useState(false); // 메일 보내기 창
 
   useEffect(() => {
     if (!copied) return undefined;
@@ -52,7 +54,9 @@ const Footer = () => {
               <div className={styles.row}>
                 <dt>{FOOTER_TEXT.emailLabel}</dt>
                 <dd>
-                  <span className={styles.value}>{PROFILE.email}</span>
+                  <button type="button" className={`${styles.value} ${styles.mailButton}`} onClick={() => setIsMailOpen(true)} aria-label={`${PROFILE.email} ${MAIL_TEXT.openLabel}`}>
+                    {PROFILE.email}
+                  </button>
                   <button type="button" className={styles.copy} onClick={() => handleCopy("email", PROFILE.email)}>
                     {copied === "email" ? FOOTER_TEXT.copied : FOOTER_TEXT.copy}
                   </button>
@@ -94,6 +98,7 @@ const Footer = () => {
           <button type="button" className={styles.toTop} onClick={handleToTop}>{FOOTER_TEXT.toTop} ↑</button>
         </div>
       </div>
+      {isMailOpen && <MailModal onClose={() => setIsMailOpen(false)} />}
     </footer>
   );
 };

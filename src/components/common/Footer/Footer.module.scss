@@ -92,6 +92,15 @@
 
 a.value { @include hover-underline; }
 
+// 이메일 주소 — 누르면 메일 보내기 창 (링크처럼 밑줄)
+.mailButton {
+  @include hover-underline;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+}
+
 .copy {
   flex-shrink: 0;
   padding: 2px $space-3;

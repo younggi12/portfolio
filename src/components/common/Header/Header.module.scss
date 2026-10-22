@@ -90,3 +90,6 @@
   font-weight: $font-weight-semibold;
   text-decoration-color: currentColor;
 }
+
+// 태블릿 — 메뉴 글씨 한 단계 크게
+@include tablet { .nav { font-size: $font-size-md; } }

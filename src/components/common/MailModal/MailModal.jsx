@@ -62,15 +62,26 @@ const MailModal = ({ onClose }) => {
         data-chat // 사이트 부드러운 스크롤이 이 창 안의 휠을 건드리지 않게 (챗봇 창과 같은 표시)
       >
         <div className={styles.head}>
-          <h2 id="mail-title" className={styles.title}>{MAIL_TEXT.title}</h2>
-          <button type="button" className={styles.close} onClick={onClose} aria-label={MAIL_TEXT.close}>×</button>
+          <h2 id="mail-title" className={`${styles.title} ${status === "sent" ? styles.srOnly : ""}`}>{MAIL_TEXT.title}</h2>
+          {/* 성공 화면에는 아래 "닫기" 버튼이 있어 위 × 는 숨김 */}
+          {status !== "sent" && (
+            <button type="button" className={styles.close} onClick={onClose} aria-label={MAIL_TEXT.close}>×</button>
+          )}
         </div>
-        <p className={styles.to}>{MAIL_TEXT.to} <b>{PROFILE.email}</b></p>
+        {status !== "sent" && <p className={styles.to}>{MAIL_TEXT.to} <b>{PROFILE.email}</b></p>}
 
         {status === "sent" ? (
-          <div className={styles.done}>
+          // 성공 — 가운데 원 안에 체크가 그려지고, 이름 · 답장 주소를 넣은 안내
+          <div className={styles.done} role="status">
+            <svg className={styles.doneIcon} viewBox="0 0 64 64" width="84" height="84" aria-hidden="true">
+              <circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" strokeWidth="3" pathLength="1" />
+              <path d="M20 33l8 8 16-17" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" pathLength="1" />
+            </svg>
             <p className={styles.doneTitle}>{MAIL_TEXT.sentTitle}</p>
-            <p>{MAIL_TEXT.sentText}</p>
+            <p className={styles.doneText}>
+              {MAIL_TEXT.sentThanks(form.name)}<br />
+              {MAIL_TEXT.sentReply} <b>{form.email}</b>{MAIL_TEXT.sentReplyEnd}
+            </p>
             <button type="button" className={styles.submit} onClick={onClose}>{MAIL_TEXT.close}</button>
           </div>
         ) : (

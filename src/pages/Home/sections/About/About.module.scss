@@ -66,7 +66,7 @@ $card-flip: 0.35s; // 그림이 반 바퀴 도는 시간 (옆 → 정면은 두 
   transform: translateY(calc(var(--curtain, 0) * -100%));
   box-shadow: 0 24px 48px -16px rgba(0, 0, 0, calc(var(--dark, 0) * 0.35)); // 걷힐 때 아래 끝 그림자
 
-  @include tablet { --edge: #{$side-padding-tablet}; }
+  @include tablet { --name-size: 16vw; --edge: #{$side-padding-tablet}; } // 태블릿은 화면이 좁아 이름을 조금 더 크게
   @include mobile { --name-size: 15vw; --edge: #{$side-padding-mobile}; }
 }
 
@@ -123,6 +123,7 @@ $card-flip: 0.35s; // 그림이 반 바퀴 도는 시간 (옆 → 정면은 두 
   translate: 0 calc(var(--hi-shift, 0px) * (1 - var(--show, 0))); // --hi-shift: JS가 이름 줄 높이로 잼
   opacity: calc((1 - var(--show, 0) * 0.5) * (1 - var(--out, 0))); // 작아지면서 조금 옅게, 끝에서 사라짐
 
+  @include tablet { --hi-small: 3.2vw; } // 태블릿에서 HELLO I'M이 너무 작지 않게
   @include mobile { --hi-big: 22vw; --hi-small: 4.5vw; }
 }
 
@@ -674,11 +675,8 @@ $fill-ms: 0.5s;           // 검은 배경이 차오르는 시간
 // PC에선 한 줄로 (넘치지 않게 글자 · 간격을 조금 줄임), 태블릿 · 휴대폰은 줄바꿈
 .items {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap; // 기술이 많은 줄(데이터 · 서버)은 화면 끝에서 잘리지 않고 다음 줄로
   gap: $space-2 $space-4;
-  white-space: nowrap;
-
-  @include below-desktop { flex-wrap: wrap; white-space: normal; }
 
   li {
     display: flex;
@@ -712,4 +710,20 @@ $fill-ms: 0.5s;           // 검은 배경이 차오르는 시간
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+// ---- 태블릿 — 화면이 넓어도 vw 글씨가 작아지지 않게, 작은 글씨를 한 단계씩 키움 ----
+@include tablet {
+  .eyebrow { font-size: $font-size-md; }
+  .corner { font-size: $font-size-sm; }
+  .statNo { font-size: $font-size-md; }
+  .statLabel { font-size: 20px; }
+  .statCta { font-size: $font-size-lg; }
+  .course { font-size: 24px; }
+  .lead { font-size: 30px; }
+  .ways li { font-size: 21px; }
+  .wayNo { font-size: $font-size-md; }
+  .skillNo { font-size: $font-size-md; }
+  .skillName { font-size: 32px; }
+  .items li { font-size: 16px; }
 }

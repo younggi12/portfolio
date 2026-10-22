@@ -144,3 +144,9 @@ a.value { @include hover-underline; }
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+// 태블릿 — 작은 글씨를 한 단계씩 키움
+@include tablet {
+  .title, .copy, .bottom, .toTop { font-size: $font-size-sm; }
+  .subMessage, .row { font-size: $font-size-md; }
+}
